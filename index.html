@@ -7,6 +7,10 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
+    html, body {
+      height: 100%;
+    }
+
     body {
       font-family: 'Segoe UI', system-ui, sans-serif;
       min-height: 100vh;
@@ -16,6 +20,60 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
+      position: relative;
+    }
+
+    /* Animated glow orbs */
+    .bg-orb {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bg-orb-1 {
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(124,58,237,0.28) 0%, transparent 65%);
+      filter: blur(60px);
+      top: -200px;
+      left: -200px;
+      animation: drift-a 14s ease-in-out infinite alternate;
+    }
+
+    .bg-orb-2 {
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(37,99,235,0.22) 0%, transparent 65%);
+      filter: blur(60px);
+      bottom: -150px;
+      right: -150px;
+      animation: drift-b 18s ease-in-out infinite alternate;
+    }
+
+    .bg-orb-3 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(244,114,182,0.16) 0%, transparent 65%);
+      filter: blur(60px);
+      top: 40%;
+      left: 5%;
+      animation: drift-c 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes drift-a {
+      0%   { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(80px, 70px) scale(1.15); }
+    }
+
+    @keyframes drift-b {
+      0%   { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(-70px, -80px) scale(1.1); }
+    }
+
+    @keyframes drift-c {
+      0%   { transform: translate(0, 0) scale(1); opacity: 0.6; }
+      100% { transform: translate(50px, -60px) scale(1.2); opacity: 1; }
     }
 
     .card {
@@ -27,6 +85,8 @@
       max-width: 520px;
       width: 100%;
       box-shadow: 0 24px 64px rgba(0,0,0,0.7), 0 0 0 1px rgba(167,139,250,0.04);
+      position: relative;
+      z-index: 1;
     }
 
     /* ── START SCREEN ── */
@@ -386,6 +446,9 @@
   </style>
 </head>
 <body>
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+<div class="bg-orb bg-orb-3"></div>
 <div class="card">
 
   <!-- ══ START SCREEN ══ -->
@@ -468,110 +531,110 @@
 const QUESTIONS = [
   {
     id: "q1",
-    text: "Someone you thought was a close friend starts acting distant. What's your gut reaction?",
+    text: "Which one feels most like you — no overthinking?",
     choices: [
-      "Give them space and wait — they'll come to me if they need to 🫥",
-      "Overthink every recent conversation to figure out what I did 🌀",
-      "Reach out directly — I'd rather know than wonder 📱",
-      "Pull back too, and tell myself I don't care (even if I do) 🧊",
-      "Ask a mutual friend if they know what's going on 🕵️"
+      "I notice everything but say half of it 👁️",
+      "I make things happen and figure it out after ⚡",
+      "I feel things deeply before I can explain them 🌊",
+      "I show up for people. Quietly, but always. 🪨",
+      "I connect fast. I read people fast. I move fast. 🧲"
     ],
     reactions: [
-      "Calculated patience.",
-      "You already know what you did.",
-      "You hate sitting with uncertainty.",
-      "Protecting yourself before they can.",
-      "Intelligence gathering."
+      "You see more than you show.",
+      "Action is how you think.",
+      "You process from the inside out.",
+      "Reliability is your love language.",
+      "You run on connection."
     ]
   },
   {
     id: "q2",
-    text: "Be honest — when you meet someone new, what do you actually notice first?",
+    text: "What actually drains you more than anything?",
     choices: [
-      "The vibe — whether the energy just feels right 🌊",
-      "How they treat other people, not just you 👀",
-      "Whether they seem confident or nervous 🧐",
-      "What they're passionate about — their eyes light up 💡",
-      "Whether they seem like the type who actually shows up 🤝"
+      "Conversations that stay surface-level no matter how long they go 🥱",
+      "Sitting still when something could be happening 🌀",
+      "Feeling like you have to explain yourself to be understood 😮‍💨",
+      "When plans change last minute and nobody thinks it's a big deal 📅",
+      "Carrying other people's energy when yours is already low 🔋"
     ],
     reactions: [
-      "You trust your gut over your head.",
-      "You've been burned before.",
-      "You're reading them instantly.",
-      "You want someone who cares about something.",
-      "You've met too many people who don't."
+      "Depth isn't optional for you — it's the whole point.",
+      "You're built for movement, not stillness.",
+      "You want to be understood without having to perform yourself.",
+      "Reliability matters to you. Chaos costs you.",
+      "You give a lot. Sometimes too much."
     ]
   },
   {
     id: "q3",
-    text: "You're in a group chat and someone posts a take you fully disagree with. You…",
+    text: "Pick the friendship dynamic that fits you best:",
     choices: [
-      "Reply instantly with your real opinion 🔥",
-      "Type a response, delete it, and decide it's not worth it 🙃",
-      "React with an emoji and address it privately later 💬",
-      "Leave it on read and move on 👁️",
-      "Like it anyway to keep the peace 😅"
+      "We don't talk every day but when we do it's like no time passed 🌙",
+      "We're always in each other's orbit — no schedule needed 🔁",
+      "We go deep fast and somehow never run out of things to say 💬",
+      "We've been through enough that we don't need to explain anything 🫂",
+      "We bring out a version of each other that nobody else sees ✨"
     ],
     reactions: [
-      "You don't filter.",
-      "You care more than you let on.",
-      "Strategic. You don't do public drama.",
-      "Not your problem.",
-      "Conflict costs too much."
+      "Quality over frequency, every time.",
+      "Proximity is your kind of intimacy.",
+      "You bond through words and ideas.",
+      "History is the foundation you trust most.",
+      "You're someone who unlocks people."
     ]
   },
   {
     id: "q4",
-    text: "What kind of friend are you, really?",
+    text: "What do people usually get wrong about you?",
     choices: [
-      "The one who remembers the small things you mentioned once 🧠",
-      "The one everyone calls when something actually goes wrong 📞",
-      "The one who suggests the plan and makes it happen 🗓️",
-      "The one who shows up with snacks and no questions asked 🥡",
-      "The most chaotic one — but somehow always there when it counts 🌪️"
+      "They think I'm distant. I'm just selective. 🧊",
+      "They think I'm always fine. I'm just not loud about it. 🎭",
+      "They think I'm intense. I just actually care. 🔥",
+      "They think I don't need anything. I just don't ask. 🪨",
+      "They think I'm easy to read. I'm really not. 🌫️"
     ],
     reactions: [
-      "You pay attention.",
-      "Whether you wanted to be or not.",
-      "You run on action.",
-      "No words needed.",
-      "Chaos with loyalty."
+      "You protect your energy without explaining it.",
+      "You carry more than you let on.",
+      "Caring deeply gets mistaken for a lot of things.",
+      "Independence can look like you need nothing. It's not the same.",
+      "There's more underneath than people reach."
     ]
   },
   {
     id: "q5",
-    text: "Your friendships usually start to feel real when…",
+    text: "Pick what you value most in a person — honestly:",
     choices: [
-      "You've had one genuinely deep, honest conversation 🌙",
-      "You've gone through something difficult together 🫂",
-      "You realize you make each other laugh without even trying 😂",
-      "You just keep ending up in the same place, over and over 🔁",
-      "They reached out first and you let them in 🔓"
+      "They're consistent. You never wonder where you stand. 📌",
+      "They're real. No performance, no filter. 🪞",
+      "They make everything feel lighter just by being there. ☀️",
+      "They push you to be better without making you feel small. 🏔️",
+      "They actually get you — without needing everything explained. 🧠"
     ],
     reactions: [
-      "One good conversation does it.",
-      "Tested and proven.",
-      "Easy. Rare.",
-      "Orbit.",
-      "You needed them to go first."
+      "Stability is rare to you. You don't take it for granted.",
+      "Authenticity is non-negotiable.",
+      "You need people who ease the weight, not add to it.",
+      "Growth matters to you — in yourself and who you keep close.",
+      "Being truly understood is the highest form of connection, to you."
     ]
   },
   {
     id: "q6",
-    text: "Be honest — what do you actually want most in a friendship?",
+    text: "How do you actually show someone you care about them?",
     choices: [
-      "Someone who checks in on you without you having to ask 💌",
-      "Someone who gets your humor and never makes you explain yourself 🎭",
-      "Deep conversations at weird hours — no small talk 🌙",
-      "Consistency — people who say they'll show up and actually do 📅",
-      "Someone who pulls you out of your comfort zone without forcing it 🚀"
+      "I remember things. Details. Things they said once, months ago. 🧩",
+      "I show up. No announcement — I'm just there. 🚪",
+      "I say it. Directly. I don't do hints. 💬",
+      "I make time. And I protect it. 🕐",
+      "I match their energy and meet them where they are. 🌊"
     ],
     reactions: [
-      "You notice who notices.",
-      "You're funnier than most people know.",
-      "You need someone who can go there.",
-      "You've been let down before.",
-      "You want someone to make it easy."
+      "Attention is how you love.",
+      "Presence is your signature.",
+      "Clarity is your kindness.",
+      "Time is the most honest thing you can give someone.",
+      "You adapt. That's a rare kind of care."
     ]
   }
 ];
@@ -674,13 +737,20 @@ const ARCHETYPES = [
 //  Each array maps answer index → archetype index.
 //  0=Observer, 1=SocialGlue, 2=Chaos, 3=Rock, 4=VibShifter
 // ─────────────────────────────────────────
+// 0=Observer, 1=SocialGlue, 2=Chaos, 3=Rock, 4=VibShifter
+// Q1: notice-everything→Observer, make-happen→Chaos, feel-deeply→VibShifter, show-up→Rock, connect-fast→SocialGlue
+// Q2: surface-convos→VibShifter, sitting-still→Chaos, explain-self→Observer, plan-changes→Rock, carrying-energy→SocialGlue
+// Q3: no-time-passed→Observer, always-orbit→SocialGlue, go-deep→VibShifter, been-through-it→Rock, unlock-each-other→Chaos
+// Q4: selective→Observer, not-loud→Rock, actually-care→VibShifter, dont-ask→Chaos, hard-to-read→SocialGlue
+// Q5: consistent→Rock, real→Observer, lighter→Chaos, push-better→VibShifter, truly-get-you→SocialGlue
+// Q6: remember-details→Observer, show-up→Rock, say-it→Chaos, make-time→SocialGlue, match-energy→VibShifter
 const WEIGHTS = {
-  q1: [0, 4, 1, 2, 3],
-  q2: [2, 1, 0, 4, 3],
-  q3: [2, 4, 1, 0, 3],
-  q4: [0, 1, 2, 3, 4],
-  q5: [4, 3, 2, 0, 1],
-  q6: [3, 2, 4, 1, 0]
+  q1: [0, 2, 4, 3, 1],
+  q2: [4, 2, 0, 3, 1],
+  q3: [0, 1, 4, 3, 2],
+  q4: [0, 3, 4, 2, 1],
+  q5: [3, 0, 2, 4, 1],
+  q6: [0, 3, 2, 1, 4]
 };
 
 // ─────────────────────────────────────────
