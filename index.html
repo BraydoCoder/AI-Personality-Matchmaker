@@ -400,56 +400,75 @@
     /* ── SETUP SCREEN ── */
     #setup-screen { display: none; }
 
-    .setup-eyebrow {
-      font-size: 0.7rem;
+    .setup-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .setup-wordmark {
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.28em;
       text-transform: uppercase;
-      letter-spacing: 0.18em;
+      background: linear-gradient(90deg, #a78bfa, #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .setup-step-label {
+      font-size: 0.72rem;
+      color: #475569;
+    }
+
+    .setup-card {
+      background: rgba(167,139,250,0.06);
+      border: 1px solid rgba(167,139,250,0.15);
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 12px;
+      transition: border-color 0.2s;
+    }
+
+    .setup-card.answered {
+      border-color: rgba(167,139,250,0.35);
+    }
+
+    .setup-q-num {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
       color: #a78bfa;
       font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .setup-title {
-      font-size: 1.35rem;
-      font-weight: 700;
-      color: #f1f5f9;
       margin-bottom: 6px;
-      line-height: 1.3;
-    }
-
-    .setup-sub {
-      color: #64748b;
-      font-size: 0.85rem;
-      margin-bottom: 28px;
-    }
-
-    .setup-block {
-      margin-bottom: 22px;
     }
 
     .setup-q-label {
-      font-size: 0.88rem;
+      font-size: 0.95rem;
       font-weight: 600;
-      color: #cbd5e1;
-      margin-bottom: 10px;
+      color: #f1f5f9;
+      margin-bottom: 14px;
+      line-height: 1.4;
     }
 
     .setup-choices {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 7px;
     }
 
     .setup-chip {
       background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.09);
-      border-radius: 12px;
-      padding: 12px 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 11px 14px;
       color: #94a3b8;
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       cursor: pointer;
       text-align: left;
-      transition: background 0.14s, border-color 0.14s, color 0.14s;
+      transition: background 0.13s, border-color 0.13s, color 0.13s;
     }
 
     .setup-chip:hover {
@@ -465,8 +484,8 @@
     }
 
     #setup-continue {
-      margin-top: 8px;
-      opacity: 0.35;
+      margin-top: 16px;
+      opacity: 0.3;
       pointer-events: none;
       transition: opacity 0.3s;
     }
@@ -476,18 +495,64 @@
       pointer-events: auto;
     }
 
-    /* Context tag shown on results */
+    /* Context tags row on results */
+    .context-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
     .context-tag {
       display: inline-block;
-      background: rgba(167,139,250,0.12);
-      border: 1px solid rgba(167,139,250,0.25);
+      background: rgba(167,139,250,0.1);
+      border: 1px solid rgba(167,139,250,0.22);
       color: #a78bfa;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 600;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.05em;
       padding: 4px 10px;
       border-radius: 20px;
-      margin-bottom: 14px;
+    }
+
+    /* Compare CTA — shown when user is with friends */
+    .compare-cta {
+      background: linear-gradient(135deg, rgba(124,58,237,0.18), rgba(37,99,235,0.15));
+      border: 1px solid rgba(167,139,250,0.3);
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .compare-cta-icon { font-size: 1.5rem; }
+
+    .compare-cta-body { flex: 1; }
+
+    .compare-cta-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 3px;
+    }
+
+    .compare-cta-sub {
+      font-size: 0.78rem;
+      color: #64748b;
+    }
+
+    .compare-cta-btn {
+      background: linear-gradient(135deg, #7c3aed, #2563eb);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
     }
   </style>
 </head>
@@ -514,27 +579,53 @@
 
   <!-- ══ SETUP SCREEN ══ -->
   <div id="setup-screen">
-    <div class="setup-eyebrow">Quick setup</div>
-    <div class="setup-title">Help Virel read you better.</div>
-    <div class="setup-sub">2 questions. 10 seconds.</div>
+    <div class="setup-header">
+      <div class="setup-wordmark">Virel</div>
+      <div class="setup-step-label">Setup · 4 questions</div>
+    </div>
 
-    <div class="setup-block">
+    <!-- Card 1: Purpose (Why) -->
+    <div class="setup-card" id="setup-card-1">
+      <div class="setup-q-num">Why</div>
       <div class="setup-q-label">What brings you here?</div>
-      <div class="setup-choices" id="setup-choices-1">
-        <button class="setup-chip" data-group="1" data-val="friendships" onclick="selectSetup(this)">Better friendships 🤝</button>
-        <button class="setup-chip" data-group="1" data-val="romantic"    onclick="selectSetup(this)">Romantic connections 💞</button>
-        <button class="setup-chip" data-group="1" data-val="self"        onclick="selectSetup(this)">Understanding myself better 🧠</button>
-        <button class="setup-chip" data-group="1" data-val="curious"     onclick="selectSetup(this)">Honestly just curious ✨</button>
+      <div class="setup-choices">
+        <button class="setup-chip" data-group="purpose" data-val="friendships" onclick="selectSetup(this)">Better friendships 🤝</button>
+        <button class="setup-chip" data-group="purpose" data-val="romantic"    onclick="selectSetup(this)">Romantic connections 💞</button>
+        <button class="setup-chip" data-group="purpose" data-val="self"        onclick="selectSetup(this)">Understanding myself better 🧠</button>
+        <button class="setup-chip" data-group="purpose" data-val="curious"     onclick="selectSetup(this)">Honestly just curious ✨</button>
       </div>
     </div>
 
-    <div class="setup-block">
+    <!-- Card 2: Energy (Who) -->
+    <div class="setup-card" id="setup-card-2">
+      <div class="setup-q-num">Who</div>
       <div class="setup-q-label">Your social energy, honestly:</div>
-      <div class="setup-choices" id="setup-choices-2">
-        <button class="setup-chip" data-group="2" data-val="selective" onclick="selectSetup(this)">Selective — small circle, deep connections 🌑</button>
-        <button class="setup-chip" data-group="2" data-val="open"      onclick="selectSetup(this)">Open — I meet people pretty easily 🌊</button>
-        <button class="setup-chip" data-group="2" data-val="shifts"    onclick="selectSetup(this)">It shifts — high sometimes, low other times ⚡</button>
-        <button class="setup-chip" data-group="2" data-val="figuring"  onclick="selectSetup(this)">Still figuring that out 🌫️</button>
+      <div class="setup-choices">
+        <button class="setup-chip" data-group="energy" data-val="selective" onclick="selectSetup(this)">Selective — small circle, deep connections 🌑</button>
+        <button class="setup-chip" data-group="energy" data-val="open"      onclick="selectSetup(this)">Open — I meet people pretty easily 🌊</button>
+        <button class="setup-chip" data-group="energy" data-val="shifts"    onclick="selectSetup(this)">It shifts — high sometimes, low other times ⚡</button>
+        <button class="setup-chip" data-group="energy" data-val="figuring"  onclick="selectSetup(this)">Still figuring that out 🌫️</button>
+      </div>
+    </div>
+
+    <!-- Card 3: Time (How long) -->
+    <div class="setup-card" id="setup-card-3">
+      <div class="setup-q-num">How long</div>
+      <div class="setup-q-label">How much time do you have right now?</div>
+      <div class="setup-choices">
+        <button class="setup-chip" data-group="time" data-val="quick" onclick="selectSetup(this)">Just a few minutes ⚡</button>
+        <button class="setup-chip" data-group="time" data-val="full"  onclick="selectSetup(this)">I've got time — give me the full thing 🌙</button>
+      </div>
+    </div>
+
+    <!-- Card 4: With whom -->
+    <div class="setup-card" id="setup-card-4">
+      <div class="setup-q-num">With whom</div>
+      <div class="setup-q-label">Taking this…</div>
+      <div class="setup-choices">
+        <button class="setup-chip" data-group="social" data-val="solo"    onclick="selectSetup(this)">By myself 🌑</button>
+        <button class="setup-chip" data-group="social" data-val="friends" onclick="selectSetup(this)">With someone / want to compare 👥</button>
+        <button class="setup-chip" data-group="social" data-val="send"    onclick="selectSetup(this)">To send to someone 📲</button>
       </div>
     </div>
 
@@ -572,7 +663,7 @@
   <!-- ══ RESULTS SCREEN ══ -->
   <div id="results-screen">
     <div class="result-eyebrow">Your Virel type</div>
-    <div id="context-tag"></div>
+    <div class="context-tags" id="context-tags"></div>
 
     <div class="share-card">
       <div class="result-icon" id="result-icon"></div>
@@ -587,6 +678,8 @@
 
     <div class="section-label">Who You Match With</div>
     <div class="compat-list" id="compat-list"></div>
+
+    <div id="compare-cta"></div>
 
     <div class="results-footer">
       <button class="btn btn-secondary" onclick="restartQuiz()">↩ Retake</button>
@@ -625,12 +718,59 @@ const PURPOSE_LABELS = {
   curious:     "Here out of curiosity"
 };
 
+const ENERGY_LABELS = {
+  selective: "Selective energy",
+  open:      "Open energy",
+  shifts:    "Shifting energy",
+  figuring:  "Still figuring it out"
+};
+
 const ENERGY_CONTEXT = {
   selective: "You said you're selective — that tracks.",
   open:      "You said you're open — that shows.",
   shifts:    "Your energy shifts — and so does this read.",
   figuring:  "You're still figuring it out — this might help."
 };
+
+// Extra questions added for "full mode" (time = full)
+const EXTRA_QUESTIONS = [
+  {
+    id: "q7",
+    text: "Pick the one that describes how you handle conflict:",
+    choices: [
+      "I go quiet and process before I say anything 🌑",
+      "I address it directly — tension sits badly with me 🔥",
+      "I joke about it first, then get real later 😅",
+      "I let it go unless it keeps happening 🌊",
+      "I overthink every angle before I say a word 🌀"
+    ],
+    reactions: [
+      "You need space before you can be honest.",
+      "You'd rather clear the air than carry it.",
+      "Humour is your armour.",
+      "You pick your battles carefully.",
+      "You've played this conversation out ten times already."
+    ]
+  },
+  {
+    id: "q8",
+    text: "What does 'being close to someone' actually mean to you?",
+    choices: [
+      "They know things about me that most people don't 🤐",
+      "I can be completely myself without editing anything 🎭",
+      "We've been through something real together 🫂",
+      "They show up for me without me having to ask 💌",
+      "The silence between us isn't awkward 🌙"
+    ],
+    reactions: [
+      "You guard what you share. The people who know get the real version.",
+      "You need to drop the performance. That takes trust.",
+      "Shared experience is the foundation you build on.",
+      "Actions over words. Every time.",
+      "Comfort in silence is intimacy to you."
+    ]
+  }
+];
 
 const QUESTIONS = [
   {
@@ -862,7 +1002,8 @@ const WEIGHTS = {
 // ─────────────────────────────────────────
 let currentQ    = 0;
 let answers     = {};
-let userContext = { purpose: null, energy: null };
+let activeQuestions = [];
+let userContext = { purpose: null, energy: null, time: null, social: null };
 const apiKey    = "__OPENROUTER_API_KEY__";
 
 // ─────────────────────────────────────────
@@ -878,9 +1019,9 @@ function showScreen(id) {
 //  SETUP FLOW
 // ─────────────────────────────────────────
 function startQuiz() {
-  // Go to setup card first
-  userContext = { purpose: null, energy: null };
+  userContext = { purpose: null, energy: null, time: null, social: null };
   document.querySelectorAll(".setup-chip").forEach(c => c.classList.remove("selected"));
+  document.querySelectorAll(".setup-card").forEach(c => c.classList.remove("answered"));
   document.getElementById("setup-continue").classList.remove("ready");
   showScreen("setup-screen");
 }
@@ -891,11 +1032,14 @@ function selectSetup(btn) {
     .forEach(c => c.classList.remove("selected"));
   btn.classList.add("selected");
 
-  if (group === "1") userContext.purpose = btn.dataset.val;
-  if (group === "2") userContext.energy  = btn.dataset.val;
+  userContext[group] = btn.dataset.val;
 
-  // Unlock continue once both answered
-  if (userContext.purpose && userContext.energy) {
+  // Mark the parent card as answered
+  const card = btn.closest(".setup-card");
+  if (card) card.classList.add("answered");
+
+  // Unlock continue once all 4 answered
+  if (userContext.purpose && userContext.energy && userContext.time && userContext.social) {
     document.getElementById("setup-continue").classList.add("ready");
   }
 }
@@ -903,6 +1047,10 @@ function selectSetup(btn) {
 function submitSetup() {
   currentQ = 0;
   answers  = {};
+  // Build active question set based on time constraint
+  activeQuestions = userContext.time === "full"
+    ? [...QUESTIONS, ...EXTRA_QUESTIONS]
+    : [...QUESTIONS];
   showScreen("quiz-screen");
   buildDots();
   renderQuestion();
@@ -915,7 +1063,7 @@ function submitSetup() {
 function buildDots() {
   const wrap = document.getElementById("progress-dots");
   wrap.innerHTML = "";
-  QUESTIONS.forEach((_, i) => {
+  activeQuestions.forEach((_, i) => {
     const d = document.createElement("div");
     d.className = "dot";
     d.id = `dot-${i}`;
@@ -924,18 +1072,18 @@ function buildDots() {
 }
 
 function updateDots() {
-  QUESTIONS.forEach((_, i) => {
+  activeQuestions.forEach((_, i) => {
     const d = document.getElementById(`dot-${i}`);
     d.className = "dot" + (i < currentQ ? " done" : i === currentQ ? " active" : "");
   });
 }
 
 function renderQuestion() {
-  const q = QUESTIONS[currentQ];
+  const q = activeQuestions[currentQ];
   updateDots();
 
   document.getElementById("question-area").classList.remove("fade-out");
-  document.getElementById("question-num").textContent = `Question ${currentQ + 1} of ${QUESTIONS.length}`;
+  document.getElementById("question-num").textContent = `Question ${currentQ + 1} of ${activeQuestions.length}`;
 
   // Apply context-aware variant if one exists for this question
   let questionText = q.text;
@@ -960,7 +1108,7 @@ function renderQuestion() {
 
   const nextBtn = document.getElementById("next-btn");
   nextBtn.classList.remove("ready");
-  nextBtn.textContent = currentQ === QUESTIONS.length - 1 ? "See My Type ✨" : "Next →";
+  nextBtn.textContent = currentQ === activeQuestions.length - 1 ? "See My Type ✨" : "Next →";
 
   // Restore state if revisiting
   if (answers[q.id] !== undefined) {
@@ -987,9 +1135,9 @@ function selectAnswer(index) {
 }
 
 function nextQuestion() {
-  if (answers[QUESTIONS[currentQ].id] === undefined) return;
+  if (answers[activeQuestions[currentQ].id] === undefined) return;
 
-  if (currentQ < QUESTIONS.length - 1) {
+  if (currentQ < activeQuestions.length - 1) {
     const area = document.getElementById("question-area");
     area.classList.add("fade-out");
     setTimeout(() => { currentQ++; renderQuestion(); }, 230);
@@ -1004,12 +1152,9 @@ function nextQuestion() {
 async function analyseAnswers() {
   showScreen("loading-screen");
 
-  const messages = [
-    "Reading your patterns…",
-    "Cross-referencing your answers…",
-    "Building your profile…",
-    "Almost there…"
-  ];
+  const messages = userContext.time === "quick"
+    ? ["Reading your patterns…", "Almost there…"]
+    : ["Reading your patterns…", "Cross-referencing your answers…", "Building your profile…", "Almost there…"];
   let mi = 0;
   const lt = document.getElementById("loading-text");
   const ticker = setInterval(() => { lt.textContent = messages[++mi % messages.length]; }, 1100);
@@ -1109,17 +1254,44 @@ function displayResults(r) {
   document.getElementById("result-name").textContent    = r.name;
   document.getElementById("result-tagline").textContent = r.tagline;
 
-  // Show context tag based on setup answers
-  const tagEl = document.getElementById("context-tag");
-  if (userContext.purpose) {
-    tagEl.innerHTML = `<div class="context-tag">${PURPOSE_LABELS[userContext.purpose]}</div>`;
-  } else {
-    tagEl.innerHTML = "";
-  }
+  // Build context tags row from all setup answers
+  const tags = [];
+  if (userContext.purpose) tags.push(PURPOSE_LABELS[userContext.purpose]);
+  if (userContext.energy)  tags.push(ENERGY_LABELS[userContext.energy]);
+  if (userContext.time === "quick") tags.push("Quick mode ⚡");
+  if (userContext.time === "full")  tags.push("Full read 🌙");
+  document.getElementById("context-tags").innerHTML =
+    tags.map(t => `<div class="context-tag">${t}</div>`).join("");
 
   // Prepend energy context note to profile
   const energyNote = userContext.energy ? ENERGY_CONTEXT[userContext.energy] + " " : "";
   document.getElementById("profile-text").textContent = energyNote + r.profile;
+
+  // Compare CTA — shown when user is with friends or wants to send
+  const compareCta = document.getElementById("compare-cta");
+  if (userContext.social === "friends") {
+    compareCta.innerHTML = `
+      <div class="compare-cta">
+        <div class="compare-cta-icon">👥</div>
+        <div class="compare-cta-body">
+          <div class="compare-cta-title">Compare with them</div>
+          <div class="compare-cta-sub">Send them the link and compare your types</div>
+        </div>
+        <button class="compare-cta-btn" onclick="shareResult()">Send →</button>
+      </div>`;
+  } else if (userContext.social === "send") {
+    compareCta.innerHTML = `
+      <div class="compare-cta">
+        <div class="compare-cta-icon">📲</div>
+        <div class="compare-cta-body">
+          <div class="compare-cta-title">Send it now</div>
+          <div class="compare-cta-sub">See if they agree with your result</div>
+        </div>
+        <button class="compare-cta-btn" onclick="shareResult()">Share →</button>
+      </div>`;
+  } else {
+    compareCta.innerHTML = "";
+  }
 
   document.getElementById("traits-grid").innerHTML = r.traits.map(t => `
     <div class="trait-chip">
