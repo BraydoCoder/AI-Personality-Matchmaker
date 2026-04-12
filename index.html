@@ -321,33 +321,65 @@
       font-style: italic;
     }
 
-    /* Trait chips */
-    .traits-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 9px;
+    /* Trait bars */
+    .traits-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
       margin-bottom: 22px;
     }
 
-    .trait-chip {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 12px;
-      padding: 10px 13px;
+    .trait-bar-row { }
+
+    .trait-bar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
     }
 
     .trait-label {
-      color: #475569;
-      font-size: 0.68rem;
+      font-size: 0.72rem;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 3px;
+      letter-spacing: 0.09em;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    .trait-bar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .trait-value {
-      font-weight: 600;
-      font-size: 0.86rem;
+      font-size: 0.82rem;
       color: #c4b5fd;
+      font-weight: 600;
+    }
+
+    .trait-pct {
+      font-size: 0.72rem;
+      color: #475569;
+      font-weight: 700;
+      min-width: 30px;
+      text-align: right;
+    }
+
+    .trait-bar-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(255,255,255,0.07);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .trait-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, #7c3aed, #60a5fa);
+      width: 0%;
+      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .section-label {
@@ -671,7 +703,7 @@
       <div class="result-tagline" id="result-tagline"></div>
     </div>
 
-    <div class="traits-grid" id="traits-grid"></div>
+    <div class="traits-list" id="traits-list"></div>
 
     <div class="section-label">The Read</div>
     <div class="profile-text" id="profile-text"></div>
@@ -894,10 +926,10 @@ const ARCHETYPES = [
     icon: "👁️",
     tagline: "You read the room before you enter it",
     traits: [
-      { label: "Social Style", value: "Selective" },
-      { label: "Energy",       value: "Steady & still" },
-      { label: "Reads People", value: "Deeply" },
-      { label: "Friendship",   value: "Quality over quantity" }
+      { label: "Social Style", value: "Selective",          pct: 28 },
+      { label: "Energy",       value: "Steady & still",     pct: 42 },
+      { label: "Reads People", value: "Deeply",             pct: 94 },
+      { label: "Depth",        value: "Quality over qty",   pct: 97 }
     ],
     profile: "You don't need to be the loudest person in the room — you're the one who actually knows what's going on in it. You take longer to open up, but when you do, it's real. You'd rather have two people who genuinely get you than twenty who kind of do.",
     matches: [
@@ -911,10 +943,10 @@ const ARCHETYPES = [
     icon: "🧲",
     tagline: "The one people call when it actually matters",
     traits: [
-      { label: "Social Style", value: "Connector" },
-      { label: "Energy",       value: "Warm & present" },
-      { label: "Reads People", value: "Intuitively" },
-      { label: "Friendship",   value: "Deep and wide" }
+      { label: "Social Style", value: "Connector",      pct: 91 },
+      { label: "Energy",       value: "Warm & present", pct: 88 },
+      { label: "Reads People", value: "Intuitively",    pct: 83 },
+      { label: "Depth",        value: "Deep and wide",  pct: 86 }
     ],
     profile: "You're the reason the group is still a group. You notice when someone's off before they've said a word, and you show up in ways people don't forget. The hard part? You give a lot — make sure you're actually getting it back.",
     matches: [
@@ -928,10 +960,10 @@ const ARCHETYPES = [
     icon: "⚡",
     tagline: "Somehow always the reason it became a night",
     traits: [
-      { label: "Social Style", value: "Spontaneous" },
-      { label: "Energy",       value: "High & contagious" },
-      { label: "Reads People", value: "Fast & instinctive" },
-      { label: "Friendship",   value: "Ride or die" }
+      { label: "Social Style", value: "Spontaneous",        pct: 96 },
+      { label: "Energy",       value: "High & contagious",  pct: 94 },
+      { label: "Reads People", value: "Fast & instinctive", pct: 74 },
+      { label: "Depth",        value: "Ride or die",        pct: 87 }
     ],
     profile: "You live at the intersection of bad ideas and great memories. You're not trying to be unpredictable — you just genuinely can't help it. The right people find your energy magnetic. Everyone else is just not your type.",
     matches: [
@@ -944,11 +976,12 @@ const ARCHETYPES = [
     name: "The Loyal Rock",
     icon: "🪨",
     tagline: "Still there when everyone else bounced",
+
     traits: [
-      { label: "Social Style", value: "Reliable" },
-      { label: "Energy",       value: "Calm & steady" },
-      { label: "Reads People", value: "Slowly & surely" },
-      { label: "Friendship",   value: "Built to last" }
+      { label: "Social Style", value: "Reliable",       pct: 96 },
+      { label: "Energy",       value: "Calm & steady",  pct: 38 },
+      { label: "Reads People", value: "Slowly & surely",pct: 62 },
+      { label: "Depth",        value: "Built to last",  pct: 99 }
     ],
     profile: "You don't do surface-level. When you're in someone's corner, you're in it. You show up quietly, consistently, and without making it a big deal — because to you, that's just what you do. People tend to realize later how rare that actually is.",
     matches: [
@@ -962,10 +995,10 @@ const ARCHETYPES = [
     icon: "🌊",
     tagline: "Every friendship goes deeper with you in it",
     traits: [
-      { label: "Social Style", value: "Expressive" },
-      { label: "Energy",       value: "Fluid & intense" },
-      { label: "Reads People", value: "Emotionally" },
-      { label: "Friendship",   value: "Intense and real" }
+      { label: "Social Style", value: "Expressive",      pct: 79 },
+      { label: "Energy",       value: "Fluid & intense",  pct: 76 },
+      { label: "Reads People", value: "Emotionally",      pct: 91 },
+      { label: "Depth",        value: "Intense and real", pct: 93 }
     ],
     profile: "You don't do small talk for long. You want to know what someone actually thinks, what keeps them up at night, what they're working through. You make people feel like they can be honest — and that's rarer than most people realize.",
     matches: [
@@ -1293,11 +1326,27 @@ function displayResults(r) {
     compareCta.innerHTML = "";
   }
 
-  document.getElementById("traits-grid").innerHTML = r.traits.map(t => `
-    <div class="trait-chip">
-      <div class="trait-label">${t.label}</div>
-      <div class="trait-value">${t.value}</div>
+  // Render trait bars (fill animates after paint)
+  document.getElementById("traits-list").innerHTML = r.traits.map(t => `
+    <div class="trait-bar-row">
+      <div class="trait-bar-header">
+        <span class="trait-label">${t.label}</span>
+        <div class="trait-bar-right">
+          <span class="trait-value">${t.value}</span>
+          <span class="trait-pct">${t.pct}%</span>
+        </div>
+      </div>
+      <div class="trait-bar-track">
+        <div class="trait-bar-fill" data-pct="${t.pct}"></div>
+      </div>
     </div>`).join("");
+
+  // Animate bars after DOM paints
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    document.querySelectorAll(".trait-bar-fill").forEach(bar => {
+      bar.style.width = bar.dataset.pct + "%";
+    });
+  }));
 
   document.getElementById("profile-text").textContent = r.profile;
 
