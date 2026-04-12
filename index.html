@@ -396,6 +396,99 @@
       font-size: 0.88rem;
       text-align: center;
     }
+
+    /* ── SETUP SCREEN ── */
+    #setup-screen { display: none; }
+
+    .setup-eyebrow {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: #a78bfa;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .setup-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .setup-sub {
+      color: #64748b;
+      font-size: 0.85rem;
+      margin-bottom: 28px;
+    }
+
+    .setup-block {
+      margin-bottom: 22px;
+    }
+
+    .setup-q-label {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 10px;
+    }
+
+    .setup-choices {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .setup-chip {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: #94a3b8;
+      font-size: 0.88rem;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.14s, border-color 0.14s, color 0.14s;
+    }
+
+    .setup-chip:hover {
+      background: rgba(124,58,237,0.14);
+      border-color: rgba(124,58,237,0.4);
+      color: #e2e8f0;
+    }
+
+    .setup-chip.selected {
+      background: rgba(124,58,237,0.22);
+      border-color: #a78bfa;
+      color: #f1f5f9;
+    }
+
+    #setup-continue {
+      margin-top: 8px;
+      opacity: 0.35;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    #setup-continue.ready {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Context tag shown on results */
+    .context-tag {
+      display: inline-block;
+      background: rgba(167,139,250,0.12);
+      border: 1px solid rgba(167,139,250,0.25);
+      color: #a78bfa;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+    }
   </style>
 </head>
 <body>
@@ -417,6 +510,35 @@
       <div class="meta-pill">🎯 6 questions</div>
     </div>
     <button class="btn btn-primary" onclick="startQuiz()">Find My Type →</button>
+  </div>
+
+  <!-- ══ SETUP SCREEN ══ -->
+  <div id="setup-screen">
+    <div class="setup-eyebrow">Quick setup</div>
+    <div class="setup-title">Help Virel read you better.</div>
+    <div class="setup-sub">2 questions. 10 seconds.</div>
+
+    <div class="setup-block">
+      <div class="setup-q-label">What brings you here?</div>
+      <div class="setup-choices" id="setup-choices-1">
+        <button class="setup-chip" data-group="1" data-val="friendships" onclick="selectSetup(this)">Better friendships 🤝</button>
+        <button class="setup-chip" data-group="1" data-val="romantic"    onclick="selectSetup(this)">Romantic connections 💞</button>
+        <button class="setup-chip" data-group="1" data-val="self"        onclick="selectSetup(this)">Understanding myself better 🧠</button>
+        <button class="setup-chip" data-group="1" data-val="curious"     onclick="selectSetup(this)">Honestly just curious ✨</button>
+      </div>
+    </div>
+
+    <div class="setup-block">
+      <div class="setup-q-label">Your social energy, honestly:</div>
+      <div class="setup-choices" id="setup-choices-2">
+        <button class="setup-chip" data-group="2" data-val="selective" onclick="selectSetup(this)">Selective — small circle, deep connections 🌑</button>
+        <button class="setup-chip" data-group="2" data-val="open"      onclick="selectSetup(this)">Open — I meet people pretty easily 🌊</button>
+        <button class="setup-chip" data-group="2" data-val="shifts"    onclick="selectSetup(this)">It shifts — high sometimes, low other times ⚡</button>
+        <button class="setup-chip" data-group="2" data-val="figuring"  onclick="selectSetup(this)">Still figuring that out 🌫️</button>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="setup-continue" onclick="submitSetup()">Start Quiz →</button>
   </div>
 
   <!-- ══ QUIZ SCREEN ══ -->
@@ -450,6 +572,7 @@
   <!-- ══ RESULTS SCREEN ══ -->
   <div id="results-screen">
     <div class="result-eyebrow">Your Virel type</div>
+    <div id="context-tag"></div>
 
     <div class="share-card">
       <div class="result-icon" id="result-icon"></div>
@@ -478,6 +601,37 @@
 //  All multiple choice. Open-ended deleted (K/C/D: DELETE).
 //  Questions target 16-25, friendship/relationship context.
 // ─────────────────────────────────────────
+// ─────────────────────────────────────────
+//  SETUP OPTIONS — question variants keyed by purpose
+// ─────────────────────────────────────────
+const Q3_VARIANTS = {
+  friendships: "Pick the friendship dynamic that fits you best:",
+  romantic:    "Pick the romantic dynamic that feels most like you:",
+  self:        "Pick the dynamic that shows how you connect with people:",
+  curious:     "Pick the connection dynamic that fits you best:"
+};
+
+const Q5_VARIANTS = {
+  friendships: "Pick what you value most in a friend — honestly:",
+  romantic:    "Pick what you need most in someone you'd date:",
+  self:        "Pick what you're trying to build more of in yourself:",
+  curious:     "Pick what you value most in a person — honestly:"
+};
+
+const PURPOSE_LABELS = {
+  friendships: "Here for better friendships",
+  romantic:    "Here for romantic connections",
+  self:        "Here to understand yourself",
+  curious:     "Here out of curiosity"
+};
+
+const ENERGY_CONTEXT = {
+  selective: "You said you're selective — that tracks.",
+  open:      "You said you're open — that shows.",
+  shifts:    "Your energy shifts — and so does this read.",
+  figuring:  "You're still figuring it out — this might help."
+};
+
 const QUESTIONS = [
   {
     id: "q1",
@@ -706,29 +860,57 @@ const WEIGHTS = {
 // ─────────────────────────────────────────
 //  STATE
 // ─────────────────────────────────────────
-let currentQ = 0;
-let answers  = {};
-const apiKey = "__OPENROUTER_API_KEY__";
+let currentQ    = 0;
+let answers     = {};
+let userContext = { purpose: null, energy: null };
+const apiKey    = "__OPENROUTER_API_KEY__";
 
 // ─────────────────────────────────────────
 //  SCREEN HELPERS
 // ─────────────────────────────────────────
 function showScreen(id) {
-  ["start-screen","quiz-screen","loading-screen","results-screen"]
+  ["start-screen","setup-screen","quiz-screen","loading-screen","results-screen"]
     .forEach(s => { document.getElementById(s).style.display = "none"; });
   document.getElementById(id).style.display = "block";
 }
 
 // ─────────────────────────────────────────
-//  QUIZ FLOW
+//  SETUP FLOW
 // ─────────────────────────────────────────
 function startQuiz() {
+  // Go to setup card first
+  userContext = { purpose: null, energy: null };
+  document.querySelectorAll(".setup-chip").forEach(c => c.classList.remove("selected"));
+  document.getElementById("setup-continue").classList.remove("ready");
+  showScreen("setup-screen");
+}
+
+function selectSetup(btn) {
+  const group = btn.dataset.group;
+  document.querySelectorAll(`.setup-chip[data-group="${group}"]`)
+    .forEach(c => c.classList.remove("selected"));
+  btn.classList.add("selected");
+
+  if (group === "1") userContext.purpose = btn.dataset.val;
+  if (group === "2") userContext.energy  = btn.dataset.val;
+
+  // Unlock continue once both answered
+  if (userContext.purpose && userContext.energy) {
+    document.getElementById("setup-continue").classList.add("ready");
+  }
+}
+
+function submitSetup() {
   currentQ = 0;
   answers  = {};
   showScreen("quiz-screen");
   buildDots();
   renderQuestion();
 }
+
+// ─────────────────────────────────────────
+//  QUIZ FLOW
+// ─────────────────────────────────────────
 
 function buildDots() {
   const wrap = document.getElementById("progress-dots");
@@ -754,7 +936,12 @@ function renderQuestion() {
 
   document.getElementById("question-area").classList.remove("fade-out");
   document.getElementById("question-num").textContent = `Question ${currentQ + 1} of ${QUESTIONS.length}`;
-  document.getElementById("question-text").textContent = q.text;
+
+  // Apply context-aware variant if one exists for this question
+  let questionText = q.text;
+  if (q.id === "q3" && userContext.purpose) questionText = Q3_VARIANTS[userContext.purpose];
+  if (q.id === "q5" && userContext.purpose) questionText = Q5_VARIANTS[userContext.purpose];
+  document.getElementById("question-text").textContent = questionText;
 
   const area = document.getElementById("choices-area");
   area.innerHTML = "";
@@ -922,6 +1109,18 @@ function displayResults(r) {
   document.getElementById("result-name").textContent    = r.name;
   document.getElementById("result-tagline").textContent = r.tagline;
 
+  // Show context tag based on setup answers
+  const tagEl = document.getElementById("context-tag");
+  if (userContext.purpose) {
+    tagEl.innerHTML = `<div class="context-tag">${PURPOSE_LABELS[userContext.purpose]}</div>`;
+  } else {
+    tagEl.innerHTML = "";
+  }
+
+  // Prepend energy context note to profile
+  const energyNote = userContext.energy ? ENERGY_CONTEXT[userContext.energy] + " " : "";
+  document.getElementById("profile-text").textContent = energyNote + r.profile;
+
   document.getElementById("traits-grid").innerHTML = r.traits.map(t => `
     <div class="trait-chip">
       <div class="trait-label">${t.label}</div>
@@ -946,7 +1145,7 @@ function displayResults(r) {
 // ─────────────────────────────────────────
 //  UTILITIES
 // ─────────────────────────────────────────
-function restartQuiz() { showScreen("start-screen"); }
+function restartQuiz() { startQuiz(); }
 
 function shareResult() {
   const name    = document.getElementById("result-name").textContent;
