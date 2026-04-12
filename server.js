@@ -20,5 +20,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`AI Personality Matchmaker running at http://localhost:${PORT}`);
+  console.log(`Virel running at http://localhost:${PORT}`);
 });
