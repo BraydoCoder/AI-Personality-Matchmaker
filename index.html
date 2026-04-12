@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Personality Matchmaker</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      color: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 680px;
+      width: 100%;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+    }
+
+    /* ── START SCREEN ── */
+    #start-screen { text-align: center; }
+
+    .logo {
+      font-size: 3rem;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      background: linear-gradient(90deg, #a78bfa, #60a5fa, #f472b6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #a0aec0;
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+
+    .api-section {
+      background: rgba(0,0,0,0.25);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 28px;
+      text-align: left;
+    }
+
+    .api-section label {
+      display: block;
+      font-size: 0.85rem;
+      color: #a0aec0;
+      margin-bottom: 8px;
+    }
+
+    .api-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .api-section input {
+      flex: 1;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: #f0f0f0;
+      font-size: 0.9rem;
+    }
+
+    .api-section input:focus { outline: none; border-color: #a78bfa; }
+
+    .mock-badge {
+      display: inline-block;
+      background: rgba(250, 204, 21, 0.15);
+      border: 1px solid rgba(250, 204, 21, 0.4);
+      color: #fcd34d;
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 20px;
+      margin-top: 8px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 14px 36px;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .btn:active { transform: scale(0.97); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #7c3aed, #2563eb);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(124, 58, 237, 0.5);
+    }
+
+    .btn-primary:hover { box-shadow: 0 6px 28px rgba(124, 58, 237, 0.7); }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.1);
+      color: #f0f0f0;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .btn-secondary:hover { background: rgba(255,255,255,0.17); }
+
+    /* ── QUIZ SCREEN ── */
+    #quiz-screen { display: none; }
+
+    .progress-bar-wrap {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      height: 6px;
+      margin-bottom: 32px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #7c3aed, #60a5fa);
+      transition: width 0.4s ease;
+    }
+
+    .question-label {
+      font-size: 0.8rem;
+      color: #a0aec0;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .question-text {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    .choices { display: flex; flex-direction: column; gap: 12px; }
+
+    .choice-btn {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
+      padding: 14px 18px;
+      color: #f0f0f0;
+      font-size: 0.95rem;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .choice-btn:hover {
+      background: rgba(124, 58, 237, 0.25);
+      border-color: #7c3aed;
+    }
+
+    .choice-btn.selected {
+      background: rgba(124, 58, 237, 0.35);
+      border-color: #a78bfa;
+    }
+
+    .open-input {
+      width: 100%;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      padding: 14px 18px;
+      color: #f0f0f0;
+      font-size: 0.95rem;
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .open-input:focus { outline: none; border-color: #a78bfa; }
+
+    .quiz-nav {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 28px;
+    }
+
+    /* ── LOADING SCREEN ── */
+    #loading-screen { display: none; text-align: center; }
+
+    .spinner {
+      width: 56px; height: 56px;
+      border: 4px solid rgba(255,255,255,0.1);
+      border-top-color: #a78bfa;
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+      margin: 0 auto 24px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-text { color: #a0aec0; font-size: 1rem; }
+
+    /* ── RESULTS SCREEN ── */
+    #results-screen { display: none; }
+
+    .results-header { text-align: center; margin-bottom: 32px; }
+
+    .personality-icon { font-size: 4rem; margin-bottom: 12px; }
+
+    .personality-name {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #a78bfa, #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 6px;
+    }
+
+    .personality-tagline {
+      color: #a0aec0;
+      font-size: 0.95rem;
+    }
+
+    .traits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin: 28px 0;
+    }
+
+    .trait-chip {
+      background: rgba(124, 58, 237, 0.2);
+      border: 1px solid rgba(167, 139, 250, 0.3);
+      border-radius: 10px;
+      padding: 10px 14px;
+      text-align: center;
+      font-size: 0.85rem;
+    }
+
+    .trait-chip .trait-label {
+      color: #a0aec0;
+      font-size: 0.75rem;
+      margin-bottom: 4px;
+    }
+
+    .trait-chip .trait-value {
+      font-weight: 600;
+      color: #c4b5fd;
+    }
+
+    .section-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #a0aec0;
+      margin: 24px 0 10px;
+    }
+
+    .profile-text {
+      line-height: 1.7;
+      color: #e2e8f0;
+      background: rgba(0,0,0,0.2);
+      border-radius: 12px;
+      padding: 18px;
+    }
+
+    .compatibility-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .compat-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+      padding: 12px 16px;
+    }
+
+    .compat-icon { font-size: 1.4rem; }
+
+    .compat-info { flex: 1; }
+
+    .compat-name { font-weight: 600; font-size: 0.95rem; }
+
+    .compat-desc { color: #a0aec0; font-size: 0.82rem; }
+
+    .compat-score {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #a78bfa;
+    }
+
+    .results-footer {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 32px;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+
+  <!-- ══ START SCREEN ══ -->
+  <div id="start-screen">
+    <div class="logo">🤖💫</div>
+    <h1>AI Personality Matchmaker</h1>
+    <p class="subtitle">
+      Answer a few fun questions and discover which AI personality type you are —
+      then find out which AI minds you'd vibe with most.
+    </p>
+
+    <button class="btn btn-primary" onclick="startQuiz()">Start Quiz →</button>
+  </div>
+
+  <!-- ══ QUIZ SCREEN ══ -->
+  <div id="quiz-screen">
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progress-bar"></div>
+    </div>
+    <div class="question-label" id="question-label">Question 1 of 7</div>
+    <div class="question-text" id="question-text"></div>
+    <div id="answer-area"></div>
+    <div class="quiz-nav">
+      <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()">Next →</button>
+    </div>
+  </div>
+
+  <!-- ══ LOADING SCREEN ══ -->
+  <div id="loading-screen">
+    <div class="spinner"></div>
+    <p class="loading-text" id="loading-text">Analyzing your personality…</p>
+  </div>
+
+  <!-- ══ RESULTS SCREEN ══ -->
+  <div id="results-screen">
+    <div class="results-header">
+      <div class="personality-icon" id="result-icon"></div>
+      <div class="personality-name" id="result-name"></div>
+      <div class="personality-tagline" id="result-tagline"></div>
+    </div>
+
+    <div class="traits-grid" id="traits-grid"></div>
+
+    <div class="section-title">Your Profile</div>
+    <div class="profile-text" id="profile-text"></div>
+
+    <div class="section-title">Best AI Matches</div>
+    <div class="compatibility-list" id="compat-list"></div>
+
+    <div class="results-footer">
+      <button class="btn btn-secondary" onclick="restartQuiz()">↩ Retake Quiz</button>
+      <button class="btn btn-primary" onclick="shareResult()">Share Result</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ─────────────────────────────────────────
+//  QUESTIONS
+// ─────────────────────────────────────────
+const QUESTIONS = [
+  {
+    id: "q1",
+    text: "You're given a free afternoon with no obligations. What do you do?",
+    type: "choice",
+    choices: [
+      "Dive deep into a new book or documentary 📚",
+      "Hang out with friends or plan something social 🎉",
+      "Work on a creative side project 🎨",
+      "Organise something — lists, plans, goals 📋",
+      "Just relax and let the moment guide you 🌊"
+    ]
+  },
+  {
+    id: "q2",
+    text: "When you face a hard decision, you tend to…",
+    type: "choice",
+    choices: [
+      "Research every angle until you're certain 🔬",
+      "Trust your gut — intuition rarely lies ⚡",
+      "Talk it through with someone you trust 💬",
+      "Make a pros/cons list and weigh outcomes 📊",
+      "Sleep on it and see how you feel tomorrow 🌙"
+    ]
+  },
+  {
+    id: "q3",
+    text: "Pick the sentence that sounds most like you:",
+    type: "choice",
+    choices: [
+      "I love asking 'why?' more than 'how?' 🤔",
+      "I love asking 'how?' more than 'why?' 🛠️",
+      "I love asking 'what if?' more than either 🌈",
+      "I love asking 'who?' — people are the puzzle 🧩",
+      "I love asking 'when?' — timing is everything ⏱️"
+    ]
+  },
+  {
+    id: "q4",
+    text: "In a group project, which role fits you best?",
+    type: "choice",
+    choices: [
+      "The researcher — I dig up all the facts 🔍",
+      "The leader — I keep everyone on track 🏁",
+      "The creative — I pitch wild ideas 💡",
+      "The harmoniser — I keep the team vibing 🤝",
+      "The finisher — I make sure it actually ships ✅"
+    ]
+  },
+  {
+    id: "q5",
+    text: "How do you feel about uncertainty?",
+    type: "choice",
+    choices: [
+      "Love it — it means unexplored territory 🗺️",
+      "Handle it — I adapt pretty well 🔄",
+      "Tolerate it — but I'd rather have a plan 📌",
+      "Dislike it — I prefer clarity and structure 🏗️",
+      "Hate it — unpredictability stresses me out 😬"
+    ]
+  },
+  {
+    id: "q6",
+    text: "What's your relationship with making mistakes?",
+    type: "choice",
+    choices: [
+      "They're just data — I learn and move on 📈",
+      "I analyse them obsessively so I never repeat them 🔄",
+      "I feel bad for a bit, then bounce back 🎯",
+      "They haunt me — I hold myself to a high standard 😅",
+      "I try to laugh them off and keep going 😄"
+    ]
+  },
+  {
+    id: "q7",
+    text: "Describe your ideal conversation in a few words:",
+    type: "open",
+    placeholder: "e.g. deep, philosophical, fun and fast-paced, practical…"
+  }
+];
+
+// ─────────────────────────────────────────
+//  PERSONALITY ARCHETYPES (for mock / fallback)
+// ─────────────────────────────────────────
+const ARCHETYPES = [
+  {
+    name: "The Deep Thinker",
+    icon: "🧠",
+    tagline: "Always three questions ahead of everyone else",
+    traits: [
+      { label: "Curiosity", value: "Insatiable" },
+      { label: "Style", value: "Analytical" },
+      { label: "Energy", value: "Focused" },
+      { label: "Strength", value: "Pattern Recognition" }
+    ],
+    profile: "You're the person who can't watch a film without theorising about its subtext. You approach life like a grand puzzle, and you're happiest when you're untangling something genuinely complex. You value depth over breadth and would rather have one profound conversation than ten shallow ones.",
+    matches: [
+      { icon: "🔬", name: "GPT-4o", desc: "Shares your love of nuanced, layered reasoning", score: "97%" },
+      { icon: "🌌", name: "Claude", desc: "Matches your philosophical curiosity and depth", score: "95%" },
+      { icon: "💡", name: "Gemini Ultra", desc: "Complements with wide-ranging knowledge synthesis", score: "88%" }
+    ]
+  },
+  {
+    name: "The Empathetic Connector",
+    icon: "💞",
+    tagline: "You make everyone feel genuinely seen",
+    traits: [
+      { label: "Curiosity", value: "People-focused" },
+      { label: "Style", value: "Warm & Intuitive" },
+      { label: "Energy", value: "Relational" },
+      { label: "Strength", value: "Emotional Intelligence" }
+    ],
+    profile: "You read a room the way others read a book. Your superpower is making people feel understood, and you care deeply about the emotional undercurrent in every interaction. You're drawn to stories, relationships, and the messy, beautiful complexity of being human.",
+    matches: [
+      { icon: "💬", name: "Claude", desc: "Prioritises nuance, care, and avoiding harm", score: "98%" },
+      { icon: "🤝", name: "Pi by Inflection", desc: "Built for warm, supportive conversation", score: "94%" },
+      { icon: "🌟", name: "GPT-4o", desc: "Versatile emotional range and empathy", score: "87%" }
+    ]
+  },
+  {
+    name: "The Bold Innovator",
+    icon: "🚀",
+    tagline: "First to leap, first to land",
+    traits: [
+      { label: "Curiosity", value: "Experimental" },
+      { label: "Style", value: "Bold & Rapid" },
+      { label: "Energy", value: "High Octane" },
+      { label: "Strength", value: "Creative Risk-Taking" }
+    ],
+    profile: "You're the one pitching the idea nobody else dared to say out loud — and you're usually right. You thrive in chaos and see uncertainty as a playground. You move fast, iterate faster, and you believe the best way to learn is to do.",
+    matches: [
+      { icon: "⚡", name: "Grok", desc: "Unfiltered, fast, and loves pushing boundaries", score: "96%" },
+      { icon: "🎯", name: "GPT-4o", desc: "Keeps pace with your speed and breadth", score: "91%" },
+      { icon: "🔥", name: "Mistral Large", desc: "Sharp, direct, and loves a challenge", score: "86%" }
+    ]
+  },
+  {
+    name: "The Steady Strategist",
+    icon: "♟️",
+    tagline: "Precision over impulse, every time",
+    traits: [
+      { label: "Curiosity", value: "Goal-Oriented" },
+      { label: "Style", value: "Methodical" },
+      { label: "Energy", value: "Steady & Calm" },
+      { label: "Strength", value: "Long-Term Planning" }
+    ],
+    profile: "You play chess while others play checkers. You rarely make a move without understanding its downstream consequences, and you've probably already thought three steps ahead of this sentence. You're the architect of your own life — and occasionally of everyone else's.",
+    matches: [
+      { icon: "📊", name: "Claude", desc: "Careful, structured, and thinks before speaking", score: "95%" },
+      { icon: "🧩", name: "GPT-4o", desc: "Strong at multi-step reasoning and strategy", score: "92%" },
+      { icon: "📐", name: "Gemini Ultra", desc: "Great for systematic planning and research", score: "88%" }
+    ]
+  },
+  {
+    name: "The Vibrant Creator",
+    icon: "🎨",
+    tagline: "Every blank page is an invitation",
+    traits: [
+      { label: "Curiosity", value: "Aesthetic" },
+      { label: "Style", value: "Expressive & Fluid" },
+      { label: "Energy", value: "Burst-Driven" },
+      { label: "Strength", value: "Original Thinking" }
+    ],
+    profile: "You experience the world in colour — literally and figuratively. Ideas don't just come to you linearly; they arrive in flashes, half-finished but electric. You're drawn to beauty, originality, and the feeling of making something that didn't exist before. The process is as important as the product.",
+    matches: [
+      { icon: "✨", name: "Claude", desc: "Loves creative writing, brainstorming, and imagination", score: "96%" },
+      { icon: "🎭", name: "GPT-4o", desc: "Versatile creative partner across many formats", score: "93%" },
+      { icon: "🌀", name: "Midjourney AI", desc: "Visual creativity companion", score: "89%" }
+    ]
+  }
+];
+
+// ─────────────────────────────────────────
+//  STATE
+// ─────────────────────────────────────────
+let currentQ = 0;
+let answers = {};
+const apiKey = "__OPENROUTER_API_KEY__";
+
+// ─────────────────────────────────────────
+//  SCREEN HELPERS
+// ─────────────────────────────────────────
+function showScreen(id) {
+  ["start-screen","quiz-screen","loading-screen","results-screen"].forEach(s => {
+    document.getElementById(s).style.display = "none";
+  });
+  document.getElementById(id).style.display = "block";
+}
+
+// ─────────────────────────────────────────
+//  QUIZ LOGIC
+// ─────────────────────────────────────────
+function startQuiz() {
+  currentQ = 0;
+  answers = {};
+  showScreen("quiz-screen");
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentQ];
+  const total = QUESTIONS.length;
+
+  document.getElementById("progress-bar").style.width = `${((currentQ) / total) * 100}%`;
+  document.getElementById("question-label").textContent = `Question ${currentQ + 1} of ${total}`;
+  document.getElementById("question-text").textContent = q.text;
+  document.getElementById("next-btn").textContent = currentQ === total - 1 ? "See My Results ✨" : "Next →";
+
+  const area = document.getElementById("answer-area");
+  area.innerHTML = "";
+
+  if (q.type === "choice") {
+    const div = document.createElement("div");
+    div.className = "choices";
+    q.choices.forEach((c, i) => {
+      const btn = document.createElement("button");
+      btn.className = "choice-btn";
+      if (answers[q.id] === i) btn.classList.add("selected");
+      btn.textContent = c;
+      btn.onclick = () => {
+        document.querySelectorAll(".choice-btn").forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        answers[q.id] = i;
+      };
+      div.appendChild(btn);
+    });
+    area.appendChild(div);
+  } else {
+    const ta = document.createElement("textarea");
+    ta.className = "open-input";
+    ta.placeholder = q.placeholder || "Type your answer…";
+    ta.value = answers[q.id] || "";
+    ta.oninput = () => { answers[q.id] = ta.value; };
+    area.appendChild(ta);
+  }
+}
+
+function nextQuestion() {
+  const q = QUESTIONS[currentQ];
+
+  // Validate
+  if (q.type === "choice" && answers[q.id] === undefined) {
+    alert("Please pick an option before continuing.");
+    return;
+  }
+  if (q.type === "open" && !answers[q.id]?.trim()) {
+    alert("Please write a quick answer before continuing.");
+    return;
+  }
+
+  if (currentQ < QUESTIONS.length - 1) {
+    currentQ++;
+    renderQuestion();
+  } else {
+    analyseAnswers();
+  }
+}
+
+// ─────────────────────────────────────────
+//  ANALYSIS
+// ─────────────────────────────────────────
+async function analyseAnswers() {
+  showScreen("loading-screen");
+
+  const loadingMessages = [
+    "Analysing your personality…",
+    "Consulting the AI oracle…",
+    "Mapping your cognitive fingerprint…",
+    "Calculating compatibility scores…",
+    "Almost there…"
+  ];
+  let mi = 0;
+  const lt = document.getElementById("loading-text");
+  const interval = setInterval(() => {
+    mi = (mi + 1) % loadingMessages.length;
+    lt.textContent = loadingMessages[mi];
+  }, 1200);
+
+  let result;
+  try {
+    if (apiKey) {
+      result = await callOpenRouter();
+    } else {
+      await sleep(3000);
+      result = mockAnalysis();
+    }
+  } catch(e) {
+    console.warn("API error, falling back to mock:", e);
+    result = mockAnalysis();
+  }
+
+  clearInterval(interval);
+  displayResults(result);
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ─────────────────────────────────────────
+//  OPENROUTER CALL
+// ─────────────────────────────────────────
+async function callOpenRouter() {
+  const summary = QUESTIONS.map((q, i) => {
+    let ans = answers[q.id];
+    if (q.type === "choice") ans = q.choices[ans] || "no answer";
+    return `Q${i+1}: ${q.text}\nAnswer: ${ans}`;
+  }).join("\n\n");
+
+  const systemPrompt = `You are an AI Personality Matchmaker. Analyse the user's quiz answers and return a JSON object describing their personality type.
+
+Return ONLY valid JSON with this exact structure (no markdown, no explanation):
+{
+  "name": "The [Personality Type]",
+  "icon": "[single emoji]",
+  "tagline": "[short punchy tagline under 10 words]",
+  "traits": [
+    {"label": "Curiosity", "value": "[1-3 word descriptor]"},
+    {"label": "Style", "value": "[1-3 word descriptor]"},
+    {"label": "Energy", "value": "[1-3 word descriptor]"},
+    {"label": "Strength", "value": "[1-3 word descriptor]"}
+  ],
+  "profile": "[2-3 sentences describing their personality warmly and specifically]",
+  "matches": [
+    {"icon": "[emoji]", "name": "[AI name]", "desc": "[why they match, under 8 words]", "score": "[XX%]"},
+    {"icon": "[emoji]", "name": "[AI name]", "desc": "[why they match, under 8 words]", "score": "[XX%]"},
+    {"icon": "[emoji]", "name": "[AI name]", "desc": "[why they match, under 8 words]", "score": "[XX%]"}
+  ]
+}`;
+
+  const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${apiKey}`,
+      "HTTP-Referer": window.location.href,
+      "X-Title": "AI Personality Matchmaker"
+    },
+    body: JSON.stringify({
+      model: "openai/gpt-4o-mini",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: summary }
+      ],
+      temperature: 0.85
+    })
+  });
+
+  if (!resp.ok) throw new Error(`API ${resp.status}`);
+  const data = await resp.json();
+  const raw = data.choices[0].message.content;
+  return JSON.parse(raw);
+}
+
+// ─────────────────────────────────────────
+//  MOCK ANALYSIS
+// ─────────────────────────────────────────
+function mockAnalysis() {
+  // Score choices to pick an archetype
+  const scores = [0, 0, 0, 0, 0]; // deep, empathetic, innovator, strategist, creator
+
+  const weights = {
+    q1: [0,1,4,3,2], // free afternoon
+    q2: [0,2,1,3,2], // hard decision
+    q3: [0,3,4,1,3], // favourite question
+    q4: [0,1,4,3,2], // group role
+    q5: [2,1,3,0,4], // uncertainty
+    q6: [0,3,2,3,1]  // mistakes
+  };
+
+  for (const [qid, ws] of Object.entries(weights)) {
+    const ans = answers[qid];
+    if (ans !== undefined && ws[ans] !== undefined) {
+      scores[ws[ans]]++;
+    }
+  }
+
+  // Open question keyword nudges
+  const openAns = (answers["q7"] || "").toLowerCase();
+  if (/deep|philosoph|meaning|exist/.test(openAns)) scores[0] += 2;
+  if (/connect|feel|heart|friend|empath/.test(openAns)) scores[1] += 2;
+  if (/fast|spontan|fun|wild|energy/.test(openAns)) scores[2] += 2;
+  if (/plan|goal|focus|logic|strateg/.test(openAns)) scores[3] += 2;
+  if (/creat|art|music|write|story|imagine/.test(openAns)) scores[4] += 2;
+
+  const best = scores.indexOf(Math.max(...scores));
+  return ARCHETYPES[best];
+}
+
+// ─────────────────────────────────────────
+//  DISPLAY RESULTS
+// ─────────────────────────────────────────
+function displayResults(r) {
+  document.getElementById("result-icon").textContent = r.icon;
+  document.getElementById("result-name").textContent = r.name;
+  document.getElementById("result-tagline").textContent = r.tagline;
+
+  const tg = document.getElementById("traits-grid");
+  tg.innerHTML = r.traits.map(t => `
+    <div class="trait-chip">
+      <div class="trait-label">${t.label}</div>
+      <div class="trait-value">${t.value}</div>
+    </div>
+  `).join("");
+
+  document.getElementById("profile-text").textContent = r.profile;
+
+  const cl = document.getElementById("compat-list");
+  cl.innerHTML = r.matches.map(m => `
+    <div class="compat-item">
+      <div class="compat-icon">${m.icon}</div>
+      <div class="compat-info">
+        <div class="compat-name">${m.name}</div>
+        <div class="compat-desc">${m.desc}</div>
+      </div>
+      <div class="compat-score">${m.score}</div>
+    </div>
+  `).join("");
+
+  showScreen("results-screen");
+}
+
+// ─────────────────────────────────────────
+//  UTILITIES
+// ─────────────────────────────────────────
+function restartQuiz() {
+  showScreen("start-screen");
+}
+
+function shareResult() {
+  const name = document.getElementById("result-name").textContent;
+  const text = `I just took the AI Personality Matchmaker quiz and I'm "${name}"! 🤖✨`;
+  if (navigator.share) {
+    navigator.share({ title: "AI Personality Matchmaker", text });
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => alert("Result copied to clipboard!"));
+  } else {
+    alert(text);
+  }
+}
+</script>
+</body>
+</html>
