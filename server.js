@@ -12,11 +12,13 @@ if (!apiKey) {
   console.warn("Warning: OPENROUTER_API_KEY is not set in .env — app will run in demo mode.");
 }
 
+// Read and inject once at startup — restart server to pick up HTML changes
+const injectedHtml = fs.readFileSync(path.join(__dirname, "index.html"), "utf8")
+  .replace("__OPENROUTER_API_KEY__", apiKey);
+
 app.get("/", (req, res) => {
-  const html = fs.readFileSync(path.join(__dirname, "index.html"), "utf8");
-  const injected = html.replace("__OPENROUTER_API_KEY__", apiKey);
   res.setHeader("Content-Type", "text/html");
-  res.send(injected);
+  res.send(injectedHtml);
 });
 
 app.listen(PORT, () => {

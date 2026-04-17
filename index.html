@@ -270,8 +270,15 @@
       50%       { opacity: 0.5; transform: scale(0.9); }
     }
 
+    @media (prefers-reduced-motion: reduce) {
+      body { animation: none; }
+      .loading-icon { animation: none; }
+      .question-area, .choice-btn, .btn, .trait-bar-fill,
+      .setup-chip, .setup-card, .results-reveal { transition: none; }
+    }
+
     .loading-label {
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.18em;
       color: #a78bfa;
@@ -279,16 +286,16 @@
       margin-bottom: 8px;
     }
 
-    .loading-text { color: #64748b; font-size: 0.9rem; }
+    .loading-text { color: #94a3b8; font-size: 0.9rem; }
 
     /* ── RESULTS SCREEN ── */
     #results-screen { display: none; }
 
     .result-eyebrow {
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.18em;
-      color: #475569;
+      color: #94a3b8;
       text-align: center;
       margin-bottom: 16px;
     }
@@ -339,10 +346,10 @@
     }
 
     .trait-label {
-      font-size: 0.72rem;
+      font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.09em;
-      color: #64748b;
+      color: #94a3b8;
       font-weight: 600;
     }
 
@@ -359,8 +366,8 @@
     }
 
     .trait-pct {
-      font-size: 0.72rem;
-      color: #475569;
+      font-size: 0.75rem;
+      color: #94a3b8;
       font-weight: 700;
       min-width: 30px;
       text-align: right;
@@ -383,10 +390,10 @@
     }
 
     .section-label {
-      font-size: 0.68rem;
+      font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.13em;
-      color: #475569;
+      color: #94a3b8;
       margin-bottom: 10px;
     }
 
@@ -417,7 +424,7 @@
     .compat-icon { font-size: 1.25rem; }
     .compat-info { flex: 1; }
     .compat-name { font-weight: 600; font-size: 0.88rem; color: #e2e8f0; }
-    .compat-desc { color: #64748b; font-size: 0.78rem; margin-top: 2px; }
+    .compat-desc { color: #94a3b8; font-size: 0.78rem; margin-top: 2px; }
     .compat-score { font-size: 0.98rem; font-weight: 700; color: #a78bfa; }
 
     .results-footer { display: flex; gap: 10px; }
@@ -451,8 +458,8 @@
     }
 
     .setup-step-label {
-      font-size: 0.72rem;
-      color: #475569;
+      font-size: 0.75rem;
+      color: #94a3b8;
     }
 
     .setup-card {
@@ -469,7 +476,7 @@
     }
 
     .setup-q-num {
-      font-size: 0.65rem;
+      font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.12em;
       color: #a78bfa;
@@ -540,7 +547,7 @@
       background: rgba(167,139,250,0.1);
       border: 1px solid rgba(167,139,250,0.22);
       color: #a78bfa;
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       font-weight: 600;
       letter-spacing: 0.05em;
       padding: 4px 10px;
@@ -572,7 +579,7 @@
 
     .compare-cta-sub {
       font-size: 0.78rem;
-      color: #64748b;
+      color: #94a3b8;
     }
 
     .compare-cta-btn {
@@ -586,6 +593,33 @@
       cursor: pointer;
       white-space: nowrap;
     }
+
+    /* Results reveal animation */
+    .results-reveal {
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .results-reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* Share toast */
+    #share-toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(124,58,237,0.95);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 50px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+      z-index: 100;
+    }
+    #share-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   </style>
 </head>
 <body>
@@ -613,7 +647,7 @@
   <div id="setup-screen">
     <div class="setup-header">
       <div class="setup-wordmark">Virel</div>
-      <div class="setup-step-label">Setup · 4 questions</div>
+      <div class="setup-step-label" role="status" aria-live="polite">Setup · Step 1 of 4</div>
     </div>
 
     <!-- Card 1: Purpose (Why) -->
@@ -668,7 +702,7 @@
   <div id="quiz-screen">
     <div class="quiz-header">
       <div class="quiz-wordmark">Virel</div>
-      <div class="progress-dots" id="progress-dots"></div>
+      <div class="progress-dots" id="progress-dots" aria-hidden="true"></div>
     </div>
 
     <div class="question-area" id="question-area">
@@ -686,8 +720,8 @@
   </div>
 
   <!-- ══ LOADING SCREEN ══ -->
-  <div id="loading-screen">
-    <div class="loading-icon">👁️</div>
+  <div id="loading-screen" tabindex="-1">
+    <div class="loading-icon" aria-hidden="true">👁️</div>
     <div class="loading-label">Virel</div>
     <p class="loading-text" id="loading-text">Reading your patterns…</p>
   </div>
@@ -697,27 +731,29 @@
     <div class="result-eyebrow">Your Virel type</div>
     <div class="context-tags" id="context-tags"></div>
 
-    <div class="share-card">
-      <div class="result-icon" id="result-icon"></div>
+    <div class="share-card results-reveal">
+      <div class="result-icon" id="result-icon" aria-hidden="true"></div>
       <div class="result-name" id="result-name"></div>
       <div class="result-tagline" id="result-tagline"></div>
     </div>
 
-    <div class="traits-list" id="traits-list"></div>
+    <div class="traits-list results-reveal" id="traits-list"></div>
 
     <div class="section-label">The Read</div>
-    <div class="profile-text" id="profile-text"></div>
+    <div class="profile-text results-reveal" id="profile-text"></div>
 
     <div class="section-label">Who You Match With</div>
-    <div class="compat-list" id="compat-list"></div>
+    <div class="compat-list results-reveal" id="compat-list"></div>
 
-    <div id="compare-cta"></div>
+    <div id="compare-cta" class="results-reveal"></div>
 
-    <div class="results-footer">
-      <button class="btn btn-secondary" onclick="restartQuiz()">↩ Retake</button>
+    <div class="results-footer results-reveal">
+      <button class="btn btn-secondary" onclick="restartQuiz()" aria-label="Retake quiz">↩ Retake</button>
       <button class="btn btn-primary" onclick="shareResult()">Share My Type</button>
     </div>
   </div>
+
+  <div id="share-toast"></div>
 
 </div>
 <script>
@@ -1027,7 +1063,9 @@ const WEIGHTS = {
   q3: [0, 1, 4, 3, 2],
   q4: [0, 3, 4, 2, 1],
   q5: [3, 0, 2, 4, 1],
-  q6: [0, 3, 2, 1, 4]
+  q6: [0, 3, 2, 1, 4],
+  q7: [0, 4, 2, 3, 0],
+  q8: [0, 4, 3, 1, 0]
 };
 
 // ─────────────────────────────────────────
@@ -1037,6 +1075,7 @@ let currentQ    = 0;
 let answers     = {};
 let activeQuestions = [];
 let userContext = { purpose: null, energy: null, time: null, social: null };
+let apiErrorUsed = false;
 const apiKey    = "__OPENROUTER_API_KEY__";
 
 // ─────────────────────────────────────────
@@ -1045,7 +1084,10 @@ const apiKey    = "__OPENROUTER_API_KEY__";
 function showScreen(id) {
   ["start-screen","setup-screen","quiz-screen","loading-screen","results-screen"]
     .forEach(s => { document.getElementById(s).style.display = "none"; });
-  document.getElementById(id).style.display = "block";
+  const target = document.getElementById(id);
+  target.style.display = "block";
+  const focusable = target.querySelector("button, [tabindex]");
+  if (focusable) focusable.focus();
 }
 
 // ─────────────────────────────────────────
@@ -1053,6 +1095,8 @@ function showScreen(id) {
 // ─────────────────────────────────────────
 function startQuiz() {
   userContext = { purpose: null, energy: null, time: null, social: null };
+  answers = {};
+  localStorage.removeItem("virel_result");
   document.querySelectorAll(".setup-chip").forEach(c => c.classList.remove("selected"));
   document.querySelectorAll(".setup-card").forEach(c => c.classList.remove("answered"));
   document.getElementById("setup-continue").classList.remove("ready");
@@ -1075,6 +1119,12 @@ function selectSetup(btn) {
   if (userContext.purpose && userContext.energy && userContext.time && userContext.social) {
     document.getElementById("setup-continue").classList.add("ready");
   }
+
+  // Update step counter
+  const answered = [userContext.purpose, userContext.energy, userContext.time, userContext.social]
+    .filter(Boolean).length;
+  document.querySelector(".setup-step-label").textContent =
+    `Setup · Step ${Math.min(answered + 1, 4)} of 4`;
 }
 
 function submitSetup() {
@@ -1087,6 +1137,7 @@ function submitSetup() {
   showScreen("quiz-screen");
   buildDots();
   renderQuestion();
+  document.addEventListener("keydown", handleQuizKey);
 }
 
 // ─────────────────────────────────────────
@@ -1139,9 +1190,12 @@ function renderQuestion() {
   reactionEl.textContent = "";
   reactionEl.classList.remove("visible");
 
+  const isLast = currentQ === activeQuestions.length - 1;
   const nextBtn = document.getElementById("next-btn");
   nextBtn.classList.remove("ready");
-  nextBtn.textContent = currentQ === activeQuestions.length - 1 ? "See My Type ✨" : "Next →";
+  nextBtn.textContent = isLast ? "See My Type ✨" : "Next →";
+  if (isLast) nextBtn.setAttribute("aria-label", "See my personality type");
+  else nextBtn.removeAttribute("aria-label");
 
   // Restore state if revisiting
   if (answers[q.id] !== undefined) {
@@ -1149,10 +1203,14 @@ function renderQuestion() {
     reactionEl.classList.add("visible");
     nextBtn.classList.add("ready");
   }
+
+  // Move focus to first choice for keyboard users
+  const firstChoice = area.querySelector(".choice-btn");
+  if (firstChoice) firstChoice.focus();
 }
 
 function selectAnswer(index) {
-  const q = QUESTIONS[currentQ];
+  const q = activeQuestions[currentQ];
   answers[q.id] = index;
 
   document.querySelectorAll(".choice-btn").forEach((btn, i) => {
@@ -1165,6 +1223,17 @@ function selectAnswer(index) {
   reactionEl.classList.add("visible");
 
   document.getElementById("next-btn").classList.add("ready");
+}
+
+function handleQuizKey(e) {
+  const idx = parseInt(e.key) - 1;
+  const choices = document.querySelectorAll(".choice-btn");
+  if (idx >= 0 && idx < choices.length) { selectAnswer(idx); return; }
+  if ((e.key === "Enter" || e.key === " ") &&
+      document.getElementById("next-btn").classList.contains("ready")) {
+    e.preventDefault();
+    nextQuestion();
+  }
 }
 
 function nextQuestion() {
@@ -1183,6 +1252,7 @@ function nextQuestion() {
 //  ANALYSIS
 // ─────────────────────────────────────────
 async function analyseAnswers() {
+  document.removeEventListener("keydown", handleQuizKey);
   showScreen("loading-screen");
 
   const messages = userContext.time === "quick"
@@ -1200,9 +1270,11 @@ async function analyseAnswers() {
   } catch(e) {
     console.warn("API error, falling back to mock:", e);
     result = mockAnalysis();
+    apiErrorUsed = true;
   }
 
   clearInterval(ticker);
+  lt.textContent = "";
   displayResults(result);
 }
 
@@ -1213,7 +1285,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 //  System prompt written in Virel voice — specific, personal, bold.
 // ─────────────────────────────────────────
 async function callOpenRouter() {
-  const summary = QUESTIONS.map((q, i) => {
+  const summary = activeQuestions.map((q, i) => {
     const chosen = q.choices[answers[q.id]] || "no answer";
     return `Q${i+1}: ${q.text}\nAnswer: ${chosen}`;
   }).join("\n\n");
@@ -1283,11 +1355,28 @@ function mockAnalysis() {
 //  DISPLAY RESULTS
 // ─────────────────────────────────────────
 function displayResults(r) {
+  // Reset reveal classes so animation re-triggers every time
+  document.querySelectorAll(".results-reveal").forEach(el => el.classList.remove("visible"));
+
+  // Reset trait bars to 0 so fill animation always plays
+  document.querySelectorAll(".trait-bar-fill").forEach(bar => {
+    bar.style.transition = "none";
+    bar.style.width = "0%";
+  });
+
+  // Identity fields — visible immediately
   document.getElementById("result-icon").textContent    = r.icon;
   document.getElementById("result-name").textContent    = r.name;
   document.getElementById("result-tagline").textContent = r.tagline;
 
-  // Build context tags row from all setup answers
+  if (apiErrorUsed) {
+    document.getElementById("result-eyebrow").textContent = "Your Virel type · Demo mode";
+    apiErrorUsed = false;
+  } else {
+    document.getElementById("result-eyebrow").textContent = "Your Virel type";
+  }
+
+  // Context tags
   const tags = [];
   if (userContext.purpose) tags.push(PURPOSE_LABELS[userContext.purpose]);
   if (userContext.energy)  tags.push(ENERGY_LABELS[userContext.energy]);
@@ -1300,7 +1389,7 @@ function displayResults(r) {
   const energyNote = userContext.energy ? ENERGY_CONTEXT[userContext.energy] + " " : "";
   document.getElementById("profile-text").textContent = energyNote + r.profile;
 
-  // Compare CTA — shown when user is with friends or wants to send
+  // Compare CTA
   const compareCta = document.getElementById("compare-cta");
   if (userContext.social === "friends") {
     compareCta.innerHTML = `
@@ -1326,7 +1415,7 @@ function displayResults(r) {
     compareCta.innerHTML = "";
   }
 
-  // Render trait bars (fill animates after paint)
+  // Render trait bars
   document.getElementById("traits-list").innerHTML = r.traits.map(t => `
     <div class="trait-bar-row">
       <div class="trait-bar-header">
@@ -1341,15 +1430,6 @@ function displayResults(r) {
       </div>
     </div>`).join("");
 
-  // Animate bars after DOM paints
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    document.querySelectorAll(".trait-bar-fill").forEach(bar => {
-      bar.style.width = bar.dataset.pct + "%";
-    });
-  }));
-
-  document.getElementById("profile-text").textContent = r.profile;
-
   document.getElementById("compat-list").innerHTML = r.matches.map(m => `
     <div class="compat-item">
       <div class="compat-icon">${m.icon}</div>
@@ -1361,12 +1441,54 @@ function displayResults(r) {
     </div>`).join("");
 
   showScreen("results-screen");
+
+  // Staggered section reveals
+  const reveal = sel => document.querySelector(sel)?.classList.add("visible");
+  setTimeout(() => reveal(".share-card"),       300);
+  setTimeout(() => {
+    reveal("#traits-list");
+    // Animate bars after reveal paint
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      document.querySelectorAll(".trait-bar-fill").forEach(bar => {
+        bar.style.transition = "";
+        bar.style.width = bar.dataset.pct + "%";
+      });
+    }));
+  }, 600);
+  setTimeout(() => reveal("#profile-text"),     900);
+  setTimeout(() => reveal("#compat-list"),      1100);
+  setTimeout(() => { reveal("#compare-cta"); reveal(".results-footer"); }, 1300);
+
+  saveResult(r);
 }
 
 // ─────────────────────────────────────────
 //  UTILITIES
 // ─────────────────────────────────────────
 function restartQuiz() { startQuiz(); }
+
+function saveResult(result) {
+  try {
+    localStorage.setItem("virel_result", JSON.stringify({ result, context: userContext, ts: Date.now() }));
+  } catch(e) {}
+}
+
+function loadResult() {
+  try {
+    const raw = localStorage.getItem("virel_result");
+    if (!raw) return null;
+    const d = JSON.parse(raw);
+    if (Date.now() - d.ts > 7 * 86400000) { localStorage.removeItem("virel_result"); return null; }
+    return d;
+  } catch(e) { return null; }
+}
+
+function showToast(msg) {
+  const toast = document.getElementById("share-toast");
+  toast.textContent = msg;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 2200);
+}
 
 function shareResult() {
   const name    = document.getElementById("result-name").textContent;
@@ -1375,11 +1497,20 @@ function shareResult() {
   if (navigator.share) {
     navigator.share({ title: "Virel", text });
   } else if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(() => alert("Copied! Paste it anywhere."));
+    navigator.clipboard.writeText(text).then(() => showToast("Copied to clipboard!"));
   } else {
-    alert(text);
+    showToast(text);
   }
 }
+
+// On page load: restore cached result if fresh (< 7 days)
+(function() {
+  const cached = loadResult();
+  if (cached) {
+    userContext = cached.context;
+    displayResults(cached.result);
+  }
+})();
 </script>
 </body>
 </html>
