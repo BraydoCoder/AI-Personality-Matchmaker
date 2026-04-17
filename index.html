@@ -766,17 +766,17 @@
 //  SETUP OPTIONS — question variants keyed by purpose
 // ─────────────────────────────────────────
 const Q3_VARIANTS = {
-  friendships: "Pick the friendship dynamic that fits you best:",
-  romantic:    "Pick the romantic dynamic that feels most like you:",
-  self:        "Pick the dynamic that shows how you connect with people:",
-  curious:     "Pick the connection dynamic that fits you best:"
+  friendships: "Which friendship dynamic actually sounds like yours?",
+  romantic:    "Which connection dynamic fits how you actually are in romance?",
+  self:        "Which dynamic shows how you naturally connect with people?",
+  curious:     "Which friendship dynamic actually sounds like yours?"
 };
 
 const Q5_VARIANTS = {
-  friendships: "Pick what you value most in a friend — honestly:",
-  romantic:    "Pick what you need most in someone you'd date:",
-  self:        "Pick what you're trying to build more of in yourself:",
-  curious:     "Pick what you value most in a person — honestly:"
+  friendships: "Pick the text a good friend could send that would actually mean something:",
+  romantic:    "Pick the text from someone you like that would actually hit:",
+  self:        "Pick the message you secretly want but rarely get:",
+  curious:     "Pick the text that would actually mean something to you:"
 };
 
 const PURPOSE_LABELS = {
@@ -804,38 +804,38 @@ const ENERGY_CONTEXT = {
 const EXTRA_QUESTIONS = [
   {
     id: "q7",
-    text: "Pick the one that describes how you handle conflict:",
+    text: "Something's off with a close friend and you both know it. You:",
     choices: [
-      "I go quiet and process before I say anything 🌑",
-      "I address it directly — tension sits badly with me 🔥",
-      "I joke about it first, then get real later 😅",
-      "I let it go unless it keeps happening 🌊",
-      "I overthink every angle before I say a word 🌀"
+      "Go quiet and take time to figure out what you're actually feeling first 🌑",
+      "Bring it up the same day — sitting on tension is worse than the conversation 🔥",
+      "Make a joke about it and see how they react. If they laugh, you'll go deeper later. 😅",
+      "Let it sit unless they bring it up. Not every tension needs to be dissected. 🌊",
+      "Replay every interaction from the past two weeks looking for where it shifted 🌀"
     ],
     reactions: [
-      "You need space before you can be honest.",
-      "You'd rather clear the air than carry it.",
-      "Humour is your armour.",
-      "You pick your battles carefully.",
-      "You've played this conversation out ten times already."
+      "You need to understand what you feel before you can say it.",
+      "You'd rather clear the air than carry something heavy.",
+      "Humour is how you test the temperature before you go deeper.",
+      "You pick your battles. Not everything deserves the energy.",
+      "You've already had this conversation ten times — just in your head."
     ]
   },
   {
     id: "q8",
-    text: "What does 'being close to someone' actually mean to you?",
+    text: "You actually feel close to someone when:",
     choices: [
-      "They know things about me that most people don't 🤐",
-      "I can be completely myself without editing anything 🎭",
-      "We've been through something real together 🫂",
-      "They show up for me without me having to ask 💌",
-      "The silence between us isn't awkward 🌙"
+      "They know a side of you that the rest of your life hasn't met 🤐",
+      "You can be completely yourself — no softening, no editing 🎭",
+      "You've been through something real together and came out the other side 🫂",
+      "They show up before you even have to ask 💌",
+      "Silence with them doesn't feel like something you need to fill 🌙"
     ],
     reactions: [
-      "You guard what you share. The people who know get the real version.",
-      "You need to drop the performance. That takes trust.",
-      "Shared experience is the foundation you build on.",
-      "Actions over words. Every time.",
-      "Comfort in silence is intimacy to you."
+      "You guard the real version. The people who find it, keep it.",
+      "You need to drop the performance. That takes real trust.",
+      "Shared experience is the foundation you actually build on.",
+      "Actions before words. Every single time.",
+      "Comfortable silence is intimacy. Not everyone gets that."
     ]
   }
 ];
@@ -843,110 +843,110 @@ const EXTRA_QUESTIONS = [
 const QUESTIONS = [
   {
     id: "q1",
-    text: "Which one feels most like you — no overthinking?",
+    text: "Your friend group is all together and the energy's off. You're the one who…",
     choices: [
-      "I notice everything but say half of it 👁️",
-      "I make things happen and figure it out after ⚡",
-      "I feel things deeply before I can explain them 🌊",
-      "I show up for people. Quietly, but always. 🪨",
-      "I connect fast. I read people fast. I move fast. 🧲"
+      "Already clocked it before anyone else did, but stayed quiet 👁️",
+      "Turned it around — changed the music, said something, made it shift ⚡",
+      "Found whoever looked like they needed rescuing and went there 🧲",
+      "Quietly checked in on whoever looked the most uncomfortable 🪨",
+      "Started pulling people in and filling silences without making it obvious 🌊"
     ],
     reactions: [
-      "You see more than you show.",
-      "Action is how you think.",
-      "You process from the inside out.",
-      "Reliability is your love language.",
-      "You run on connection."
+      "You read the room the second you walked in.",
+      "You fix the vibe without announcing that's what you're doing.",
+      "You go where the energy needs to go.",
+      "You noticed. You acted. You didn't make it a thing.",
+      "You hold groups together without anyone realising you're doing it."
     ]
   },
   {
     id: "q2",
-    text: "What actually drains you more than anything?",
+    text: "Be honest — which one actually hits?",
     choices: [
-      "Conversations that stay surface-level no matter how long they go 🥱",
-      "Sitting still when something could be happening 🌀",
-      "Feeling like you have to explain yourself to be understood 😮‍💨",
-      "When plans change last minute and nobody thinks it's a big deal 📅",
-      "Carrying other people's energy when yours is already low 🔋"
+      "When a conversation goes two hours and never gets past the surface 🥱",
+      "When you have absolutely nothing to do and nowhere to be all day 🌀",
+      "When you're completely misread by someone you thought actually got you 😮‍💨",
+      "When you're always the one who shows up, but it doesn't really come back 📵",
+      "After being everyone's person all week and nobody's checked in on you once 🔋"
     ],
     reactions: [
-      "Depth isn't optional for you — it's the whole point.",
-      "You're built for movement, not stillness.",
-      "You want to be understood without having to perform yourself.",
-      "Reliability matters to you. Chaos costs you.",
-      "You give a lot. Sometimes too much."
+      "Depth isn't optional for you. Surface-level is exhausting.",
+      "You need momentum. Stillness feels like falling behind.",
+      "Being misread by someone you trusted stings differently.",
+      "You give a lot. The imbalance is what wears you down.",
+      "You pour into people. Sometimes the glass runs empty."
     ]
   },
   {
     id: "q3",
-    text: "Pick the friendship dynamic that fits you best:",
+    text: "Which friendship dynamic actually sounds like yours?",
     choices: [
-      "We don't talk every day but when we do it's like no time passed 🌙",
-      "We're always in each other's orbit — no schedule needed 🔁",
-      "We go deep fast and somehow never run out of things to say 💬",
-      "We've been through enough that we don't need to explain anything 🫂",
-      "We bring out a version of each other that nobody else sees ✨"
+      "We don't talk for months, then pick up exactly where we left off 🌙",
+      "We're always in each other's orbit without ever planning it 🔁",
+      "We went deep within the first week and never ran out of things to say 💬",
+      "We've seen each other at our worst and still showed up 🫂",
+      "I don't know how it started but somehow this person knows everything ✨"
     ],
     reactions: [
       "Quality over frequency, every time.",
       "Proximity is your kind of intimacy.",
-      "You bond through words and ideas.",
-      "History is the foundation you trust most.",
-      "You're someone who unlocks people."
+      "You bond through honesty more than history.",
+      "Shared experience is the foundation you trust most.",
+      "You go all in fast. And somehow it always works."
     ]
   },
   {
     id: "q4",
-    text: "What do people usually get wrong about you?",
+    text: "Pick the one that lands:",
     choices: [
-      "They think I'm distant. I'm just selective. 🧊",
-      "They think I'm always fine. I'm just not loud about it. 🎭",
-      "They think I'm intense. I just actually care. 🔥",
-      "They think I don't need anything. I just don't ask. 🪨",
-      "They think I'm easy to read. I'm really not. 🌫️"
+      '"You\'re hard to read." You\'re not. You just don\'t broadcast. 🧊',
+      '"You always seem fine." You\'re not always fine. You just don\'t perform it. 🎭',
+      '"You\'re a lot." Maybe. But you actually mean the things you say. 🔥',
+      '"You\'re unpredictable." You just refuse to be boring. 🌪️',
+      '"You\'ve got it together." You just hold space for others before yourself. 🌫️'
     ],
     reactions: [
-      "You protect your energy without explaining it.",
-      "You carry more than you let on.",
-      "Caring deeply gets mistaken for a lot of things.",
-      "Independence can look like you need nothing. It's not the same.",
-      "There's more underneath than people reach."
+      "You protect your inner world. People mistake that for distance.",
+      "Carrying it quietly looks like having it handled. It's not the same.",
+      "Caring this much gets mistaken for too much. It's not.",
+      "People want predictable. You find it suffocating.",
+      "Being everyone's anchor makes it look like you don't need one."
     ]
   },
   {
     id: "q5",
-    text: "Pick what you value most in a person — honestly:",
+    text: "Pick the text that would actually mean something to you:",
     choices: [
-      "They're consistent. You never wonder where you stand. 📌",
-      "They're real. No performance, no filter. 🪞",
-      "They make everything feel lighter just by being there. ☀️",
-      "They push you to be better without making you feel small. 🏔️",
-      "They actually get you — without needing everything explained. 🧠"
+      '"I don\'t need a response — just wanted you to know I\'ve got you 🫂"',
+      '"I\'ve been thinking about what you said last month. You were right."',
+      '"Get ready. We\'re leaving in 20. Don\'t ask why. ⚡"',
+      '"You\'ve genuinely changed how I see things. I don\'t say that to many people."',
+      '"You\'re the reason this group is still a group. Just needed you to know that."'
     ],
     reactions: [
-      "Stability is rare to you. You don't take it for granted.",
-      "Authenticity is non-negotiable.",
-      "You need people who ease the weight, not add to it.",
-      "Growth matters to you — in yourself and who you keep close.",
-      "Being truly understood is the highest form of connection, to you."
+      "You want to know someone has you — not just that they need you.",
+      "Being remembered, really remembered — that's intimacy to you.",
+      "You want to be pulled into something, not checked in on.",
+      "You want to matter to someone's thinking, not just their day.",
+      "You give so much. Being seen for it means everything."
     ]
   },
   {
     id: "q6",
-    text: "How do you actually show someone you care about them?",
+    text: "Be honest — which one is actually how you show up for people?",
     choices: [
-      "I remember things. Details. Things they said once, months ago. 🧩",
-      "I show up. No announcement — I'm just there. 🚪",
-      "I say it. Directly. I don't do hints. 💬",
-      "I make time. And I protect it. 🕐",
-      "I match their energy and meet them where they are. 🌊"
+      "I remembered something they mentioned in passing. That was weeks ago. 🧩",
+      "I just showed up. Didn't text first. Just knew. 🚪",
+      "I said it out loud. I don't do the hinting thing. 💬",
+      "I made time and didn't mention once that I moved things around for it. 🕐",
+      "I met them where they were instead of where I wanted them to be. 🌊"
     ],
     reactions: [
-      "Attention is how you love.",
-      "Presence is your signature.",
-      "Clarity is your kindness.",
-      "Time is the most honest thing you can give someone.",
-      "You adapt. That's a rare kind of care."
+      "Attention is your love language. The details are how you say it.",
+      "Presence is your signature. No announcement needed.",
+      "You don't do ambiguity. Saying it directly is how you love.",
+      "Time is the most honest thing you can give. You know that.",
+      "You meet people where they are. That's rarer than it sounds."
     ]
   }
 ];
