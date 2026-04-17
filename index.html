@@ -274,7 +274,7 @@
       body { animation: none; }
       .loading-icon { animation: none; }
       .question-area, .choice-btn, .btn, .trait-bar-fill,
-      .setup-chip, .setup-card, .results-reveal { transition: none; }
+      .results-reveal { transition: none; }
     }
 
     .loading-label {
@@ -436,104 +436,6 @@
       text-align: center;
     }
 
-    /* ── SETUP SCREEN ── */
-    #setup-screen { display: none; }
-
-    .setup-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 24px;
-    }
-
-    .setup-wordmark {
-      font-size: 0.75rem;
-      font-weight: 800;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      background: linear-gradient(90deg, #a78bfa, #60a5fa);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .setup-step-label {
-      font-size: 0.75rem;
-      color: #94a3b8;
-    }
-
-    .setup-card {
-      background: rgba(167,139,250,0.06);
-      border: 1px solid rgba(167,139,250,0.15);
-      border-radius: 18px;
-      padding: 20px;
-      margin-bottom: 12px;
-      transition: border-color 0.2s;
-    }
-
-    .setup-card.answered {
-      border-color: rgba(167,139,250,0.35);
-    }
-
-    .setup-q-num {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: #a78bfa;
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-
-    .setup-q-label {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: #f1f5f9;
-      margin-bottom: 14px;
-      line-height: 1.4;
-    }
-
-    .setup-choices {
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-    }
-
-    .setup-chip {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 10px;
-      padding: 11px 14px;
-      color: #94a3b8;
-      font-size: 0.86rem;
-      cursor: pointer;
-      text-align: left;
-      transition: background 0.13s, border-color 0.13s, color 0.13s;
-    }
-
-    .setup-chip:hover {
-      background: rgba(124,58,237,0.14);
-      border-color: rgba(124,58,237,0.4);
-      color: #e2e8f0;
-    }
-
-    .setup-chip.selected {
-      background: rgba(124,58,237,0.22);
-      border-color: #a78bfa;
-      color: #f1f5f9;
-    }
-
-    #setup-continue {
-      margin-top: 16px;
-      opacity: 0.3;
-      pointer-events: none;
-      transition: opacity 0.3s;
-    }
-
-    #setup-continue.ready {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
     /* Context tags row on results */
     .context-tags {
       display: flex;
@@ -641,61 +543,6 @@
       <div class="meta-pill">🎯 6 questions</div>
     </div>
     <button class="btn btn-primary" onclick="startQuiz()">Find My Type →</button>
-  </div>
-
-  <!-- ══ SETUP SCREEN ══ -->
-  <div id="setup-screen">
-    <div class="setup-header">
-      <div class="setup-wordmark">Virel</div>
-      <div class="setup-step-label" role="status" aria-live="polite">Setup · Step 1 of 4</div>
-    </div>
-
-    <!-- Card 1: Purpose (Why) -->
-    <div class="setup-card" id="setup-card-1">
-      <div class="setup-q-num">Why</div>
-      <div class="setup-q-label">What brings you here?</div>
-      <div class="setup-choices">
-        <button class="setup-chip" data-group="purpose" data-val="friendships" onclick="selectSetup(this)">Better friendships 🤝</button>
-        <button class="setup-chip" data-group="purpose" data-val="romantic"    onclick="selectSetup(this)">Romantic connections 💞</button>
-        <button class="setup-chip" data-group="purpose" data-val="self"        onclick="selectSetup(this)">Understanding myself better 🧠</button>
-        <button class="setup-chip" data-group="purpose" data-val="curious"     onclick="selectSetup(this)">Honestly just curious ✨</button>
-      </div>
-    </div>
-
-    <!-- Card 2: Energy (Who) -->
-    <div class="setup-card" id="setup-card-2">
-      <div class="setup-q-num">Who</div>
-      <div class="setup-q-label">Your social energy, honestly:</div>
-      <div class="setup-choices">
-        <button class="setup-chip" data-group="energy" data-val="selective" onclick="selectSetup(this)">Selective — small circle, deep connections 🌑</button>
-        <button class="setup-chip" data-group="energy" data-val="open"      onclick="selectSetup(this)">Open — I meet people pretty easily 🌊</button>
-        <button class="setup-chip" data-group="energy" data-val="shifts"    onclick="selectSetup(this)">It shifts — high sometimes, low other times ⚡</button>
-        <button class="setup-chip" data-group="energy" data-val="figuring"  onclick="selectSetup(this)">Still figuring that out 🌫️</button>
-      </div>
-    </div>
-
-    <!-- Card 3: Time (How long) -->
-    <div class="setup-card" id="setup-card-3">
-      <div class="setup-q-num">How long</div>
-      <div class="setup-q-label">How much time do you have right now?</div>
-      <div class="setup-choices">
-        <button class="setup-chip" data-group="time" data-val="quick" onclick="selectSetup(this)">Just a few minutes ⚡</button>
-        <button class="setup-chip" data-group="time" data-val="full"  onclick="selectSetup(this)">I've got time — give me the full thing 🌙</button>
-      </div>
-    </div>
-
-    <!-- Card 4: With whom -->
-    <div class="setup-card" id="setup-card-4">
-      <div class="setup-q-num">With whom</div>
-      <div class="setup-q-label">Taking this…</div>
-      <div class="setup-choices">
-        <button class="setup-chip" data-group="social" data-val="solo"    onclick="selectSetup(this)">By myself 🌑</button>
-        <button class="setup-chip" data-group="social" data-val="friends" onclick="selectSetup(this)">With someone / want to compare 👥</button>
-        <button class="setup-chip" data-group="social" data-val="send"    onclick="selectSetup(this)">To send to someone 📲</button>
-      </div>
-    </div>
-
-    <button class="btn btn-primary" id="setup-continue" onclick="submitSetup()">Start Quiz →</button>
   </div>
 
   <!-- ══ QUIZ SCREEN ══ -->
@@ -1082,7 +929,7 @@ const apiKey    = "__OPENROUTER_API_KEY__";
 //  SCREEN HELPERS
 // ─────────────────────────────────────────
 function showScreen(id) {
-  ["start-screen","setup-screen","quiz-screen","loading-screen","results-screen"]
+  ["start-screen","quiz-screen","loading-screen","results-screen"]
     .forEach(s => { document.getElementById(s).style.display = "none"; });
   const target = document.getElementById(id);
   target.style.display = "block";
@@ -1091,49 +938,14 @@ function showScreen(id) {
 }
 
 // ─────────────────────────────────────────
-//  SETUP FLOW
+//  QUIZ START
 // ─────────────────────────────────────────
 function startQuiz() {
-  userContext = { purpose: null, energy: null, time: null, social: null };
+  userContext = { purpose: null, energy: null, time: "quick", social: null };
   answers = {};
-  localStorage.removeItem("virel_result");
-  document.querySelectorAll(".setup-chip").forEach(c => c.classList.remove("selected"));
-  document.querySelectorAll(".setup-card").forEach(c => c.classList.remove("answered"));
-  document.getElementById("setup-continue").classList.remove("ready");
-  showScreen("setup-screen");
-}
-
-function selectSetup(btn) {
-  const group = btn.dataset.group;
-  document.querySelectorAll(`.setup-chip[data-group="${group}"]`)
-    .forEach(c => c.classList.remove("selected"));
-  btn.classList.add("selected");
-
-  userContext[group] = btn.dataset.val;
-
-  // Mark the parent card as answered
-  const card = btn.closest(".setup-card");
-  if (card) card.classList.add("answered");
-
-  // Unlock continue once all 4 answered
-  if (userContext.purpose && userContext.energy && userContext.time && userContext.social) {
-    document.getElementById("setup-continue").classList.add("ready");
-  }
-
-  // Update step counter
-  const answered = [userContext.purpose, userContext.energy, userContext.time, userContext.social]
-    .filter(Boolean).length;
-  document.querySelector(".setup-step-label").textContent =
-    `Setup · Step ${Math.min(answered + 1, 4)} of 4`;
-}
-
-function submitSetup() {
   currentQ = 0;
-  answers  = {};
-  // Build active question set based on time constraint
-  activeQuestions = userContext.time === "full"
-    ? [...QUESTIONS, ...EXTRA_QUESTIONS]
-    : [...QUESTIONS];
+  activeQuestions = [...QUESTIONS];
+  localStorage.removeItem("virel_result");
   showScreen("quiz-screen");
   buildDots();
   renderQuestion();
