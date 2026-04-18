@@ -45,24 +45,50 @@
     /* ── START SCREEN ── */
     #start-screen { text-align: center; }
 
-    .virel-wordmark {
-      font-size: 0.85rem;
-      font-weight: 800;
-      letter-spacing: 0.3em;
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 4px 24px rgba(124,58,237,0.45); }
+      50%       { box-shadow: 0 6px 44px rgba(124,58,237,0.8), 0 0 80px rgba(124,58,237,0.18); }
+    }
+
+    .start-eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.24em;
       text-transform: uppercase;
-      background: linear-gradient(90deg, #a78bfa, #60a5fa);
+      color: #7c3aed;
+      font-weight: 700;
+      margin-bottom: 16px;
+      opacity: 0;
+      animation: fadeUp 0.5s ease 0.05s both;
+    }
+
+    .virel-wordmark {
+      font-size: clamp(3rem, 13vw, 4.4rem);
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #a78bfa 0%, #818cf8 35%, #60a5fa 65%, #f472b6 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      margin-bottom: 44px;
+      line-height: 1;
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: fadeUp 0.65s ease 0.15s both;
     }
 
     .start-headline {
-      font-size: 1.85rem;
+      font-size: 1.65rem;
       font-weight: 700;
-      line-height: 1.25;
-      margin-bottom: 16px;
+      line-height: 1.28;
+      margin-bottom: 14px;
       color: #f1f5f9;
+      opacity: 0;
+      animation: fadeUp 0.5s ease 0.35s both;
     }
 
     .start-headline em {
@@ -75,26 +101,47 @@
 
     .start-sub {
       color: #94a3b8;
-      font-size: 0.95rem;
-      line-height: 1.65;
-      margin-bottom: 32px;
+      font-size: 0.93rem;
+      line-height: 1.7;
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeUp 0.5s ease 0.5s both;
     }
 
-    .start-meta {
+    .archetype-row {
       display: flex;
-      gap: 10px;
-      justify-content: center;
       flex-wrap: wrap;
-      margin-bottom: 36px;
+      gap: 7px;
+      justify-content: center;
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: fadeUp 0.5s ease 0.65s both;
     }
 
-    .meta-pill {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.09);
+    .archetype-chip {
+      background: rgba(167,139,250,0.08);
+      border: 1px solid rgba(167,139,250,0.2);
       border-radius: 20px;
-      padding: 6px 14px;
+      padding: 5px 13px;
       font-size: 0.78rem;
-      color: #94a3b8;
+      color: #c4b5fd;
+      letter-spacing: 0.01em;
+    }
+
+    #start-cta {
+      opacity: 0;
+      animation:
+        fadeUp 0.5s ease 0.8s both,
+        pulse-glow 2.8s ease-in-out 1.3s infinite;
+    }
+
+    .start-footnote {
+      margin-top: 14px;
+      font-size: 0.75rem;
+      color: #64748b;
+      letter-spacing: 0.04em;
+      opacity: 0;
+      animation: fadeUp 0.5s ease 0.9s both;
     }
 
     .btn {
@@ -529,20 +576,23 @@
 
   <!-- ══ START SCREEN ══ -->
   <div id="start-screen">
+    <div class="start-eyebrow">Personality · Friendships</div>
     <div class="virel-wordmark">Virel</div>
     <h1 class="start-headline">
-      Find out who you <em>actually</em> are in friendships.
+      Find out which kind of friend<br>you <em>actually</em> are.
     </h1>
     <p class="start-sub">
-      6 honest questions. Virel reads your personality and tells you
-      exactly who you match with — and why.
+      Six questions. Virel reads your patterns and tells you things about yourself most people don't say out loud.
     </p>
-    <div class="start-meta">
-      <div class="meta-pill">⚡ 2 minutes</div>
-      <div class="meta-pill">📱 No signup</div>
-      <div class="meta-pill">🎯 6 questions</div>
+    <div class="archetype-row">
+      <span class="archetype-chip">👁️ Quiet Observer</span>
+      <span class="archetype-chip">🧲 Social Glue</span>
+      <span class="archetype-chip">⚡ Chaos Friend</span>
+      <span class="archetype-chip">🪨 Loyal Rock</span>
+      <span class="archetype-chip">🌊 Vibe Shifter</span>
     </div>
-    <button class="btn btn-primary" onclick="startQuiz()">Find My Type →</button>
+    <button class="btn btn-primary" id="start-cta" onclick="startQuiz()">Find My Type →</button>
+    <div class="start-footnote">No signup · Under 2 minutes</div>
   </div>
 
   <!-- ══ QUIZ SCREEN ══ -->
