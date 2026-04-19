@@ -223,18 +223,26 @@
     }
     .mode-card {
       background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(167,139,250,0.16);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-top: 3px solid transparent;
       border-radius: 16px;
       padding: 14px 13px;
       cursor: pointer;
       text-align: left;
-      transition: background 0.2s, border-color 0.2s;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s;
     }
-    .mode-card.active {
-      background: rgba(124,58,237,0.18);
-      border-color: rgba(167,139,250,0.5);
-    }
-    .mode-card:hover:not(.active) { background: rgba(255,255,255,0.07); }
+    .mode-card:hover:not(.active) { background: rgba(255,255,255,0.07); transform: translateY(-2px); }
+
+    #mode-friends  { border-top-color: rgba(167,139,250,0.5); }
+    #mode-teams    { border-top-color: rgba(96,165,250,0.5);  }
+    #mode-darkside { border-top-color: rgba(244,114,182,0.5); }
+    #mode-mainchar { border-top-color: rgba(251,146,60,0.5);  }
+
+    #mode-friends.active  { background: rgba(167,139,250,0.14); border-top-color: #a78bfa; border-right-color: rgba(167,139,250,0.25); border-bottom-color: rgba(167,139,250,0.25); border-left-color: rgba(167,139,250,0.25); }
+    #mode-teams.active    { background: rgba(96,165,250,0.14);  border-top-color: #60a5fa; border-right-color: rgba(96,165,250,0.25);  border-bottom-color: rgba(96,165,250,0.25);  border-left-color: rgba(96,165,250,0.25);  }
+    #mode-darkside.active { background: rgba(244,114,182,0.14); border-top-color: #f472b6; border-right-color: rgba(244,114,182,0.25); border-bottom-color: rgba(244,114,182,0.25); border-left-color: rgba(244,114,182,0.25); }
+    #mode-mainchar.active { background: rgba(251,146,60,0.14);  border-top-color: #fb923c; border-right-color: rgba(251,146,60,0.25);  border-bottom-color: rgba(251,146,60,0.25);  border-left-color: rgba(251,146,60,0.25);  }
+
     .mode-card-icon { font-size: 1.25rem; margin-bottom: 5px; }
     .mode-card-name { font-size: 0.82rem; font-weight: 700; color: #e2e8f0; margin-bottom: 3px; }
     .mode-card-desc { font-size: 0.72rem; color: #64748b; line-height: 1.38; }
