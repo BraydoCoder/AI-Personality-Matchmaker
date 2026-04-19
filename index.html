@@ -198,6 +198,48 @@
       animation: fadeUp 0.5s ease 0.9s both;
     }
 
+    .name-input {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(167,139,250,0.22);
+      border-radius: 14px;
+      padding: 13px 18px;
+      color: #f1f5f9;
+      font-size: 0.97rem;
+      font-family: inherit;
+      outline: none;
+      margin-bottom: 14px;
+      text-align: center;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .name-input::placeholder { color: #475569; }
+    .name-input:focus { border-color: rgba(167,139,250,0.55); background: rgba(255,255,255,0.07); }
+
+    .mode-toggle {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      justify-content: center;
+    }
+    .mode-pill {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(167,139,250,0.2);
+      background: rgba(255,255,255,0.04);
+      color: #94a3b8;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+    .mode-pill.active {
+      background: rgba(124,58,237,0.2);
+      border-color: rgba(167,139,250,0.5);
+      color: #c4b5fd;
+    }
+    .mode-pill:hover:not(.active) { background: rgba(255,255,255,0.08); }
+
     .btn {
       display: inline-block;
       padding: 14px 32px;
@@ -674,6 +716,11 @@
       <span class="archetype-chip">🪨 Loyal Rock</span>
       <span class="archetype-chip">🌊 Vibe Shifter</span>
     </div>
+    <input class="name-input" id="user-name" type="text" placeholder="What's your name?" maxlength="30" autocomplete="off" />
+    <div class="mode-toggle" role="group" aria-label="Quiz mode">
+      <button class="mode-pill active" id="mode-quick" onclick="setMode('quick')">⚡ Quick · 6 questions</button>
+      <button class="mode-pill" id="mode-full" onclick="setMode('full')">🌙 Full read · 8 questions</button>
+    </div>
     <button class="btn btn-primary" id="start-cta" onclick="startQuiz()">Find My Type →</button>
     <div class="start-footnote">No signup · Under 2 minutes</div>
   </div>
@@ -788,38 +835,38 @@ const ENERGY_CONTEXT = {
 const EXTRA_QUESTIONS = [
   {
     id: "q7",
-    text: "Which thing is most true when things get hard:",
+    text: "It's midnight. You're most likely:",
     choices: [
-      "You go quiet — not because you don't care, but because you're processing everything at once 🌑",
-      "You name the thing nobody else is naming. The tension needs a voice. 🔥",
-      "You make it a joke first. You'll get real. Just not yet. 😅",
-      "You stay. Even when it's uncomfortable. Even when you have nothing to say. 🌊",
-      "You've already played the conversation out fifteen times in your head before saying a word 🌀"
+      "In your head about something that happened three days ago 🌑",
+      "In a conversation you didn't mean to start 💬",
+      "Starting a project you definitely won't finish tonight 🔥",
+      "Asleep. You're not joking. 🪨",
+      "Deep in a rabbit hole you couldn't explain to anyone 🌀"
     ],
     reactions: [
-      "Processing first, speaking second — that's precision, not avoidance.",
-      "You don't flinch from the hard thing. Most people do.",
-      "Humour is the first layer. The real stuff comes after.",
-      "Just being there is underrated. You've always known that.",
-      "You're already ready. You just haven't gone yet."
+      "Your brain doesn't clock out. There's a lot going on in there.",
+      "You didn't mean to start talking. Then suddenly it's 2am.",
+      "Tonight's the night. Or tomorrow. Definitely one of those.",
+      "You protect your sleep like it owes you something.",
+      "You'll come up for air eventually. Maybe."
     ]
   },
   {
     id: "q8",
-    text: "Pick what closeness actually feels like to you:",
+    text: "Your ideal Saturday involves:",
     choices: [
-      "They know your real face — not the one you wear for everyone else 🤐",
-      "You can be fully, unselfconsciously weird around them 🎭",
-      "You've both done something you wouldn't tell most people 🫂",
-      "They're just... always there. No scheduling. No explanation needed. 💌",
-      "Silence with them doesn't need to be filled. It just is. 🌙"
+      "Time alone to actually think — properly, uninterrupted 🌙",
+      "Plans that somehow include everyone you know 🧲",
+      "No plan, just vibes and whoever's available ⚡",
+      "Something simple, something predictable, something good 🪨",
+      "One conversation that shifts how you see something 🌊"
     ],
     reactions: [
-      "You show the unfiltered version to very few. The ones who have it — keep it.",
-      "Full weirdness, zero judgment. That's the only bar that matters.",
-      "Shared experience you can't explain to someone who wasn't there.",
-      "Available without needing a reason. That's the whole thing.",
-      "Comfortable silence is intimacy. Not everyone finds it."
+      "Time alone is how you recalibrate. You need it more than most.",
+      "You energize around people. Full calendar, full tank.",
+      "Spontaneous is the only plan that actually works for you.",
+      "Simple and good beats complicated and memorable. Every time.",
+      "One good conversation beats ten okay ones. You know this."
     ]
   }
 ];
@@ -827,110 +874,110 @@ const EXTRA_QUESTIONS = [
 const QUESTIONS = [
   {
     id: "q1",
-    text: "Pick the one that's weirdly accurate:",
+    text: "When do you actually go to sleep?",
     choices: [
-      "You know something's off before anyone says a word 👁️",
-      "You've started things you had no business starting — and they worked ⚡",
-      "Talking to you makes people say things they've never said out loud 🌀",
-      "People call you when it's actually serious, not just inconvenient 🪨",
-      "You're low-key the reason half your friend group knows each other 🧲"
+      "When my brain finally stops replaying today 🌑",
+      "When everyone I was talking to finally goes offline 💬",
+      "Sleep schedule? What's that ⚡",
+      "Same time every night, roughly 🪨",
+      "Somewhere between 'I'm going to sleep early' and 3am 🌀"
     ],
     reactions: [
-      "You read people before they read themselves.",
-      "You don't plan. You move. Somehow that works.",
-      "You unlock people. That's not common.",
-      "Being that consistent is actually a whole personality.",
-      "Without you, the group chat probably goes quiet."
+      "Your brain doesn't clock out easy. A lot going on in there.",
+      "You stay up to make sure everyone's okay. That's your whole thing.",
+      "Sleep is a suggestion and you're ignoring it. Classic.",
+      "You've got a rhythm. Most people just pretend they do.",
+      "The plan was 10pm. Reality had other ideas."
     ]
   },
   {
     id: "q2",
-    text: "Pick the statement that makes you go 'okay, rude — but fine':",
+    text: "Your phone dies at a party. You:",
     choices: [
-      "You feel things before you understand them, and you understand them better than most 😮‍💨",
-      "You've peaked multiple times. You'll do it again. ⚡",
-      "The way other people describe you sounds like a completely different person 🥱",
-      "You've held things together for people who will never know you did 📵",
-      "You could walk into a room where you know nobody and leave with three people who feel like old friends 🔋"
+      "Find a corner and enjoy being unreachable for once 👁️",
+      "Immediately borrow a charger — you're coordinating three things 🧲",
+      "See it as an invitation to do something wilder ⚡",
+      "It's fine. You were barely checking it anyway 🪨",
+      "Spend the next hour wondering if anyone noticed 🌊"
     ],
     reactions: [
-      "Emotional intelligence hits different when it's actually yours.",
-      "You don't have a final form. That's the thing.",
-      "The gap between how you see yourself and how they see you is the whole story.",
-      "Quiet support is still support. Even when it's invisible.",
-      "That's not charisma. That's something rarer."
+      "You needed that more than you want to admit.",
+      "You were already running the logistics before anyone asked.",
+      "You're not chaotic. You're just on a different frequency.",
+      "You were never that attached to it. That's actually rare.",
+      "You're always tracking something. Most people don't even see it."
     ]
   },
   {
     id: "q3",
-    text: "Which sentence would make you feel the most seen?",
+    text: "What does your camera roll say about you?",
     choices: [
-      '"I can tell when something\'s off with you even when you say you\'re fine." 🌙',
-      '"Wherever you are is somehow where everything ends up happening." 🔁',
-      '"Talking to you makes me understand myself better." 💬',
-      '"I knew you\'d pick up. I don\'t have that with many people." 🫂',
-      '"I don\'t know what\'s going to happen but I want you there." ✨'
+      "Mostly screenshots and notes to yourself 👁️",
+      "Group photos from every event, tagged and organized 🧲",
+      "400 blurry videos from last weekend ⚡",
+      "Barely anything. The moment was enough. 🪨",
+      "A weirdly artistic collection nobody asked for 🌊"
     ],
     reactions: [
-      "Being truly read — not performed at — is everything to you.",
-      "You make things happen just by existing in them.",
-      "You don't just connect. You change people.",
-      "That kind of trust is earned. Yours always is.",
-      "You're the variable that makes it interesting."
+      "You're collecting evidence of your own thoughts. That's not nothing.",
+      "You're the archivist. Everyone's glad you were there.",
+      "Not disorganized — *a vibe*. There's a difference.",
+      "No documentation needed. That's actually kind of free.",
+      "You see things differently. Your camera roll proves it."
     ]
   },
   {
     id: "q4",
-    text: "Pick the one that's true even though you'd never just say it:",
+    text: "Your friend group is picking a place to eat. You:",
     choices: [
-      "You've already figured out how this ends. You're just waiting. 🧊",
-      "You've forgiven things you never got an apology for. 🎭",
-      "You've changed people and then had to watch them leave. 🔥",
-      "You're more sensitive than you look. Way more. 🌪️",
-      "You're the reason something good happened and nobody knew it was you. 🌫️"
+      "Already know what you want but wait to see what everyone says 👁️",
+      "Somehow end up making the decision for everyone 🧲",
+      "Suggest the place nobody thought of — and it works ⚡",
+      "Go with whatever. You're here for the people, not the food 🪨",
+      "Change your mind three times before you even get there 🌊"
     ],
     reactions: [
-      "You sit with what you know and wait for the right moment.",
-      "That kind of grace is quiet. It costs something.",
-      "Leaving a mark that outlasts the relationship is bittersweet.",
-      "Loudness is armour. People miss that.",
-      "Making it look effortless means the effort goes unseen."
+      "You already know. You're just being diplomatic about it.",
+      "They all act like they don't want to decide. You just step in.",
+      "You suggested the thing nobody thought of and somehow it worked.",
+      "Location was never the point for you anyway.",
+      "Commitment is hard when your feelings keep updating."
     ]
   },
   {
     id: "q5",
-    text: "Pick the version of loneliness you know best:",
+    text: "Someone's venting to you. Your first instinct:",
     choices: [
-      "Being around people who'd notice if you were gone — just not right away 📌",
-      "Being in a conversation and feeling like you're watching it from outside yourself 🪞",
-      "Having energy to burn with nobody to burn it with ☀️",
-      "Saying something that mattered and watching it land wrong 🏔️",
-      "Being the most connected person in the room and still feeling completely alone in it 🧠"
+      "Listen. Actually listen. Without planning what to say. 👁️",
+      "Ask questions — you genuinely want to understand everything 🧲",
+      "Make them laugh first. Real talk can come after. ⚡",
+      "'I got you.' And you mean it exactly. 🪨",
+      "Relate immediately — you've felt that exact thing 🌊"
     ],
     reactions: [
-      "You're reliable to people who aren't always reliable to you.",
-      "You observe even yourself. That's both a gift and a weight.",
-      "You need somewhere for all that energy to go.",
-      "Being misunderstood when you're being genuine — that's its own kind of hurt.",
-      "Giving everyone a place to land means you sometimes have nowhere."
+      "You don't fill silence. That makes it safe to talk.",
+      "You ask because you genuinely want the full picture.",
+      "Laughter is your first language. The real stuff comes right after.",
+      "Two words and they already feel less alone. That's power.",
+      "You don't just hear it — you absorb it."
     ]
   },
   {
     id: "q6",
-    text: "How do you actually love people? Be honest.",
+    text: "Pick what your friends would roast you for:",
     choices: [
-      "By remembering everything. Things they said once, months ago. 🧩",
-      "By showing up before they ask. That's it. That's the whole thing. 🚪",
-      "By dragging them somewhere they wouldn't go alone and making it the best night. 💥",
-      "By clearing my schedule and never mentioning once that I did. 🕐",
-      "By asking the question they were afraid to ask themselves. 🌊"
+      "Disappearing for days then acting like nothing happened 👁️",
+      "Knowing everyone's business before they even tell you 🧲",
+      "Starting ten things and finishing zero ⚡",
+      "Never complaining. Ever. It's actually concerning. 🪨",
+      "Texting 'on my way' from your bed 🌊"
     ],
     reactions: [
-      "Attention is love. The details are how you say it.",
-      "Presence before permission. That's your whole thing.",
-      "You love by making people live a little. They don't forget that.",
-      "Time is the most honest gift. You know that better than most.",
-      "You love by helping people understand themselves. That's rare."
+      "Recharging looks like disappearing. People learn not to worry.",
+      "You know before people know. That's not gossip — that's radar.",
+      "10 tabs open, 0 closed. You'll get there eventually.",
+      "Your tolerance for discomfort is actually kind of wild.",
+      "You meant to leave 20 minutes ago. It's fine."
     ]
   }
 ];
@@ -1033,23 +1080,17 @@ const ARCHETYPES = [
 //  MOCK SCORING WEIGHTS
 //  Each array maps answer index → archetype index.
 //  0=Observer, 1=SocialGlue, 2=Chaos, 3=Rock, 4=VibShifter
+//  Choices are ordered [Observer, SocialGlue, Chaos, Rock, VibShifter] per question.
 // ─────────────────────────────────────────
-// 0=Observer, 1=SocialGlue, 2=Chaos, 3=Rock, 4=VibShifter
-// Q1: notice-everything→Observer, make-happen→Chaos, feel-deeply→VibShifter, show-up→Rock, connect-fast→SocialGlue
-// Q2: surface-convos→VibShifter, sitting-still→Chaos, explain-self→Observer, plan-changes→Rock, carrying-energy→SocialGlue
-// Q3: no-time-passed→Observer, always-orbit→SocialGlue, go-deep→VibShifter, been-through-it→Rock, unlock-each-other→Chaos
-// Q4: selective→Observer, not-loud→Rock, actually-care→VibShifter, dont-ask→Chaos, hard-to-read→SocialGlue
-// Q5: consistent→Rock, real→Observer, lighter→Chaos, push-better→VibShifter, truly-get-you→SocialGlue
-// Q6: remember-details→Observer, show-up→Rock, say-it→Chaos, make-time→SocialGlue, match-energy→VibShifter
 const WEIGHTS = {
-  q1: [0, 2, 4, 3, 1],
-  q2: [4, 2, 0, 3, 1],
-  q3: [0, 1, 4, 3, 2],
-  q4: [0, 3, 4, 2, 1],
-  q5: [3, 0, 2, 4, 1],
-  q6: [0, 3, 2, 1, 4],
-  q7: [0, 4, 2, 3, 0],
-  q8: [0, 4, 3, 1, 0]
+  q1: [0, 1, 2, 3, 4],
+  q2: [0, 1, 2, 3, 4],
+  q3: [0, 1, 2, 3, 4],
+  q4: [0, 1, 2, 3, 4],
+  q5: [0, 1, 2, 3, 4],
+  q6: [0, 1, 2, 3, 4],
+  q7: [0, 1, 2, 3, 4],
+  q8: [0, 1, 2, 3, 4]
 };
 
 // ─────────────────────────────────────────
@@ -1060,7 +1101,15 @@ let answers     = {};
 let activeQuestions = [];
 let userContext = { purpose: null, energy: null, time: null, social: null };
 let apiErrorUsed = false;
+let userName    = "";
+let quizMode    = "quick";
 const apiKey    = "__OPENROUTER_API_KEY__";
+
+function setMode(mode) {
+  quizMode = mode;
+  document.getElementById("mode-quick").classList.toggle("active", mode === "quick");
+  document.getElementById("mode-full").classList.toggle("active", mode === "full");
+}
 
 // ─────────────────────────────────────────
 //  SCREEN HELPERS
@@ -1078,10 +1127,13 @@ function showScreen(id) {
 //  QUIZ START
 // ─────────────────────────────────────────
 function startQuiz() {
-  userContext = { purpose: null, energy: null, time: "quick", social: null };
+  userName = (document.getElementById("user-name")?.value || "").trim();
+  userContext = { purpose: null, energy: null, time: quizMode, social: null };
   answers = {};
   currentQ = 0;
-  activeQuestions = [...QUESTIONS];
+  activeQuestions = quizMode === "full"
+    ? [...QUESTIONS, ...EXTRA_QUESTIONS]
+    : [...QUESTIONS];
   localStorage.removeItem("virel_result");
   showScreen("quiz-screen");
   buildDots();
@@ -1318,11 +1370,12 @@ function displayResults(r) {
   document.getElementById("result-name").textContent    = r.name;
   document.getElementById("result-tagline").textContent = r.tagline;
 
+  const nameStr = userName ? `, ${userName}` : "";
   if (apiErrorUsed) {
-    document.getElementById("result-eyebrow").textContent = "Your Virel type · Demo mode";
+    document.getElementById("result-eyebrow").textContent = `Your Virel type${nameStr} · Demo mode`;
     apiErrorUsed = false;
   } else {
-    document.getElementById("result-eyebrow").textContent = "Your Virel type";
+    document.getElementById("result-eyebrow").textContent = `Your Virel type${nameStr}`;
   }
 
   // Context tags
@@ -1418,7 +1471,7 @@ function restartQuiz() { startQuiz(); }
 
 function saveResult(result) {
   try {
-    localStorage.setItem("virel_result", JSON.stringify({ result, context: userContext, ts: Date.now() }));
+    localStorage.setItem("virel_result", JSON.stringify({ result, context: userContext, name: userName, ts: Date.now() }));
   } catch(e) {}
 }
 
@@ -1457,6 +1510,7 @@ function shareResult() {
   const cached = loadResult();
   if (cached) {
     userContext = cached.context;
+    userName = cached.name || "";
     displayResults(cached.result);
   }
 })();
