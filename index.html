@@ -215,30 +215,29 @@
     .name-input::placeholder { color: #475569; }
     .name-input:focus { border-color: rgba(167,139,250,0.55); background: rgba(255,255,255,0.07); }
 
-    .mode-toggle {
-      display: flex;
-      gap: 8px;
+    .mode-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
       margin-bottom: 20px;
-      justify-content: center;
     }
-    .mode-pill {
-      flex: 1;
-      padding: 10px 14px;
-      border-radius: 12px;
-      border: 1px solid rgba(167,139,250,0.2);
+    .mode-card {
       background: rgba(255,255,255,0.04);
-      color: #94a3b8;
-      font-size: 0.84rem;
-      font-weight: 600;
+      border: 1px solid rgba(167,139,250,0.16);
+      border-radius: 16px;
+      padding: 14px 13px;
       cursor: pointer;
-      transition: background 0.2s, border-color 0.2s, color 0.2s;
+      text-align: left;
+      transition: background 0.2s, border-color 0.2s;
     }
-    .mode-pill.active {
-      background: rgba(124,58,237,0.2);
+    .mode-card.active {
+      background: rgba(124,58,237,0.18);
       border-color: rgba(167,139,250,0.5);
-      color: #c4b5fd;
     }
-    .mode-pill:hover:not(.active) { background: rgba(255,255,255,0.08); }
+    .mode-card:hover:not(.active) { background: rgba(255,255,255,0.07); }
+    .mode-card-icon { font-size: 1.25rem; margin-bottom: 5px; }
+    .mode-card-name { font-size: 0.82rem; font-weight: 700; color: #e2e8f0; margin-bottom: 3px; }
+    .mode-card-desc { font-size: 0.72rem; color: #64748b; line-height: 1.38; }
 
     .btn {
       display: inline-block;
@@ -709,18 +708,29 @@
     <p class="start-sub">
       Six questions. Virel reads your patterns and tells you things about yourself most people don't say out loud.
     </p>
-    <div class="archetype-row">
-      <span class="archetype-chip">👁️ Quiet Observer</span>
-      <span class="archetype-chip">🧲 Social Glue</span>
-      <span class="archetype-chip">⚡ Chaos Friend</span>
-      <span class="archetype-chip">🪨 Loyal Rock</span>
-      <span class="archetype-chip">🌊 Vibe Shifter</span>
+    <div class="mode-grid" role="group" aria-label="Quiz mode">
+      <button class="mode-card active" id="mode-friends" onclick="selectMode('friends')">
+        <div class="mode-card-icon">🧲</div>
+        <div class="mode-card-name">Friend Archetypes</div>
+        <div class="mode-card-desc">What kind of friend are you?</div>
+      </button>
+      <button class="mode-card" id="mode-teams" onclick="selectMode('teams')">
+        <div class="mode-card-icon">🧠</div>
+        <div class="mode-card-name">Roles in Teams</div>
+        <div class="mode-card-desc">How do you function in groups?</div>
+      </button>
+      <button class="mode-card" id="mode-darkside" onclick="selectMode('darkside')">
+        <div class="mode-card-icon">🌑</div>
+        <div class="mode-card-name">Your Dark Side</div>
+        <div class="mode-card-desc">The honest, unflattering read.</div>
+      </button>
+      <button class="mode-card" id="mode-mainchar" onclick="selectMode('mainchar')">
+        <div class="mode-card-icon">🎬</div>
+        <div class="mode-card-name">Main Character Mode</div>
+        <div class="mode-card-desc">What kind of story are you in?</div>
+      </button>
     </div>
     <input class="name-input" id="user-name" type="text" placeholder="What's your name?" maxlength="30" autocomplete="off" />
-    <div class="mode-toggle" role="group" aria-label="Quiz mode">
-      <button class="mode-pill active" id="mode-quick" onclick="setMode('quick')">⚡ Quick · 6 questions</button>
-      <button class="mode-pill" id="mode-full" onclick="setMode('full')">🌙 Full read · 8 questions</button>
-    </div>
     <button class="btn btn-primary" id="start-cta" onclick="startQuiz()">Find My Type →</button>
     <div class="start-footnote">No signup · Under 2 minutes</div>
   </div>
@@ -789,326 +799,199 @@
 
 <script>
 // ─────────────────────────────────────────
-//  QUESTIONS
-//  All multiple choice. Open-ended deleted (K/C/D: DELETE).
-//  Questions target 16-25, friendship/relationship context.
+//  MODES — all quiz content lives here
 // ─────────────────────────────────────────
-// ─────────────────────────────────────────
-//  SETUP OPTIONS — question variants keyed by purpose
-// ─────────────────────────────────────────
-const Q3_VARIANTS = {
-  friendships: "Which friendship dynamic actually sounds like yours?",
-  romantic:    "Which connection dynamic fits how you actually are in romance?",
-  self:        "Which dynamic shows how you naturally connect with people?",
-  curious:     "Which friendship dynamic actually sounds like yours?"
-};
-
-const Q5_VARIANTS = {
-  friendships: "Pick the text a good friend could send that would actually mean something:",
-  romantic:    "Pick the text from someone you like that would actually hit:",
-  self:        "Pick the message you secretly want but rarely get:",
-  curious:     "Pick the text that would actually mean something to you:"
-};
-
-const PURPOSE_LABELS = {
-  friendships: "Here for better friendships",
-  romantic:    "Here for romantic connections",
-  self:        "Here to understand yourself",
-  curious:     "Here out of curiosity"
-};
-
-const ENERGY_LABELS = {
-  selective: "Selective energy",
-  open:      "Open energy",
-  shifts:    "Shifting energy",
-  figuring:  "Still figuring it out"
-};
-
-const ENERGY_CONTEXT = {
-  selective: "You said you're selective — that tracks.",
-  open:      "You said you're open — that shows.",
-  shifts:    "Your energy shifts — and so does this read.",
-  figuring:  "You're still figuring it out — this might help."
-};
-
-// Extra questions added for "full mode" (time = full)
-const EXTRA_QUESTIONS = [
-  {
-    id: "q7",
-    text: "It's midnight. You're most likely:",
-    choices: [
-      "In your head about something that happened three days ago 🌑",
-      "In a conversation you didn't mean to start 💬",
-      "Starting a project you definitely won't finish tonight 🔥",
-      "Asleep. You're not joking. 🪨",
-      "Deep in a rabbit hole you couldn't explain to anyone 🌀"
+const MODES = {
+  friends: {
+    label: "Friend Archetypes",
+    systemContext: "friendship patterns and social connection for users aged 16–25",
+    archetypes: [
+      { name:"The Quiet Observer",   icon:"👁️", tagline:"You read the room before you enter it",
+        traits:[{label:"Social Style",value:"Selective",pct:28},{label:"Energy",value:"Steady & still",pct:42},{label:"Reads People",value:"Deeply",pct:94},{label:"Depth",value:"Quality over qty",pct:97}],
+        profile:"You don't need to be the loudest person in the room — you're the one who actually knows what's going on in it. You take longer to open up, but when you do, it's real. You'd rather have two people who genuinely get you than twenty who kind of do.",
+        matches:[{icon:"🧲",name:"The Social Glue",desc:"They draw you out naturally, without pressure",score:"95%"},{icon:"🌊",name:"The Vibe Shifter",desc:"Deep conversations — you unlock each other",score:"91%"},{icon:"🌙",name:"The Midnight Friend",desc:"Same frequency, no explanation needed",score:"88%"}]},
+      { name:"The Social Glue",      icon:"🧲", tagline:"The one people call when it actually matters",
+        traits:[{label:"Social Style",value:"Connector",pct:91},{label:"Energy",value:"Warm & present",pct:88},{label:"Reads People",value:"Intuitively",pct:83},{label:"Depth",value:"Deep and wide",pct:86}],
+        profile:"You're the reason the group is still a group. You notice when someone's off before they've said a word, and you show up in ways people don't forget. The hard part? You give a lot — make sure you're actually getting it back.",
+        matches:[{icon:"👁️",name:"The Quiet Observer",desc:"They actually listen — rare and real",score:"96%"},{icon:"🪨",name:"The Loyal Rock",desc:"Same energy of just showing up",score:"93%"},{icon:"🎉",name:"The Hype Person",desc:"You're both all-in for the people you love",score:"87%"}]},
+      { name:"The Chaos Friend",     icon:"⚡", tagline:"Somehow always the reason it became a night",
+        traits:[{label:"Social Style",value:"Spontaneous",pct:96},{label:"Energy",value:"High & contagious",pct:94},{label:"Reads People",value:"Fast & instinctive",pct:74},{label:"Depth",value:"Ride or die",pct:87}],
+        profile:"You live at the intersection of bad ideas and great memories. You're not trying to be unpredictable — you just genuinely can't help it. The right people find your energy magnetic. Everyone else is just not your type.",
+        matches:[{icon:"🌊",name:"The Vibe Shifter",desc:"Matches your intensity, keeps it interesting",score:"94%"},{icon:"🧲",name:"The Social Glue",desc:"Keeps you grounded without slowing you down",score:"90%"},{icon:"🎉",name:"The Hype Person",desc:"Same chaotic energy, double the impact",score:"85%"}]},
+      { name:"The Loyal Rock",       icon:"🪨", tagline:"Still there when everyone else bounced",
+        traits:[{label:"Social Style",value:"Reliable",pct:96},{label:"Energy",value:"Calm & steady",pct:38},{label:"Reads People",value:"Slowly & surely",pct:62},{label:"Depth",value:"Built to last",pct:99}],
+        profile:"You don't do surface-level. When you're in someone's corner, you're in it. You show up quietly, consistently, and without making it a big deal — because to you, that's just what you do. People tend to realize later how rare that actually is.",
+        matches:[{icon:"🧲",name:"The Social Glue",desc:"Shared values — you just get each other",score:"95%"},{icon:"👁️",name:"The Quiet Observer",desc:"Both about depth over noise",score:"92%"},{icon:"🎉",name:"The Hype Person",desc:"They celebrate you loudly — you need that",score:"86%"}]},
+      { name:"The Vibe Shifter",     icon:"🌊", tagline:"Every friendship goes deeper with you in it",
+        traits:[{label:"Social Style",value:"Expressive",pct:79},{label:"Energy",value:"Fluid & intense",pct:76},{label:"Reads People",value:"Emotionally",pct:91},{label:"Depth",value:"Intense and real",pct:93}],
+        profile:"You don't do small talk for long. You want to know what someone actually thinks, what keeps them up at night. You make people feel like they can be honest — and that's rarer than most people realize.",
+        matches:[{icon:"👁️",name:"The Quiet Observer",desc:"You unlock each other — rare connection",score:"97%"},{icon:"🌙",name:"The Midnight Friend",desc:"Both live in the deep end",score:"91%"},{icon:"⚡",name:"The Chaos Friend",desc:"Sparks your energy, keeps things alive",score:"88%"}]},
+      { name:"The Hype Person",      icon:"🎉", tagline:"The loudest person in your corner",
+        traits:[{label:"Social Style",value:"Enthusiastic",pct:97},{label:"Energy",value:"All-in",pct:95},{label:"Reads People",value:"Quickly",pct:71},{label:"Depth",value:"Loud love",pct:82}],
+        profile:"You don't half-ass your support. When someone you love wins, you celebrate like it's your own win. When they're down, you're the first to remind them why they're not staying down. The people around you are more themselves because of you.",
+        matches:[{icon:"🪨",name:"The Loyal Rock",desc:"They stay quiet — you're their voice",score:"93%"},{icon:"🧲",name:"The Social Glue",desc:"You're both all-in for the people you love",score:"90%"},{icon:"⚡",name:"The Chaos Friend",desc:"Same energy, double the chaos",score:"85%"}]},
+      { name:"The Midnight Friend",  icon:"🌙", tagline:"The one they call at 2am — and you pick up",
+        traits:[{label:"Social Style",value:"Intimate",pct:35},{label:"Energy",value:"Deep & unhurried",pct:44},{label:"Reads People",value:"Profoundly",pct:98},{label:"Depth",value:"All the way",pct:99}],
+        profile:"You don't need many people — you need the right ones. And when you find them, you go deep. You're the person people say things to that they've never said out loud. You don't rush intimacy. You just make it feel safe.",
+        matches:[{icon:"👁️",name:"The Quiet Observer",desc:"Same frequency, no explanation needed",score:"96%"},{icon:"🌊",name:"The Vibe Shifter",desc:"Both live in the deep end",score:"93%"},{icon:"🪨",name:"The Loyal Rock",desc:"You talk — they stay. Perfect.",score:"88%"}]}
     ],
-    reactions: [
-      "Your brain doesn't clock out. There's a lot going on in there.",
-      "You didn't mean to start talking. Then suddenly it's 2am.",
-      "Tonight's the night. Or tomorrow. Definitely one of those.",
-      "You protect your sleep like it owes you something.",
-      "You'll come up for air eventually. Maybe."
-    ]
+    questions:[
+      {id:"q1",text:"When do you actually go to sleep?",choices:["When my brain finally stops replaying today 🌑","When everyone I was talking to finally goes offline 💬","Sleep schedule? What's that ⚡","Same time every night, roughly 🪨","Somewhere between 'I'm going to sleep early' and 3am 🌀"],reactions:["Your brain doesn't clock out easy. A lot going on in there.","You stay up to make sure everyone's okay. That's your whole thing.","Sleep is a suggestion and you're ignoring it. Classic.","You've got a rhythm. Most people just pretend they do.","The plan was 10pm. Reality had other ideas."]},
+      {id:"q2",text:"Your phone dies at a party. You:",choices:["Find a corner and enjoy being unreachable 👁️","Immediately borrow a charger — you're coordinating 🧲","See it as an invitation to do something wilder ⚡","Find whoever looks left out and talk to them 🎉","Actually relieved — now you can have a real conversation 🌙"],reactions:["You needed that more than you want to admit.","You were already running the logistics before anyone asked.","You're not chaotic. You're just on a different frequency.","You can't help yourself. Someone always needs a person.","Dead phone? Finally. Now you can actually be here."]},
+      {id:"q3",text:"What does your camera roll say about you?",choices:["Mostly screenshots and notes to yourself 👁️","Barely anything — the moment was enough 🪨","A weirdly artistic collection nobody asked for 🌊","Group pics where you're always hyping someone 🎉","Saved conversations and things that made you think 🌙"],reactions:["You're collecting evidence of your own thoughts. That's not nothing.","No documentation needed. That's actually kind of free.","You see things differently. Your camera roll proves it.","Always in the background, making it better.","You keep the things that matter. Most people don't."]},
+      {id:"q4",text:"Your friend group is picking a place to eat. You:",choices:["Somehow end up making the decision for everyone 🧲","Suggest the wildcard place nobody thought of ⚡","Go with whatever — you're here for the people 🪨","Already know what you want but read the room first 🌊","Ask what everyone actually feels like — you want them happy 🌙"],reactions:["They all act like they don't want to decide. You just step in.","You suggested the thing nobody thought of and it worked.","Location was never the point for you anyway.","You read the group before you read the menu.","You want everyone comfortable before you're comfortable. That's you."]},
+      {id:"q5",text:"Someone's venting to you. First instinct:",choices:["Listen without planning what to say next 👁️","Make them laugh. Real talk comes after. ⚡","Relate — you've felt that exact thing 🌊","Immediately remind them why they're not alone 🎉","Pull up a chair. This is exactly what you're here for. 🌙"],reactions:["You don't fill silence. That makes it safe to talk.","Laughter is your first language. The real stuff comes right after.","You don't just hear it — you absorb it.","You're in their corner before they finish the sentence.","You were made for this conversation."]},
+      {id:"q6",text:"Pick what your friends would roast you for:",choices:["Disappearing for days then acting like nothing happened 👁️","Knowing everyone's business before they tell you 🧲","Starting ten things and finishing zero ⚡","Hyping everyone up even when you're running on empty 🎉","Turning every hangout into an accidental therapy session 🌙"],reactions:["Recharging looks like disappearing. People learn not to worry.","You know before people know. That's not gossip — that's radar.","10 tabs open, 0 closed. You'll get there.","Your cheerleading never stops. Even when it probably should.","You meant to keep it casual. Then suddenly it's 2am and everyone's crying."]}
+    ],
+    weights:{q1:[0,1,2,3,4],q2:[0,1,2,5,6],q3:[0,3,4,5,6],q4:[1,2,3,4,6],q5:[0,2,4,5,6],q6:[0,1,2,5,6]}
   },
-  {
-    id: "q8",
-    text: "Your ideal Saturday involves:",
-    choices: [
-      "Time alone to actually think — properly, uninterrupted 🌙",
-      "Plans that somehow include everyone you know 🧲",
-      "No plan, just vibes and whoever's available ⚡",
-      "Something simple, something predictable, something good 🪨",
-      "One conversation that shifts how you see something 🌊"
+
+  teams: {
+    label: "Roles in Teams",
+    systemContext: "group dynamics, teamwork, and collaborative behavior for users aged 16–25",
+    archetypes: [
+      { name:"The Strategist", icon:"🧠", tagline:"Already three steps ahead",
+        traits:[{label:"Planning",value:"Detailed",pct:94},{label:"Pressure",value:"Thrives",pct:87},{label:"Collaboration",value:"Structured",pct:73},{label:"Vision",value:"Long-term",pct:91}],
+        profile:"You see the whole board when everyone else is looking at one piece. You're not trying to take over — you just genuinely can't stop seeing how everything connects. The team runs smoother when you're involved, and the ones who notice are the ones worth keeping around.",
+        matches:[{icon:"⚡",name:"The Executor",desc:"They turn your plans into reality",score:"96%"},{icon:"🔍",name:"The Analyst",desc:"You think in strategy, they catch gaps",score:"91%"},{icon:"⚓",name:"The Anchor",desc:"Keeps your momentum grounded",score:"87%"}]},
+      { name:"The Executor",  icon:"⚡", tagline:"Done before everyone finished discussing it",
+        traits:[{label:"Action",value:"Immediate",pct:97},{label:"Planning",value:"In motion",pct:65},{label:"Pressure",value:"Fuel",pct:93},{label:"Output",value:"High volume",pct:88}],
+        profile:"You don't wait for perfect conditions. You move, you learn, you adjust. While the room is still talking, you've already started. That's not impatience — that's how things actually get done.",
+        matches:[{icon:"🧠",name:"The Strategist",desc:"They give you direction, you run with it",score:"95%"},{icon:"⚓",name:"The Anchor",desc:"They stabilize what you create",score:"89%"},{icon:"🎲",name:"The Wildcard",desc:"Unpredictable energy that fuels you both",score:"84%"}]},
+      { name:"The Mediator",  icon:"🕊️", tagline:"The reason the team actually works",
+        traits:[{label:"Empathy",value:"High",pct:95},{label:"Conflict",value:"Defuses it",pct:91},{label:"Reads Room",value:"Instantly",pct:89},{label:"Collaboration",value:"Everyone included",pct:94}],
+        profile:"You make sure people feel heard before decisions get made. You catch the tension before it becomes a problem. You're not soft — you're strategic. Teams without you tend to fracture. Teams with you don't.",
+        matches:[{icon:"🧠",name:"The Strategist",desc:"You handle people, they handle the plan",score:"94%"},{icon:"⚓",name:"The Anchor",desc:"Both built to hold the group together",score:"90%"},{icon:"💡",name:"The Visionary",desc:"You ground their ideas in real dynamics",score:"85%"}]},
+      { name:"The Wildcard",  icon:"🎲", tagline:"The idea nobody saw coming that changed everything",
+        traits:[{label:"Creativity",value:"Unfiltered",pct:98},{label:"Planning",value:"Loose",pct:34},{label:"Pressure",value:"Thrives on it",pct:88},{label:"Risk Tolerance",value:"High",pct:92}],
+        profile:"You see angles other people miss because you're not constrained by how things are supposed to work. Your ideas are the ones that sound crazy until they work. And they usually work.",
+        matches:[{icon:"⚡",name:"The Executor",desc:"They actually make your ideas happen",score:"93%"},{icon:"💡",name:"The Visionary",desc:"Two creative forces, explosive results",score:"89%"},{icon:"🧠",name:"The Strategist",desc:"They give your chaos a framework",score:"84%"}]},
+      { name:"The Anchor",    icon:"⚓", tagline:"The reason nothing falls apart",
+        traits:[{label:"Reliability",value:"Total",pct:99},{label:"Energy",value:"Steady",pct:41},{label:"Stress Buffer",value:"High",pct:88},{label:"Collaboration",value:"Holds space",pct:91}],
+        profile:"You're the constant. When everything's chaotic, people look at you to gauge if it's actually bad. It usually isn't, and you already knew that. You don't need credit — you need the team to come out the other side intact.",
+        matches:[{icon:"⚡",name:"The Executor",desc:"You stabilize what they build",score:"92%"},{icon:"🕊️",name:"The Mediator",desc:"Both built to hold the group together",score:"90%"},{icon:"🧠",name:"The Strategist",desc:"Your steadiness completes their vision",score:"86%"}]},
+      { name:"The Visionary", icon:"💡", tagline:"Solving problems that haven't happened yet",
+        traits:[{label:"Ideas",value:"Abundant",pct:96},{label:"Big Picture",value:"Always",pct:94},{label:"Inspiration",value:"High",pct:93},{label:"Execution",value:"Delegated",pct:52}],
+        profile:"You think in futures. Where the team sees a task, you see a possibility. You're the one who asked 'but what if we did this instead' — and changed the whole direction. Your value is clearest in hindsight.",
+        matches:[{icon:"⚡",name:"The Executor",desc:"They turn your vision into output",score:"97%"},{icon:"🎲",name:"The Wildcard",desc:"Two creative forces, explosive results",score:"91%"},{icon:"🔍",name:"The Analyst",desc:"They stress-test what you build",score:"87%"}]},
+      { name:"The Analyst",   icon:"🔍", tagline:"The one who caught the thing everyone missed",
+        traits:[{label:"Detail",value:"Obsessive",pct:98},{label:"Research",value:"Thorough",pct:95},{label:"Risk Awareness",value:"High",pct:91},{label:"Collaboration",value:"Precision",pct:76}],
+        profile:"You ask the questions that don't feel comfortable to ask. You find the gap in the plan, the assumption nobody tested, the risk nobody priced in. Teams that listen to you avoid the expensive mistakes. Teams that don't eventually wish they had.",
+        matches:[{icon:"🧠",name:"The Strategist",desc:"You fill each other's blind spots",score:"95%"},{icon:"💡",name:"The Visionary",desc:"You stress-test what they dream up",score:"90%"},{icon:"🕊️",name:"The Mediator",desc:"Facts meet feelings — both matter",score:"85%"}]}
     ],
-    reactions: [
-      "Time alone is how you recalibrate. You need it more than most.",
-      "You energize around people. Full calendar, full tank.",
-      "Spontaneous is the only plan that actually works for you.",
-      "Simple and good beats complicated and memorable. Every time.",
-      "One good conversation beats ten okay ones. You know this."
-    ]
+    questions:[
+      {id:"q1",text:"A group project just got assigned. Your first move:",choices:["Map out a full plan before anyone else speaks 🧠","Ask what needs doing and immediately start ⚡","Check in on everyone to figure out their strengths 🕊️","Pitch the unexpected angle that changes the direction 🎲","Say 'I'll handle whatever nobody else wants' ⚓"],reactions:["You need the structure before you can breathe.","While everyone's talking, you've already started.","You read people before you read the task.","You're already three angles ahead of the room.","You take the unglamorous work and own it."]},
+      {id:"q2",text:"The team can't agree on a direction. You:",choices:["Find the common thread and propose a synthesis 🧠","Jump in and mediate — everyone gets to speak 🕊️","Just pick one. Decisiveness over paralysis. ⚓","Reframe the whole problem so the answer's obvious 💡","Ask what data or evidence they have for each option 🔍"],reactions:["You find the path through. That's not obvious — it's a skill.","You hold space for the disagreement until it resolves.","You'd rather be wrong and moving than right and stuck.","You didn't answer the question. You replaced it with a better one.","Before anyone decides, you need the facts. Fair."]},
+      {id:"q3",text:"What do people actually come to you for?",choices:["Getting things across the finish line ⚡","The left-field idea nobody saw coming 🎲","Keeping the group sane when things get stressful ⚓","Seeing what's possible beyond what currently exists 💡","Catching the thing everyone else missed 🔍"],reactions:["You're the one who actually makes it happen. Irreplaceable.","You see what isn't there yet. Most people can't do that.","You're the calm in the chaos. Every team needs one.","People bring you the problem. You return a better one.","You're the quality check nobody asked for but everyone needs."]},
+      {id:"q4",text:"Halfway through, things go sideways. You:",choices:["Quickly assess what changed and adjust the plan 🧠","Stay in execution mode — complaining can wait ⚡","Make sure the team doesn't spiral — morale matters 🕊️","Find the opportunity hidden in the problem 🎲","Figure out exactly what went wrong before doing anything 🔍"],reactions:["You adapt the map before anyone realizes the terrain changed.","You're not panicking. You're building.","A broken team can't fix a broken project. You know that.","You don't see a setback — you see a redirect.","You need to understand the failure before you fix it. Correct."]},
+      {id:"q5",text:"How do you prefer to contribute?",choices:["Structuring the thinking so everyone knows what to do 🧠","Making sure everyone feels heard and included 🕊️","Bringing the angle that makes it interesting 🎲","Painting the bigger picture — why any of this matters 💡","Making sure the details actually hold up 🔍"],reactions:["You build the rails. Everyone else drives the train.","You're the reason people don't quit. That's not small.","You're the variable that makes it worth showing up for.","You make people care. Harder than any technical skill.","Last line of defence between a good idea and a public failure."]},
+      {id:"q6",text:"Deadline's tomorrow. Things aren't done. You:",choices:["Drop everything and execute — talk later ⚡","Rally the team so nobody feels alone in it 🕊️","Be the calm one — panic doesn't help ⚓","Find the fast creative solution nobody's thought of 💡","Triage what needs to be done vs what can be cut 🔍"],reactions:["Head down, output up. Debrief when it's shipped.","The work can't get done if the people are falling apart.","Your calmness is contagious. Superpower right now.","Crisis mode is when you're most alive. Entirely useful.","You cut ruthlessly and correctly. That's leadership."]}
+    ],
+    weights:{q1:[0,1,2,3,4],q2:[0,2,4,5,6],q3:[1,3,4,5,6],q4:[0,1,2,3,6],q5:[0,2,3,5,6],q6:[1,2,4,5,6]}
+  },
+
+  darkside: {
+    label: "Your Dark Side",
+    systemContext: "psychological shadow traits, defense mechanisms, and honest blind spots for users aged 16–25",
+    archetypes: [
+      { name:"The Overthinker",       icon:"🌀", tagline:"Already on version 12 of the plan",
+        traits:[{label:"Thought Loops",value:"Constant",pct:97},{label:"Preparation",value:"Over-prepared",pct:93},{label:"Rest",value:"Hard to find",pct:28},{label:"Insight",value:"Sharp",pct:89}],
+        profile:"Your brain doesn't have an off switch — and that's both your best and worst quality. You catch things other people miss, but you also catastrophize things that never happen. The gap between your inner world and your outer calm is wider than anyone knows.",
+        matches:[{icon:"🧊",name:"The Stonewaller",desc:"You both understand silent processing",score:"88%"},{icon:"🎭",name:"The Deflector",desc:"They make you laugh through the spiral",score:"84%"},{icon:"😇",name:"The People Pleaser",desc:"You both spiral — just differently",score:"79%"}]},
+      { name:"The People Pleaser",    icon:"😇", tagline:"Said yes again, didn't you",
+        traits:[{label:"Agreeableness",value:"Maximum",pct:99},{label:"Boundaries",value:"Under construction",pct:18},{label:"Warmth",value:"Genuine",pct:91},{label:"Resentment",value:"Building",pct:74}],
+        profile:"You're not people-pleasing because you're weak — you're doing it because disappointing someone is genuinely painful. But somewhere along the way 'being easy to be around' became 'abandoning your own needs.' That's the thing worth looking at.",
+        matches:[{icon:"🧊",name:"The Stonewaller",desc:"Their directness balances your agreeableness",score:"86%"},{icon:"🌀",name:"The Overthinker",desc:"Mutual understanding, different spirals",score:"82%"},{icon:"👻",name:"The Ghoster",desc:"You both avoid — just in opposite directions",score:"77%"}]},
+      { name:"The Ghoster",           icon:"👻", tagline:"Left on read. Internally, very busy.",
+        traits:[{label:"Avoidance",value:"High",pct:88},{label:"Processing",value:"Solo",pct:94},{label:"Confrontation",value:"Rare",pct:14},{label:"Self-sufficiency",value:"Very",pct:91}],
+        profile:"You don't ghost because you don't care. You ghost because you don't know how to say the real thing, so you say nothing instead. The people you've disappeared on weren't confused — they were hurt. The gap between what you felt and what you communicated is where the damage happened.",
+        matches:[{icon:"🌀",name:"The Overthinker",desc:"Both need space — they get it",score:"85%"},{icon:"😇",name:"The People Pleaser",desc:"They don't push — that's rare",score:"81%"},{icon:"🎭",name:"The Deflector",desc:"They fill silence so you don't have to",score:"76%"}]},
+      { name:"The Deflector",         icon:"🎭", tagline:"A joke for every feeling",
+        traits:[{label:"Humor",value:"Always",pct:98},{label:"Vulnerability",value:"Rare",pct:19},{label:"Warmth",value:"Underneath",pct:87},{label:"Depth",value:"Hidden",pct:82}],
+        profile:"You use humor like armor — and it works, right up until it doesn't. People love being around you. They just don't always know you. The ones who've seen past the joke know something most people don't: there's a lot going on under there, and it's worth it.",
+        matches:[{icon:"🌀",name:"The Overthinker",desc:"They see through the bit — always",score:"87%"},{icon:"👻",name:"The Ghoster",desc:"Mutual comfort in comfortable silence",score:"83%"},{icon:"🧊",name:"The Stonewaller",desc:"Two different armors, same intention",score:"78%"}]},
+      { name:"The Control Freak",     icon:"👑", tagline:"It would just be faster if you did it yourself",
+        traits:[{label:"Standards",value:"Very high",pct:96},{label:"Trust",value:"Selective",pct:38},{label:"Efficiency",value:"Maximum",pct:91},{label:"Delegation",value:"Uncomfortable",pct:24}],
+        profile:"You're not controlling for fun — you've just seen what happens when things go wrong, and you'd rather prevent it. The problem is you've expanded 'preventing problems' to include other people's choices. The trust piece is the work.",
+        matches:[{icon:"🔍",name:"The Analyst",desc:"Thorough enough to actually trust",score:"91%"},{icon:"⚡",name:"The Executor",desc:"They actually deliver — you can relax",score:"87%"},{icon:"🧠",name:"The Strategist",desc:"They think like you — mutual respect",score:"83%"}]},
+      { name:"The Validation Seeker", icon:"🪞", tagline:"Just needed someone to say it",
+        traits:[{label:"Need to be Seen",value:"High",pct:93},{label:"Self-worth",value:"External",pct:44},{label:"Warmth",value:"Genuine",pct:88},{label:"Output",value:"For audience",pct:79}],
+        profile:"You want to be witnessed — not performed at, actually seen. That's not a flaw, that's human. The problem is you've wired your self-worth to external confirmation more than you realize. When the validation comes, it helps for a minute. Then you need more. That's the cycle.",
+        matches:[{icon:"🎉",name:"The Hype Person",desc:"They celebrate you like you need",score:"94%"},{icon:"🧲",name:"The Social Glue",desc:"They actually notice you — always",score:"89%"},{icon:"😇",name:"The People Pleaser",desc:"Mutual care, mutual warmth",score:"82%"}]},
+      { name:"The Stonewaller",       icon:"🧊", tagline:"Fine. I'm fine. Everything's fine.",
+        traits:[{label:"Expression",value:"Closed",pct:11},{label:"Processing",value:"Internal",pct:97},{label:"Walls",value:"High",pct:91},{label:"Loyalty",value:"Deep",pct:89}],
+        profile:"You shut down because you learned somewhere that expressing things didn't go well. So now you hold everything, and people mistake your silence for indifference — when it's the opposite. You feel everything. You just don't let it out. The people worth keeping are patient enough to wait.",
+        matches:[{icon:"😇",name:"The People Pleaser",desc:"Patient, warm, won't push you",score:"90%"},{icon:"🌀",name:"The Overthinker",desc:"Both understand internal processing",score:"86%"},{icon:"👁️",name:"The Quiet Observer",desc:"No pressure. Just presence.",score:"81%"}]}
+    ],
+    questions:[
+      {id:"q1",text:"Your friend says something that bothers you. You:",choices:["Replay it 47 times before deciding what it meant 🌀","Laugh it off and tell them it's totally fine 😇","Go a little quieter. Less available. 👻","Make a joke about it. That counts as handling it. 🎭","Address it directly and be very clear about where you stand 👑"],reactions:["Your brain will find 12 meanings before it settles on one.","You absorbed it. The 'fine' wasn't fine.","You won't say it — you'll just be slightly less there.","The joke landed. The feeling didn't go anywhere.","You handle things before they handle you."]},
+      {id:"q2",text:"You're asked to do something you really don't want to. You:",choices:["Overthink whether saying no will ruin everything 🌀","Say yes immediately to avoid the awkward 😇","Agree out loud, internally plan to disappear later 🎭","Drop a hint so someone notices how you feel 🪞","Say you're busy and not explain further 🧊"],reactions:["You've already run 14 versions of this conversation.","The yes came out before you even decided.","You committed with your mouth. Your calendar has other plans.","You're not asking. You're testing whether they'll notice.","Two words. No elaboration. The full message."]},
+      {id:"q3",text:"Things aren't going how you wanted. You:",choices:["Get stuck in 'what if I'd done this differently' for days 🌀","Pull back and become slightly less available without explaining 👻","Quietly restructure things so they go your way 👑","Post something that hints at how you're feeling 🪞","Go completely silent on the topic 🧊"],reactions:["The loop starts and doesn't have an obvious exit.","You don't say you're pulling away. You just do.","You don't complain. You recalibrate. Efficiently.","The post wasn't random. It was a signal.","The topic is closed. You closed it."]},
+      {id:"q4",text:"Someone doesn't text back for a while. You:",choices:["Already written five versions of the follow-up 🌀","Assume it's something you did and mentally apologize 😇","Decide you don't care and accidentally go quiet yourself 👻","Send a meme. Casual. Definitely not tracking this. 🎭","Check when they were last active 👑"],reactions:["You've drafted replies you haven't sent. Multiple.","It probably wasn't you. But you've accepted responsibility.","You match their energy — usually with extra distance.","The meme says 'I noticed.' Neither of you is chill.","You're gathering data. It's fine. It's definitely fine."]},
+      {id:"q5",text:"Honestly, what's your biggest pattern?",choices:["Saying yes until you quietly resent the person who asked 😇","Disappearing when things get complicated instead of saying why 👻","Turning everything into a bit when things get too real 🎭","Needing someone to notice before you feel okay 🪞","Shutting down completely when overwhelmed 🧊"],reactions:["You said yes to everything and called it kindness. It wasn't always.","You vanish and call it needing space. Sometimes it's both.","The joke is a door. You open it to avoid the other one.","You're not asking for attention. You're asking to be seen.","The walls go up faster than you realize."]},
+      {id:"q6",text:"When something's actually wrong, you:",choices:["Slowly fade out and hope it resolves itself 👻","Make it a joke and hope nobody follows up 🎭","Handle it yourself — involving others feels like losing control 👑","Drop a hint and wait to see who notices 🪞","Say 'I'm fine' in a tone that makes it clear you're not 🧊"],reactions:["You go quiet and hope the thing goes away. It usually doesn't.","You joked past the feeling. It'll be back.","Asking for help feels like failing. That belief is the problem.","The hint was there. You needed someone to find it.","'Fine.' — the word that does the most work in your vocabulary."]}
+    ],
+    weights:{q1:[0,1,2,3,4],q2:[0,1,3,5,6],q3:[0,2,4,5,6],q4:[0,1,2,3,4],q5:[1,2,3,5,6],q6:[2,3,4,5,6]}
+  },
+
+  mainchar: {
+    label: "Main Character Mode",
+    systemContext: "personal narrative, identity, and story arc for users aged 16–25",
+    archetypes: [
+      { name:"The Coming-of-Age",  icon:"🌅", tagline:"Still becoming. That's the whole point.",
+        traits:[{label:"Growth",value:"Constant",pct:94},{label:"Self-awareness",value:"Building",pct:81},{label:"Change",value:"Embraced",pct:88},{label:"Becoming",value:"In progress",pct:97}],
+        profile:"You're in a chapter that feels uncertain because it is — and that's not a problem, that's the point. You're collecting experiences, making mistakes that teach you things, and slowly becoming someone you couldn't have been three years ago. That arc is real, even when it doesn't feel like it.",
+        matches:[{icon:"🌙",name:"The Slow Burn",desc:"Patient with your process — you need that",score:"93%"},{icon:"🔥",name:"The Redemption Arc",desc:"They show you what's possible after",score:"89%"},{icon:"🌊",name:"The Side Quest",desc:"Finds meaning in your uncertainty",score:"85%"}]},
+      { name:"The Redemption Arc", icon:"🔥", tagline:"You've already survived something most people couldn't",
+        traits:[{label:"Resilience",value:"Forged",pct:98},{label:"Growth",value:"Hard-earned",pct:94},{label:"Self-knowledge",value:"Deep",pct:91},{label:"Past",value:"Integrated",pct:83}],
+        profile:"You didn't have an easy path to where you are. Because of that, you know things people who haven't been through it don't. You're not defined by what happened — you're defined by what you chose to do after. That's not a small thing.",
+        matches:[{icon:"🌅",name:"The Coming-of-Age",desc:"You show them what's possible after the fire",score:"91%"},{icon:"🖤",name:"The Anti-Hero",desc:"You both understand the complicated road",score:"88%"},{icon:"🌙",name:"The Slow Burn",desc:"Both understand patience as survival",score:"84%"}]},
+      { name:"The Plot Twist",     icon:"⚡", tagline:"Nobody knew what to expect. Still don't.",
+        traits:[{label:"Predictability",value:"Low",pct:8},{label:"Adaptability",value:"High",pct:96},{label:"Range",value:"Full",pct:91},{label:"Surprise",value:"Constant",pct:89}],
+        profile:"You contain multitudes and you've stopped apologizing for it. Just when people think they have you figured out, you do something that resets everything. That's not inconsistency — that's range. The people who love you have learned to expect the unexpected and enjoy it.",
+        matches:[{icon:"🌙",name:"The Slow Burn",desc:"They took time to actually get you",score:"92%"},{icon:"💫",name:"The Chosen One",desc:"Your chaos meets their purpose — explosive",score:"87%"},{icon:"🖤",name:"The Anti-Hero",desc:"Mutual refusal to be predictable",score:"83%"}]},
+      { name:"The Chosen One",     icon:"💫", tagline:"Feels like it's all been building to something",
+        traits:[{label:"Purpose",value:"Strong sense",pct:94},{label:"Drive",value:"Intense",pct:91},{label:"Pressure",value:"Self-imposed",pct:87},{label:"Destiny",value:"Feels real",pct:88}],
+        profile:"You've felt it your whole life — like you're supposed to do something. That's not delusion, that's direction. The risk is the pressure you put on yourself to live up to something you haven't fully defined yet. The work is learning to act without needing certainty about the destination.",
+        matches:[{icon:"🔥",name:"The Redemption Arc",desc:"They understand what it means to have stakes",score:"90%"},{icon:"🖤",name:"The Anti-Hero",desc:"Keeps you honest when purpose gets too heavy",score:"86%"},{icon:"🌙",name:"The Slow Burn",desc:"The patience your purpose needs",score:"82%"}]},
+      { name:"The Anti-Hero",      icon:"🖤", tagline:"On your own terms. With or without approval.",
+        traits:[{label:"Independence",value:"Maximum",pct:97},{label:"Complexity",value:"High",pct:84},{label:"Approval needed",value:"None",pct:12},{label:"Self-direction",value:"Complete",pct:96}],
+        profile:"You do what makes sense to you, on your timeline, without needing it to be popular. The world is full of people performing the version of themselves they think others want. You opted out of that a while ago. The ones who respect that are your people.",
+        matches:[{icon:"⚡",name:"The Plot Twist",desc:"Mutual refusal to be predictable",score:"92%"},{icon:"🔥",name:"The Redemption Arc",desc:"You both know what it cost to get here",score:"88%"},{icon:"🌊",name:"The Side Quest",desc:"They don't need you to be anything",score:"84%"}]},
+      { name:"The Side Quest",     icon:"🌊", tagline:"Finding meaning everyone else walked past",
+        traits:[{label:"Curiosity",value:"High",pct:96},{label:"Detail",value:"Rare kind",pct:94},{label:"Main plot",value:"Optional",pct:43},{label:"Small moments",value:"Everything",pct:98}],
+        profile:"You're the one who noticed the detail, took the detour, stopped to look at the thing everyone else walked past. Your story isn't about the big moments — it's about what happened between them. When you tell it, people realize they were missing everything.",
+        matches:[{icon:"🌅",name:"The Coming-of-Age",desc:"Finds meaning in your uncertainty",score:"88%"},{icon:"🌙",name:"The Slow Burn",desc:"Both live in the quiet",score:"95%"},{icon:"👁️",name:"The Quiet Observer",desc:"Same frequency — you both see what others miss",score:"90%"}]},
+      { name:"The Slow Burn",      icon:"🌙", tagline:"Quiet now. Makes sense later.",
+        traits:[{label:"Patience",value:"Deep",pct:97},{label:"Timing",value:"Deliberate",pct:88},{label:"Visibility",value:"Low",pct:34},{label:"Depth",value:"Maximum",pct:99}],
+        profile:"You don't rush. Not because you're slow — because you're deliberate. You take time where other people take shortcuts, and what you build because of that lasts. The people who stuck around long enough to see you fully open up know they got something most people didn't.",
+        matches:[{icon:"🌅",name:"The Coming-of-Age",desc:"You give them the patience they need",score:"94%"},{icon:"🔥",name:"The Redemption Arc",desc:"Both understand what the long road costs",score:"89%"},{icon:"🌊",name:"The Side Quest",desc:"Both live in the quiet between moments",score:"95%"}]}
+    ],
+    questions:[
+      {id:"q1",text:"How do you feel about where you are in life right now?",choices:["Still figuring it out — but something's building 🌅","A long way from where you were. That's earned. 🔥","Something's about to change. You can feel it. ⚡","Like you're right where you're supposed to be 💫","Good. On your own terms. 🖤"],reactions:["The uncertainty isn't the problem. It's part of it.","You've put distance between yourself and who you were.","You feel the shift before it shows. That's awareness.","You don't need to figure it out — you already feel it.","You're not asking for anyone's opinion on your path."]},
+      {id:"q2",text:"What's your relationship with your past self?",choices:["They were doing the best they could. You're proof. 🌅","You're a completely different person now. 🔥","You've always known something others didn't 💫","They noticed things other people walked right past 🌊","They were patient in ways you didn't appreciate at the time 🌙"],reactions:["You look back with compassion instead of cringe. That took work.","There's a before and after. You know exactly where it is.","You always knew. You just didn't have language for it yet.","They were paying attention. You still are.","They were building something slow. You're living it now."]},
+      {id:"q3",text:"Pick your role in someone else's story:",choices:["The one who had already been through it 🔥","The one who shows up and changes everything ⚡","The complicated one everyone misjudged 🖤","The detail they think about differently later 🌊","The one they didn't realize they needed until much later 🌙"],reactions:["You've been the mentor in someone else's chapter.","You're the variable. Things shift when you enter.","Most people didn't get you. The ones who did really did.","You leave something behind in every room.","Slow reveal. When they finally got it, they got it completely."]},
+      {id:"q4",text:"What's your actual narrative style?",choices:["Still writing it. That's the point. 🌅","Full of things nobody predicted ⚡","Feels like there's a reason behind all of it 💫","Complicated. Morally grey. Done on your own terms. 🖤","More beautiful the slower you take it 🌙"],reactions:["You're mid-chapter and you know it. That's exactly right.","Nobody's had an accurate prediction of you.","You feel the through-line even when you can't name it.","You don't fit the expected arc and you're not trying to.","You're not in a rush to reach the ending. The middle is good."]},
+      {id:"q5",text:"The most accurate thing someone could say about you:",choices:["'You're still becoming something' 🌅","'You've already survived something most people couldn't' 🔥","'Nobody really knew what to expect from you' ⚡","'You find meaning in things other people miss' 🌊","'You never rushed anything — and it showed' 🌙"],reactions:["Still becoming — and the becoming is the whole story.","You've been through something. It shows in the best way.","You've kept people guessing and you'll keep going.","You see the thing in the corner everyone else walks past.","The pace was deliberate. The result was worth it."]},
+      {id:"q6",text:"How does your story tend to unfold?",choices:["Through moments where you chose differently than before 🔥","Like it's being pulled somewhere with a plan 💫","On your schedule. With or without an audience. 🖤","In small moments that turn out to be the whole thing 🌊","Slow. Quiet. Then suddenly everything makes sense. 🌙"],reactions:["The choices compound. You're starting to see that.","You feel the direction even when you can't see the destination.","The timeline is yours. It always was.","The big moments aren't the story. You figured that out early.","The slow unfolding is the point."]}
+    ],
+    weights:{q1:[0,1,2,3,4],q2:[0,1,3,5,6],q3:[1,2,4,5,6],q4:[0,2,3,4,6],q5:[0,1,2,5,6],q6:[1,3,4,5,6]}
   }
-];
-
-const QUESTIONS = [
-  {
-    id: "q1",
-    text: "When do you actually go to sleep?",
-    choices: [
-      "When my brain finally stops replaying today 🌑",
-      "When everyone I was talking to finally goes offline 💬",
-      "Sleep schedule? What's that ⚡",
-      "Same time every night, roughly 🪨",
-      "Somewhere between 'I'm going to sleep early' and 3am 🌀"
-    ],
-    reactions: [
-      "Your brain doesn't clock out easy. A lot going on in there.",
-      "You stay up to make sure everyone's okay. That's your whole thing.",
-      "Sleep is a suggestion and you're ignoring it. Classic.",
-      "You've got a rhythm. Most people just pretend they do.",
-      "The plan was 10pm. Reality had other ideas."
-    ]
-  },
-  {
-    id: "q2",
-    text: "Your phone dies at a party. You:",
-    choices: [
-      "Find a corner and enjoy being unreachable for once 👁️",
-      "Immediately borrow a charger — you're coordinating three things 🧲",
-      "See it as an invitation to do something wilder ⚡",
-      "It's fine. You were barely checking it anyway 🪨",
-      "Spend the next hour wondering if anyone noticed 🌊"
-    ],
-    reactions: [
-      "You needed that more than you want to admit.",
-      "You were already running the logistics before anyone asked.",
-      "You're not chaotic. You're just on a different frequency.",
-      "You were never that attached to it. That's actually rare.",
-      "You're always tracking something. Most people don't even see it."
-    ]
-  },
-  {
-    id: "q3",
-    text: "What does your camera roll say about you?",
-    choices: [
-      "Mostly screenshots and notes to yourself 👁️",
-      "Group photos from every event, tagged and organized 🧲",
-      "400 blurry videos from last weekend ⚡",
-      "Barely anything. The moment was enough. 🪨",
-      "A weirdly artistic collection nobody asked for 🌊"
-    ],
-    reactions: [
-      "You're collecting evidence of your own thoughts. That's not nothing.",
-      "You're the archivist. Everyone's glad you were there.",
-      "Not disorganized — *a vibe*. There's a difference.",
-      "No documentation needed. That's actually kind of free.",
-      "You see things differently. Your camera roll proves it."
-    ]
-  },
-  {
-    id: "q4",
-    text: "Your friend group is picking a place to eat. You:",
-    choices: [
-      "Already know what you want but wait to see what everyone says 👁️",
-      "Somehow end up making the decision for everyone 🧲",
-      "Suggest the place nobody thought of — and it works ⚡",
-      "Go with whatever. You're here for the people, not the food 🪨",
-      "Change your mind three times before you even get there 🌊"
-    ],
-    reactions: [
-      "You already know. You're just being diplomatic about it.",
-      "They all act like they don't want to decide. You just step in.",
-      "You suggested the thing nobody thought of and somehow it worked.",
-      "Location was never the point for you anyway.",
-      "Commitment is hard when your feelings keep updating."
-    ]
-  },
-  {
-    id: "q5",
-    text: "Someone's venting to you. Your first instinct:",
-    choices: [
-      "Listen. Actually listen. Without planning what to say. 👁️",
-      "Ask questions — you genuinely want to understand everything 🧲",
-      "Make them laugh first. Real talk can come after. ⚡",
-      "'I got you.' And you mean it exactly. 🪨",
-      "Relate immediately — you've felt that exact thing 🌊"
-    ],
-    reactions: [
-      "You don't fill silence. That makes it safe to talk.",
-      "You ask because you genuinely want the full picture.",
-      "Laughter is your first language. The real stuff comes right after.",
-      "Two words and they already feel less alone. That's power.",
-      "You don't just hear it — you absorb it."
-    ]
-  },
-  {
-    id: "q6",
-    text: "Pick what your friends would roast you for:",
-    choices: [
-      "Disappearing for days then acting like nothing happened 👁️",
-      "Knowing everyone's business before they even tell you 🧲",
-      "Starting ten things and finishing zero ⚡",
-      "Never complaining. Ever. It's actually concerning. 🪨",
-      "Texting 'on my way' from your bed 🌊"
-    ],
-    reactions: [
-      "Recharging looks like disappearing. People learn not to worry.",
-      "You know before people know. That's not gossip — that's radar.",
-      "10 tabs open, 0 closed. You'll get there eventually.",
-      "Your tolerance for discomfort is actually kind of wild.",
-      "You meant to leave 20 minutes ago. It's fine."
-    ]
-  }
-];
-
-// ─────────────────────────────────────────
-//  PERSONALITY ARCHETYPES
-//  Social-focused names and profiles (K/C/D: CHANGE categories).
-//  Profiles written to feel specific, not generic (V2 vision).
-// ─────────────────────────────────────────
-const ARCHETYPES = [
-  {
-    name: "The Quiet Observer",
-    icon: "👁️",
-    tagline: "You read the room before you enter it",
-    traits: [
-      { label: "Social Style", value: "Selective",          pct: 28 },
-      { label: "Energy",       value: "Steady & still",     pct: 42 },
-      { label: "Reads People", value: "Deeply",             pct: 94 },
-      { label: "Depth",        value: "Quality over qty",   pct: 97 }
-    ],
-    profile: "You don't need to be the loudest person in the room — you're the one who actually knows what's going on in it. You take longer to open up, but when you do, it's real. You'd rather have two people who genuinely get you than twenty who kind of do.",
-    matches: [
-      { icon: "🧲", name: "The Social Glue",   desc: "They draw you out naturally, without pressure", score: "95%" },
-      { icon: "🌊", name: "The Vibe Shifter",  desc: "Deep conversations for hours — you unlock each other", score: "91%" },
-      { icon: "🪨", name: "The Loyal Rock",    desc: "Both value real over surface-level", score: "88%" }
-    ]
-  },
-  {
-    name: "The Social Glue",
-    icon: "🧲",
-    tagline: "The one people call when it actually matters",
-    traits: [
-      { label: "Social Style", value: "Connector",      pct: 91 },
-      { label: "Energy",       value: "Warm & present", pct: 88 },
-      { label: "Reads People", value: "Intuitively",    pct: 83 },
-      { label: "Depth",        value: "Deep and wide",  pct: 86 }
-    ],
-    profile: "You're the reason the group is still a group. You notice when someone's off before they've said a word, and you show up in ways people don't forget. The hard part? You give a lot — make sure you're actually getting it back.",
-    matches: [
-      { icon: "👁️", name: "The Quiet Observer", desc: "They actually listen — rare and real", score: "96%" },
-      { icon: "🪨", name: "The Loyal Rock",      desc: "Same energy of just showing up", score: "93%" },
-      { icon: "⚡", name: "The Chaos Friend",    desc: "They pull you into the fun you forget to have", score: "87%" }
-    ]
-  },
-  {
-    name: "The Chaos Friend",
-    icon: "⚡",
-    tagline: "Somehow always the reason it became a night",
-    traits: [
-      { label: "Social Style", value: "Spontaneous",        pct: 96 },
-      { label: "Energy",       value: "High & contagious",  pct: 94 },
-      { label: "Reads People", value: "Fast & instinctive", pct: 74 },
-      { label: "Depth",        value: "Ride or die",        pct: 87 }
-    ],
-    profile: "You live at the intersection of bad ideas and great memories. You're not trying to be unpredictable — you just genuinely can't help it. The right people find your energy magnetic. Everyone else is just not your type.",
-    matches: [
-      { icon: "🌊", name: "The Vibe Shifter",  desc: "Matches your intensity, keeps it interesting", score: "94%" },
-      { icon: "🧲", name: "The Social Glue",   desc: "Keeps you grounded without slowing you down", score: "90%" },
-      { icon: "👁️", name: "The Quiet Observer", desc: "You're exactly what pulls them out of their shell", score: "85%" }
-    ]
-  },
-  {
-    name: "The Loyal Rock",
-    icon: "🪨",
-    tagline: "Still there when everyone else bounced",
-
-    traits: [
-      { label: "Social Style", value: "Reliable",       pct: 96 },
-      { label: "Energy",       value: "Calm & steady",  pct: 38 },
-      { label: "Reads People", value: "Slowly & surely",pct: 62 },
-      { label: "Depth",        value: "Built to last",  pct: 99 }
-    ],
-    profile: "You don't do surface-level. When you're in someone's corner, you're in it. You show up quietly, consistently, and without making it a big deal — because to you, that's just what you do. People tend to realize later how rare that actually is.",
-    matches: [
-      { icon: "🧲", name: "The Social Glue",   desc: "Shared values — you just get each other", score: "95%" },
-      { icon: "👁️", name: "The Quiet Observer", desc: "Both about depth over noise", score: "92%" },
-      { icon: "⚡", name: "The Chaos Friend",   desc: "You balance each other perfectly", score: "86%" }
-    ]
-  },
-  {
-    name: "The Vibe Shifter",
-    icon: "🌊",
-    tagline: "Every friendship goes deeper with you in it",
-    traits: [
-      { label: "Social Style", value: "Expressive",      pct: 79 },
-      { label: "Energy",       value: "Fluid & intense",  pct: 76 },
-      { label: "Reads People", value: "Emotionally",      pct: 91 },
-      { label: "Depth",        value: "Intense and real", pct: 93 }
-    ],
-    profile: "You don't do small talk for long. You want to know what someone actually thinks, what keeps them up at night, what they're working through. You make people feel like they can be honest — and that's rarer than most people realize.",
-    matches: [
-      { icon: "👁️", name: "The Quiet Observer", desc: "You unlock each other — rare connection", score: "97%" },
-      { icon: "🪨", name: "The Loyal Rock",      desc: "Grounds your intensity in the best way", score: "91%" },
-      { icon: "⚡", name: "The Chaos Friend",    desc: "Sparks your energy, keeps things alive", score: "88%" }
-    ]
-  }
-];
-
-// ─────────────────────────────────────────
-//  MOCK SCORING WEIGHTS
-//  Each array maps answer index → archetype index.
-//  0=Observer, 1=SocialGlue, 2=Chaos, 3=Rock, 4=VibShifter
-//  Choices are ordered [Observer, SocialGlue, Chaos, Rock, VibShifter] per question.
-// ─────────────────────────────────────────
-const WEIGHTS = {
-  q1: [0, 1, 2, 3, 4],
-  q2: [0, 1, 2, 3, 4],
-  q3: [0, 1, 2, 3, 4],
-  q4: [0, 1, 2, 3, 4],
-  q5: [0, 1, 2, 3, 4],
-  q6: [0, 1, 2, 3, 4],
-  q7: [0, 1, 2, 3, 4],
-  q8: [0, 1, 2, 3, 4]
 };
 
-// ─────────────────────────────────────────
-//  STATE
-// ─────────────────────────────────────────
 let currentQ    = 0;
 let answers     = {};
 let activeQuestions = [];
-let userContext = { purpose: null, energy: null, time: null, social: null };
+let userContext = { mode: "friends", social: null };
 let apiErrorUsed = false;
 let userName    = "";
-let quizMode    = "quick";
+let selectedMode = "friends";
 const apiKey    = "__OPENROUTER_API_KEY__";
 
-function setMode(mode) {
-  quizMode = mode;
-  document.getElementById("mode-quick").classList.toggle("active", mode === "quick");
-  document.getElementById("mode-full").classList.toggle("active", mode === "full");
+function selectMode(mode) {
+  selectedMode = mode;
+  document.querySelectorAll(".mode-card").forEach(c => c.classList.remove("active"));
+  document.getElementById(`mode-${mode}`).classList.add("active");
 }
 
 // ─────────────────────────────────────────
@@ -1128,12 +1011,10 @@ function showScreen(id) {
 // ─────────────────────────────────────────
 function startQuiz() {
   userName = (document.getElementById("user-name")?.value || "").trim();
-  userContext = { purpose: null, energy: null, time: quizMode, social: null };
+  userContext = { mode: selectedMode, social: null };
   answers = {};
   currentQ = 0;
-  activeQuestions = quizMode === "full"
-    ? [...QUESTIONS, ...EXTRA_QUESTIONS]
-    : [...QUESTIONS];
+  activeQuestions = [...MODES[selectedMode].questions];
   localStorage.removeItem("virel_result");
   showScreen("quiz-screen");
   buildDots();
@@ -1170,11 +1051,7 @@ function renderQuestion() {
   document.getElementById("question-area").classList.remove("fade-out");
   document.getElementById("question-num").textContent = `Question ${currentQ + 1} of ${activeQuestions.length}`;
 
-  // Apply context-aware variant if one exists for this question
-  let questionText = q.text;
-  if (q.id === "q3" && userContext.purpose) questionText = Q3_VARIANTS[userContext.purpose];
-  if (q.id === "q5" && userContext.purpose) questionText = Q5_VARIANTS[userContext.purpose];
-  document.getElementById("question-text").textContent = questionText;
+  document.getElementById("question-text").textContent = q.text;
 
   const area = document.getElementById("choices-area");
   area.innerHTML = "";
@@ -1256,9 +1133,7 @@ async function analyseAnswers() {
   document.removeEventListener("keydown", handleQuizKey);
   showScreen("loading-screen");
 
-  const messages = userContext.time === "quick"
-    ? ["Reading your patterns…", "Almost there…"]
-    : ["Reading your patterns…", "Cross-referencing your answers…", "Building your profile…", "Almost there…"];
+  const messages = ["Reading your patterns…", "Cross-referencing your answers…", "Building your profile…", "Almost there…"];
   let mi = 0;
   const lt = document.getElementById("loading-text");
   const ticker = setInterval(() => { lt.textContent = messages[++mi % messages.length]; }, 1100);
@@ -1291,11 +1166,12 @@ async function callOpenRouter() {
     return `Q${i+1}: ${q.text}\nAnswer: ${chosen}`;
   }).join("\n\n");
 
-  const systemPrompt = `You are Virel — an AI that reads personality through friendship patterns.
+  const modeCtx = MODES[userContext.mode || "friends"].systemContext;
+  const systemPrompt = `You are Virel — an AI that reads personality through behavior patterns.
 
 Analyze the user's quiz answers and write a personality profile that feels uncomfortably specific, like you've been watching them for months. Use bold, direct language. Never write generic lines like "you are thoughtful and creative." Write lines like "You don't open up fast, but when you do, it sticks."
 
-The quiz is about friendships and social connection for users aged 16–25. Every answer reveals how they navigate relationships, conflict, and closeness.
+The quiz is about ${modeCtx}. Every answer reveals something real about who they are.
 
 Return ONLY valid JSON — no markdown, no text outside the JSON:
 {
@@ -1344,12 +1220,13 @@ Return ONLY valid JSON — no markdown, no text outside the JSON:
 //  Different answer combos produce different results.
 // ─────────────────────────────────────────
 function mockAnalysis() {
-  const scores = [0, 0, 0, 0, 0];
-  for (const [qid, map] of Object.entries(WEIGHTS)) {
+  const mode = MODES[userContext.mode || "friends"];
+  const scores = Array(mode.archetypes.length).fill(0);
+  for (const [qid, map] of Object.entries(mode.weights)) {
     const ans = answers[qid];
-    if (ans !== undefined) scores[map[ans]]++;
+    if (ans !== undefined) scores[map[ans]] = (scores[map[ans]] || 0) + 1;
   }
-  return ARCHETYPES[scores.indexOf(Math.max(...scores))];
+  return mode.archetypes[scores.indexOf(Math.max(...scores))];
 }
 
 // ─────────────────────────────────────────
@@ -1379,17 +1256,11 @@ function displayResults(r) {
   }
 
   // Context tags
-  const tags = [];
-  if (userContext.purpose) tags.push(PURPOSE_LABELS[userContext.purpose]);
-  if (userContext.energy)  tags.push(ENERGY_LABELS[userContext.energy]);
-  if (userContext.time === "quick") tags.push("Quick mode ⚡");
-  if (userContext.time === "full")  tags.push("Full read 🌙");
+  const modeLabel = MODES[userContext.mode || "friends"]?.label || "";
   document.getElementById("context-tags").innerHTML =
-    tags.map(t => `<div class="context-tag">${t}</div>`).join("");
+    modeLabel ? `<div class="context-tag">${modeLabel}</div>` : "";
 
-  // Prepend energy context note to profile
-  const energyNote = userContext.energy ? ENERGY_CONTEXT[userContext.energy] + " " : "";
-  document.getElementById("profile-text").textContent = energyNote + r.profile;
+  document.getElementById("profile-text").textContent = r.profile;
 
   // Compare CTA
   const compareCta = document.getElementById("compare-cta");
@@ -1509,8 +1380,8 @@ function shareResult() {
 (function() {
   const cached = loadResult();
   if (cached) {
-    userContext = cached.context;
-    userName = cached.name || "";
+    userContext = cached.context || { mode: "friends" };
+    userName    = cached.name || "";
     displayResults(cached.result);
   }
 })();
@@ -1542,16 +1413,20 @@ function shareResult() {
     audio.play().then(fadeIn).catch(() => {});
   }
 
-  window.toggleMusic = function() {
-    if (!started) { startMusic(); return; }
-    muted = !muted;
-    audio.muted = muted;
-    btn.textContent = muted ? "♪̶" : "♪";
+  function updateBtn() {
+    btn.textContent = muted ? "🔇" : "♪";
     btn.classList.toggle("muted", muted);
     btn.setAttribute("aria-label", muted ? "Unmute music" : "Mute music");
+  }
+
+  window.toggleMusic = function() {
+    if (!started) { startMusic(); muted = false; updateBtn(); return; }
+    muted = !muted;
+    audio.muted = muted;
+    updateBtn();
   };
 
-  // Start on first meaningful interaction
+  // Start on first meaningful interaction (satisfies autoplay policy)
   document.addEventListener("click", startMusic, { once: true });
   document.addEventListener("keydown", startMusic, { once: true });
 })();
