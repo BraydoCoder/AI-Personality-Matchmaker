@@ -339,27 +339,31 @@
     .choice-btn {
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(255,255,255,0.09);
+      border-left: 3px solid transparent;
       border-radius: 14px;
       padding: 13px 17px;
       color: #cbd5e1;
       font-size: 0.9rem;
       cursor: pointer;
       text-align: left;
-      transition: background 0.14s, border-color 0.14s, transform 0.1s;
+      transition: background 0.14s, border-color 0.14s, transform 0.1s, color 0.14s;
       line-height: 1.4;
     }
 
-    .choice-btn:hover {
-      background: rgba(124,58,237,0.16);
-      border-color: rgba(124,58,237,0.45);
-      transform: translateX(3px);
-    }
+    .choice-btn:nth-child(1) { border-left-color: rgba(167,139,250,0.35); }
+    .choice-btn:nth-child(2) { border-left-color: rgba(96,165,250,0.35);  }
+    .choice-btn:nth-child(3) { border-left-color: rgba(244,114,182,0.35); }
+    .choice-btn:nth-child(4) { border-left-color: rgba(52,211,153,0.35);  }
+    .choice-btn:nth-child(5) { border-left-color: rgba(251,146,60,0.35);  }
 
-    .choice-btn.selected {
-      background: rgba(124,58,237,0.26);
-      border-color: #a78bfa;
-      color: #f1f5f9;
-    }
+    .choice-btn:nth-child(1):hover, .choice-btn:nth-child(1).selected { background: rgba(167,139,250,0.12); border-left-color: #a78bfa; }
+    .choice-btn:nth-child(2):hover, .choice-btn:nth-child(2).selected { background: rgba(96,165,250,0.12);  border-left-color: #60a5fa; }
+    .choice-btn:nth-child(3):hover, .choice-btn:nth-child(3).selected { background: rgba(244,114,182,0.12); border-left-color: #f472b6; }
+    .choice-btn:nth-child(4):hover, .choice-btn:nth-child(4).selected { background: rgba(52,211,153,0.12);  border-left-color: #34d399; }
+    .choice-btn:nth-child(5):hover, .choice-btn:nth-child(5).selected { background: rgba(251,146,60,0.12);  border-left-color: #fb923c; }
+
+    .choice-btn:hover    { transform: translateX(3px); color: #f1f5f9; border-right-color: rgba(255,255,255,0.09); border-top-color: rgba(255,255,255,0.09); border-bottom-color: rgba(255,255,255,0.09); }
+    .choice-btn.selected { transform: translateX(3px); color: #f1f5f9; border-right-color: rgba(255,255,255,0.12); border-top-color: rgba(255,255,255,0.12); border-bottom-color: rgba(255,255,255,0.12); }
 
     /* Reaction line — the key V2 feel */
     .reaction-wrap { min-height: 32px; margin: 14px 0 2px; }
