@@ -1338,7 +1338,11 @@ function displayResults(r) {
 // ─────────────────────────────────────────
 //  UTILITIES
 // ─────────────────────────────────────────
-function restartQuiz() { startQuiz(); }
+function restartQuiz() {
+  localStorage.removeItem("virel_result");
+  document.removeEventListener("keydown", handleQuizKey);
+  showScreen("start-screen");
+}
 
 function saveResult(result) {
   try {
