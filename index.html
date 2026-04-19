@@ -372,7 +372,7 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .bg-orb, .loading-icon, #start-cta { animation: none; }
+      .bg-orb, .loading-icon, #start-cta, #music-toggle { animation: none; }
       .start-eyebrow, .virel-wordmark, .start-headline,
       .start-sub, .archetype-row, #start-cta, .start-footnote { animation: none; opacity: 1; }
       .question-area, .choice-btn, .btn, .trait-bar-fill,
@@ -624,6 +624,30 @@
       z-index: 100;
     }
     #share-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* Music toggle */
+    #music-toggle {
+      position: fixed;
+      top: 18px;
+      right: 20px;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid rgba(167,139,250,0.25);
+      background: rgba(15, 10, 30, 0.65);
+      backdrop-filter: blur(12px);
+      color: #a78bfa;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      transition: background 0.2s, border-color 0.2s;
+      line-height: 1;
+    }
+    #music-toggle:hover { background: rgba(124,58,237,0.25); border-color: rgba(167,139,250,0.5); }
+    #music-toggle.muted { color: #475569; border-color: rgba(255,255,255,0.1); }
   </style>
 </head>
 <body>
@@ -712,6 +736,10 @@
   <div id="share-toast"></div>
 
 </div>
+
+<audio id="bg-music" src="/assets/music.mp3" loop preload="auto"></audio>
+<button id="music-toggle" onclick="toggleMusic()" aria-label="Toggle music" title="Toggle music">♪</button>
+
 <script>
 // ─────────────────────────────────────────
 //  QUESTIONS
@@ -1431,6 +1459,47 @@ function shareResult() {
     userContext = cached.context;
     displayResults(cached.result);
   }
+})();
+
+// ─────────────────────────────────────────
+//  BACKGROUND MUSIC
+// ─────────────────────────────────────────
+(function() {
+  const audio  = document.getElementById("bg-music");
+  const btn    = document.getElementById("music-toggle");
+  let started  = false;
+  let muted    = false;
+
+  audio.volume = 0;
+
+  function fadeIn() {
+    let v = 0;
+    const step = () => {
+      v = Math.min(v + 0.02, 0.38);
+      audio.volume = v;
+      if (v < 0.38) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  function startMusic() {
+    if (started) return;
+    started = true;
+    audio.play().then(fadeIn).catch(() => {});
+  }
+
+  window.toggleMusic = function() {
+    if (!started) { startMusic(); return; }
+    muted = !muted;
+    audio.muted = muted;
+    btn.textContent = muted ? "♪̶" : "♪";
+    btn.classList.toggle("muted", muted);
+    btn.setAttribute("aria-label", muted ? "Unmute music" : "Mute music");
+  };
+
+  // Start on first meaningful interaction
+  document.addEventListener("click", startMusic, { once: true });
+  document.addEventListener("keydown", startMusic, { once: true });
 })();
 </script>
 </body>

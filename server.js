@@ -16,6 +16,8 @@ if (!apiKey) {
 const injectedHtml = fs.readFileSync(path.join(__dirname, "index.html"), "utf8")
   .replace("__OPENROUTER_API_KEY__", apiKey);
 
+app.use(express.static(__dirname));
+
 app.get("/", (req, res) => {
   res.setHeader("Content-Type", "text/html");
   res.send(injectedHtml);
