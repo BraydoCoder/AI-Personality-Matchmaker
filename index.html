@@ -247,6 +247,29 @@
     .mode-card-name { font-size: 0.82rem; font-weight: 700; color: #e2e8f0; margin-bottom: 3px; }
     .mode-card-desc { font-size: 0.72rem; color: #64748b; line-height: 1.38; }
 
+    .length-selector {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin: 0 0 20px;
+    }
+    .length-pill {
+      flex: 1;
+      padding: 9px 12px;
+      border-radius: 50px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      color: #94a3b8;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.18s, border-color 0.18s, color 0.18s;
+      font-family: inherit;
+      text-align: center;
+    }
+    .length-pill:hover:not(.active) { background: rgba(255,255,255,0.07); color: #e2e8f0; border-color: rgba(255,255,255,0.18); }
+    .length-pill.active { background: rgba(124,58,237,0.18); color: #a78bfa; border-color: rgba(124,58,237,0.4); font-weight: 600; }
+
     .btn {
       display: inline-block;
       padding: 14px 32px;
@@ -733,8 +756,13 @@
       Find out who you <em>actually</em> are.
     </h1>
     <p class="start-sub">
-      Pick a lens. Six questions. Virel reads your patterns and tells you things about yourself most people don't say out loud.
+      Pick a lens. <span id="start-q-count">Six questions.</span> Virel reads your patterns and tells you things about yourself most people don't say out loud.
     </p>
+    <div class="length-selector" role="group" aria-label="Quiz length">
+      <button class="length-pill" onclick="selectLength(3)">Short · 3 Qs</button>
+      <button class="length-pill active" onclick="selectLength(6)">Standard · 6 Qs</button>
+      <button class="length-pill" onclick="selectLength(9)">Deep · 9 Qs</button>
+    </div>
     <div class="mode-grid" role="group" aria-label="Quiz mode">
       <button class="mode-card active" id="mode-friends" onclick="selectMode('friends')">
         <div class="mode-card-icon">🧲</div>
@@ -869,9 +897,12 @@ const MODES = {
       {id:"q3",text:"What does your camera roll say about you?",choices:["Mostly screenshots and notes to yourself","Barely anything — the moment was enough","A weirdly artistic collection nobody asked for","Group pics where you're always hyping someone","Saved conversations and things that made you think"],reactions:["You're collecting evidence of your own thoughts. That's not nothing.","No documentation needed. That's actually kind of free.","You see things differently. Your camera roll proves it.","Always in the background, making it better.","You keep the things that matter. Most people don't."]},
       {id:"q4",text:"Your friend group is picking a place to eat. You:",choices:["Somehow end up making the decision for everyone","Suggest the wildcard place nobody thought of","Go with whatever — you're here for the people","Already know what you want but read the room first","Ask what everyone actually feels like — you want them happy"],reactions:["They all act like they don't want to decide. You just step in.","You suggested the thing nobody thought of and it worked.","Location was never the point for you anyway.","You read the group before you read the menu.","You want everyone comfortable before you're comfortable. That's you."]},
       {id:"q5",text:"Someone's venting to you. First instinct:",choices:["Listen without planning what to say next","Make them laugh. Real talk comes after.","Relate — you've felt that exact thing","Immediately remind them why they're not alone","Pull up a chair. This is exactly what you're here for."],reactions:["You don't fill silence. That makes it safe to talk.","Laughter is your first language. The real stuff comes right after.","You don't just hear it — you absorb it.","You're in their corner before they finish the sentence.","You were made for this conversation."]},
-      {id:"q6",text:"Pick what your friends would roast you for:",choices:["Disappearing for days then acting like nothing happened","Knowing everyone's business before they tell you","Starting ten things and finishing zero","Hyping everyone up even when you're running on empty","Turning every hangout into an accidental therapy session"],reactions:["Recharging looks like disappearing. People learn not to worry.","You know before people know. That's not gossip — that's radar.","10 tabs open, 0 closed. You'll get there.","Your cheerleading never stops. Even when it probably should.","You meant to keep it casual. Then suddenly it's 2am and everyone's crying."]}
+      {id:"q6",text:"Pick what your friends would roast you for:",choices:["Disappearing for days then acting like nothing happened","Knowing everyone's business before they tell you","Starting ten things and finishing zero","Hyping everyone up even when you're running on empty","Turning every hangout into an accidental therapy session"],reactions:["Recharging looks like disappearing. People learn not to worry.","You know before people know. That's not gossip — that's radar.","10 tabs open, 0 closed. You'll get there.","Your cheerleading never stops. Even when it probably should.","You meant to keep it casual. Then suddenly it's 2am and everyone's crying."]},
+      {id:"q7",text:"Pick the one that's weirdly accurate:",choices:["You notice more than you ever let on","You remember everyone's important dates without being asked","You get bored when nothing's happening and make something happen","You've stayed in situations longer than you should because you said you would","You feel things before you understand them"],reactions:["You're reading everything. You just don't show it.","The dates, the details, the things they mentioned once. All filed.","If nothing's happening, that's not a condition you accept.","Your word means something. Even when it costs you.","The feeling arrives first. The understanding follows."]},
+      {id:"q8",text:"When you're in a bad mood, you:",choices:["Go very quiet and hope nobody asks","Keep showing up for people even though you're struggling","Laugh it off and deal with it alone later","Find someone to hype up — it genuinely helps","Need to talk about it, with exactly the right person"],reactions:["The quiet says everything. Most people miss it.","You show up even when you shouldn't have to. That's not nothing.","The performance is convincing. Too convincing.","You redirect the energy outward. It actually works.","One right conversation is worth more than ten okay ones."]},
+      {id:"q9",text:"What would a close friend say you're actually like?",choices:["Deeper than most people realize","The one who holds everything together without making it obvious","Unpredictable in the best possible way","Someone who doesn't need much but gives everything","The one who makes conversations go somewhere real"],reactions:["There's more going on than the surface suggests. Always.","You hold it together and never take credit. That's the whole thing.","People think they have you figured out. They don't.","Low maintenance, high loyalty. That's a rare combination.","You don't do surface level. People leave your conversations changed."]}
     ],
-    weights:{q1:[0,1,2,3,4],q2:[0,1,2,5,6],q3:[0,3,4,5,6],q4:[1,2,3,4,6],q5:[0,2,4,5,6],q6:[0,1,2,5,6]}
+    weights:{q1:[0,1,2,3,4],q2:[0,1,2,5,6],q3:[0,3,4,5,6],q4:[1,2,3,4,6],q5:[0,2,4,5,6],q6:[0,1,2,5,6],q7:[0,1,2,3,4],q8:[0,3,2,5,6],q9:[0,1,2,3,4]}
   },
 
   teams: {
@@ -913,9 +944,12 @@ const MODES = {
       {id:"q3",text:"What do people actually come to you for?",choices:["Getting things across the finish line","The left-field idea nobody saw coming","Keeping the group sane when things get stressful","Seeing what's possible beyond what currently exists","Catching the thing everyone else missed"],reactions:["You're the one who actually makes it happen. Irreplaceable.","You see what isn't there yet. Most people can't do that.","You're the calm in the chaos. Every team needs one.","People bring you the problem. You return a better one.","You're the quality check nobody asked for but everyone needs."]},
       {id:"q4",text:"Halfway through, things go sideways. You:",choices:["Quickly assess what changed and adjust the plan","Stay in execution mode — complaining can wait","Make sure the team doesn't spiral — morale matters","Find the opportunity hidden in the problem","Figure out exactly what went wrong before doing anything"],reactions:["You adapt the map before anyone realizes the terrain changed.","You're not panicking. You're building.","A broken team can't fix a broken project. You know that.","You don't see a setback — you see a redirect.","You need to understand the failure before you fix it. Correct."]},
       {id:"q5",text:"How do you prefer to contribute?",choices:["Structuring the thinking so everyone knows what to do","Making sure everyone feels heard and included","Bringing the angle that makes it interesting","Painting the bigger picture — why any of this matters","Making sure the details actually hold up"],reactions:["You build the rails. Everyone else drives the train.","You're the reason people don't quit. That's not small.","You're the variable that makes it worth showing up for.","You make people care. Harder than any technical skill.","Last line of defence between a good idea and a public failure."]},
-      {id:"q6",text:"Deadline's tomorrow. Things aren't done. You:",choices:["Drop everything and execute — talk later","Rally the team so nobody feels alone in it","Be the calm one — panic doesn't help","Find the fast creative solution nobody's thought of","Triage what needs to be done vs what can be cut"],reactions:["Head down, output up. Debrief when it's shipped.","The work can't get done if the people are falling apart.","Your calmness is contagious. Superpower right now.","Crisis mode is when you're most alive. Entirely useful.","You cut ruthlessly and correctly. That's leadership."]}
+      {id:"q6",text:"Deadline's tomorrow. Things aren't done. You:",choices:["Drop everything and execute — talk later","Rally the team so nobody feels alone in it","Be the calm one — panic doesn't help","Find the fast creative solution nobody's thought of","Triage what needs to be done vs what can be cut"],reactions:["Head down, output up. Debrief when it's shipped.","The work can't get done if the people are falling apart.","Your calmness is contagious. Superpower right now.","Crisis mode is when you're most alive. Entirely useful.","You cut ruthlessly and correctly. That's leadership."]},
+      {id:"q7",text:"When the project ends, what matters most?",choices:["It went exactly according to plan","Something actually shipped — ideas don't count","The team came out of it intact","Something unexpected and better emerged","It opened a bigger door than the one you went in"],reactions:["You need the plan to hold. That's not rigidity — that's care.","Execution is the only vote that counts.","You'd rather a close-knit team than a polished result.","The best outcomes are the ones nobody predicted.","You're building toward something past this project."]},
+      {id:"q8",text:"In a room of strangers working on something, you naturally become:",choices:["The one mapping out what everyone should do","The one making sure everyone feels included","The one with the unexpected angle nobody planned for","The steady, reliable constant when things shift","The one getting people excited about what it could become"],reactions:["You see the structure before anyone asks for it.","You create the conditions for people to actually work together.","You change the direction of rooms. Quietly, then obviously.","You don't shift — that's the superpower.","Your vision makes the work worth doing."]},
+      {id:"q9",text:"Where do you genuinely add the most?",choices:["Getting things moving when everyone's stuck","Making sure people feel connected to each other and the work","Bringing angles and energy nobody expected","Being the constant that doesn't change when everything else does","Catching the assumption everyone missed"],reactions:["Motion over deliberation. You make that call and live by it.","Teams don't function without someone doing what you do.","The best ideas often come from the person least expected.","Stability is underrated. You are the proof.","You find the gap before it becomes the problem."]}
     ],
-    weights:{q1:[0,1,2,3,4],q2:[0,2,4,5,6],q3:[1,3,4,5,6],q4:[0,1,2,3,6],q5:[0,2,3,5,6],q6:[1,2,4,5,6]}
+    weights:{q1:[0,1,2,3,4],q2:[0,2,4,5,6],q3:[1,3,4,5,6],q4:[0,1,2,3,6],q5:[0,2,3,5,6],q6:[1,2,4,5,6],q7:[0,1,2,3,5],q8:[0,2,3,4,5],q9:[1,2,3,4,6]}
   },
 
   darkside: {
@@ -957,9 +991,12 @@ const MODES = {
       {id:"q3",text:"Things aren't going how you wanted. You:",choices:["Get stuck in'what if I'd done this differently' for days","Pull back and become slightly less available without explaining","Quietly restructure things so they go your way","Post something that hints at how you're feeling","Go completely silent on the topic"],reactions:["The loop starts and doesn't have an obvious exit.","You don't say you're pulling away. You just do.","You don't complain. You recalibrate. Efficiently.","The post wasn't random. It was a signal.","The topic is closed. You closed it."]},
       {id:"q4",text:"Someone doesn't text back for a while. You:",choices:["Already written five versions of the follow-up","Assume it's something you did and mentally apologize","Decide you don't care and accidentally go quiet yourself","Send a meme. Casual. Definitely not tracking this.","Check when they were last active"],reactions:["You've drafted replies you haven't sent. Multiple.","It probably wasn't you. But you've accepted responsibility.","You match their energy — usually with extra distance.","The meme says 'I noticed.' Neither of you is chill.","You're gathering data. It's fine. It's definitely fine."]},
       {id:"q5",text:"Honestly, what's your biggest pattern?",choices:["Saying yes until you quietly resent the person who asked","Disappearing when things get complicated instead of saying why","Turning everything into a bit when things get too real","Needing someone to notice before you feel okay","Shutting down completely when overwhelmed"],reactions:["You said yes to everything and called it kindness. It wasn't always.","You vanish and call it needing space. Sometimes it's both.","The joke is a door. You open it to avoid the other one.","You're not asking for attention. You're asking to be seen.","The walls go up faster than you realize."]},
-      {id:"q6",text:"When something's actually wrong, you:",choices:["Slowly fade out and hope it resolves itself","Make it a joke and hope nobody follows up","Handle it yourself — involving others feels like losing control","Drop a hint and wait to see who notices","Say'I'm fine' in a tone that makes it clear you're not"],reactions:["You go quiet and hope the thing goes away. It usually doesn't.","You joked past the feeling. It'll be back.","Asking for help feels like failing. That belief is the problem.","The hint was there. You needed someone to find it.","'Fine.' — the word that does the most work in your vocabulary."]}
+      {id:"q6",text:"When something's actually wrong, you:",choices:["Slowly fade out and hope it resolves itself","Make it a joke and hope nobody follows up","Handle it yourself — involving others feels like losing control","Drop a hint and wait to see who notices","Say'I'm fine' in a tone that makes it clear you're not"],reactions:["You go quiet and hope the thing goes away. It usually doesn't.","You joked past the feeling. It'll be back.","Asking for help feels like failing. That belief is the problem.","The hint was there. You needed someone to find it.","'Fine.' — the word that does the most work in your vocabulary."]},
+      {id:"q7",text:"When someone criticizes your work, you:",choices:["Replay it for days and find twelve things it might have meant","Apologize immediately, even if they were off base","Process it alone. Go quiet for a bit.","Make a self-deprecating joke before they can elaborate","Need at least two people to say it was good before you can move on"],reactions:["Your brain finds every possible reading before it settles on one.","The apology came out before you even decided if they were right.","You process in private. That's not weakness — it's just how you work.","The joke landed. The feedback didn't go anywhere.","You're okay. You just need someone to confirm it."]},
+      {id:"q8",text:"What would people say you actually struggle with?",choices:["Turning your brain off","Sticking around when things get complicated","Trusting other people to handle things without you","Being okay without external reassurance","Letting people actually know you"],reactions:["The loop doesn't have a clear off switch. You already know.","When things get hard, you get invisible. Same outcome.","You've taken over more times than you needed to.","The reassurance helps for a moment. Then you need more.","You show up fully. Just not all the way."]},
+      {id:"q9",text:"What do you wish people actually understood about you?",choices:["Saying yes doesn't mean I was okay with it","Going quiet isn't the same as not caring","The joke is real — but so is what's underneath it","I just need someone to actually see it","I feel a lot more than I show. A lot more."],reactions:["You agreed. Your actual opinion had nowhere to go.","The silence is full. Most people read it as empty.","There's real depth behind the bit. Most people don't stay long enough.","You're not asking for attention. You're asking to be witnessed.","The full version of you is in there. It just doesn't come out easy."]}
     ],
-    weights:{q1:[0,1,2,3,4],q2:[0,1,3,5,6],q3:[0,2,4,5,6],q4:[0,1,2,3,4],q5:[1,2,3,5,6],q6:[2,3,4,5,6]}
+    weights:{q1:[0,1,2,3,4],q2:[0,1,3,5,6],q3:[0,2,4,5,6],q4:[0,1,2,3,4],q5:[1,2,3,5,6],q6:[2,3,4,5,6],q7:[0,1,2,3,5],q8:[0,2,4,5,6],q9:[1,2,3,5,6]}
   },
 
   mainchar: {
@@ -1001,9 +1038,12 @@ const MODES = {
       {id:"q3",text:"Pick your role in someone else's story:",choices:["The one who had already been through it","The one who shows up and changes everything","The complicated one everyone misjudged","The detail they think about differently later","The one they didn't realize they needed until much later"],reactions:["You've been the mentor in someone else's chapter.","You're the variable. Things shift when you enter.","Most people didn't get you. The ones who did really did.","You leave something behind in every room.","Slow reveal. When they finally got it, they got it completely."]},
       {id:"q4",text:"What's your actual narrative style?",choices:["Still writing it. That's the point.","Full of things nobody predicted","Feels like there's a reason behind all of it","Complicated. Morally grey. Done on your own terms.","More beautiful the slower you take it"],reactions:["You're mid-chapter and you know it. That's exactly right.","Nobody's had an accurate prediction of you.","You feel the through-line even when you can't name it.","You don't fit the expected arc and you're not trying to.","You're not in a rush to reach the ending. The middle is good."]},
       {id:"q5",text:"The most accurate thing someone could say about you:",choices:["'You're still becoming something'","'You've already survived something most people couldn't'","'Nobody really knew what to expect from you'","'You find meaning in things other people miss'","'You never rushed anything — and it showed'"],reactions:["Still becoming — and the becoming is the whole story.","You've been through something. It shows in the best way.","You've kept people guessing and you'll keep going.","You see the thing in the corner everyone else walks past.","The pace was deliberate. The result was worth it."]},
-      {id:"q6",text:"How does your story tend to unfold?",choices:["Through moments where you chose differently than before","Like it's being pulled somewhere with a plan","On your schedule. With or without an audience.","In small moments that turn out to be the whole thing","Slow. Quiet. Then suddenly everything makes sense."],reactions:["The choices compound. You're starting to see that.","You feel the direction even when you can't see the destination.","The timeline is yours. It always was.","The big moments aren't the story. You figured that out early.","The slow unfolding is the point."]}
+      {id:"q6",text:"How does your story tend to unfold?",choices:["Through moments where you chose differently than before","Like it's being pulled somewhere with a plan","On your schedule. With or without an audience.","In small moments that turn out to be the whole thing","Slow. Quiet. Then suddenly everything makes sense."],reactions:["The choices compound. You're starting to see that.","You feel the direction even when you can't see the destination.","The timeline is yours. It always was.","The big moments aren't the story. You figured that out early.","The slow unfolding is the point."]},
+      {id:"q7",text:"When things fall apart, you:",choices:["Take it as part of the process — you're still becoming","Know you've survived worse. This one isn't close.","Pivot. The setback was just the setup for the next move.","Feel it hard, but also feel strangely certain you'll come out of it","Find the interesting detail buried in the wreckage"],reactions:["The uncertainty isn't the problem. It's part of the story.","You've built resilience the hard way. It shows.","You don't see a dead end — you see a redirect.","The certainty is quiet. But it's there.","Even in the fall, you're noticing things others miss."]},
+      {id:"q8",text:"The energy of your current chapter feels like:",choices:["Still becoming. Nowhere near the ending.","Everything just shifted. You're not who you used to be.","Exactly where you chose to be — nobody else's timeline.","Finding meaning in details most people walk right past.","Quiet and patient. Building toward something nobody can see yet."],reactions:["Mid-chapter and you know it. That's exactly where you're supposed to be.","There's a before and after. You crossed it.","The timeline is yours. That's not something everyone can say.","The small moments are the whole story. You already know that.","You're playing the long game. The people who wait will see it."]},
+      {id:"q9",text:"How do you feel about where your story is going?",choices:["It was harder to get here than it looks. Worth every bit of it.","You don't know what's next. That's half the point.","There's a reason behind all of it. You can feel it.","You're not following the standard arc. You never were.","You'll understand it fully when it's done. Not before."],reactions:["The road here wasn't easy. The one ahead will be worth it.","The unpredictability is the thing, not the problem.","You feel the through-line even when you can't name it.","You opted out of the expected arc a while ago. No regrets.","You're not rushing the ending. The middle is good."]}
     ],
-    weights:{q1:[0,1,2,3,4],q2:[0,1,3,5,6],q3:[1,2,4,5,6],q4:[0,2,3,4,6],q5:[0,1,2,5,6],q6:[1,3,4,5,6]}
+    weights:{q1:[0,1,2,3,4],q2:[0,1,3,5,6],q3:[1,2,4,5,6],q4:[0,2,3,4,6],q5:[0,1,2,5,6],q6:[1,3,4,5,6],q7:[0,1,2,3,5],q8:[0,2,4,5,6],q9:[1,2,3,4,6]}
   }
 };
 
@@ -1014,12 +1054,21 @@ let userContext = { mode: "friends", social: null };
 let apiErrorUsed = false;
 let userName    = "";
 let selectedMode = "friends";
+let quizLength  = 6;
 const apiKey    = "__OPENROUTER_API_KEY__";
 
 function selectMode(mode) {
   selectedMode = mode;
   document.querySelectorAll(".mode-card").forEach(c => c.classList.remove("active"));
   document.getElementById(`mode-${mode}`).classList.add("active");
+}
+
+function selectLength(n) {
+  quizLength = n;
+  document.querySelectorAll(".length-pill").forEach(p => p.classList.remove("active"));
+  event.currentTarget.classList.add("active");
+  const labels = { 3: "Three questions.", 6: "Six questions.", 9: "Nine questions." };
+  document.getElementById("start-q-count").textContent = labels[n];
 }
 
 // ─────────────────────────────────────────
@@ -1042,7 +1091,7 @@ function startQuiz() {
   userContext = { mode: selectedMode, social: null };
   answers = {};
   currentQ = 0;
-  activeQuestions = [...MODES[selectedMode].questions];
+  activeQuestions = [...MODES[selectedMode].questions].slice(0, quizLength);
   localStorage.removeItem("virel_result");
   showScreen("quiz-screen");
   buildDots();
