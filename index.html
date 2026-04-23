@@ -247,6 +247,28 @@
     .mode-card-name { font-size: 0.82rem; font-weight: 700; color: #e2e8f0; margin-bottom: 3px; }
     .mode-card-desc { font-size: 0.72rem; color: #64748b; line-height: 1.38; }
 
+    .lang-bar {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .lang-btn {
+      padding: 5px 11px;
+      border-radius: 50px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: transparent;
+      color: #64748b;
+      font-size: 0.73rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      font-family: inherit;
+    }
+    .lang-btn:hover:not(.active) { background: rgba(255,255,255,0.06); color: #94a3b8; border-color: rgba(255,255,255,0.18); }
+    .lang-btn.active { background: rgba(124,58,237,0.15); color: #a78bfa; border-color: rgba(124,58,237,0.35); }
+
     .length-selector {
       display: flex;
       gap: 8px;
@@ -750,7 +772,15 @@
 
   <!-- ══ START SCREEN ══ -->
   <div id="start-screen">
-    <div class="start-eyebrow">Personality · Self-awareness</div>
+    <div class="lang-bar">
+      <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">EN</button>
+      <button class="lang-btn" data-lang="es" onclick="setLanguage('es')">ES</button>
+      <button class="lang-btn" data-lang="fr" onclick="setLanguage('fr')">FR</button>
+      <button class="lang-btn" data-lang="pt" onclick="setLanguage('pt')">PT</button>
+      <button class="lang-btn" data-lang="de" onclick="setLanguage('de')">DE</button>
+      <button class="lang-btn" data-lang="ja" onclick="setLanguage('ja')">JA</button>
+    </div>
+    <div class="start-eyebrow" id="start-eyebrow">Personality · Self-awareness</div>
     <div class="virel-wordmark">Virel</div>
     <h1 class="start-headline">
       Find out who you <em>actually</em> are.
@@ -832,10 +862,10 @@
 
     <div class="traits-list results-reveal" id="traits-list"></div>
 
-    <div class="section-label">The Read</div>
+    <div class="section-label" id="label-read">The Read</div>
     <div class="profile-text results-reveal" id="profile-text"></div>
 
-    <div class="section-label">Who You Match With</div>
+    <div class="section-label" id="label-matches">Who You Match With</div>
     <div class="compat-list results-reveal" id="compat-list"></div>
 
     <div id="compare-cta" class="results-reveal"></div>
@@ -1047,6 +1077,96 @@ const MODES = {
   }
 };
 
+// ─────────────────────────────────────────
+//  TRANSLATIONS — UI chrome only; quiz content stays in English
+// ─────────────────────────────────────────
+const TRANSLATIONS = {
+  en: {
+    eyebrow:"Personality · Self-awareness", headline:"Find out who you <em>actually</em> are.",
+    sub:'Pick a lens. <span id="start-q-count">Six questions.</span> Virel reads your patterns and tells you things about yourself most people don\'t say out loud.',
+    namePlaceholder:"What's your name?", cta:"Find My Type →", footnote:"No signup · Under 2 minutes",
+    lengthShort:"Short · 3 Qs", lengthMid:"Standard · 6 Qs", lengthLong:"Deep · 9 Qs",
+    qCount:{3:"Three questions.",6:"Six questions.",9:"Nine questions."},
+    prevBtn:"← Back", nextBtn:"Next →", lastBtn:"See My Type",
+    loading:["Reading your patterns…","Cross-referencing your answers…","Building your profile…","Almost there…"],
+    resultEyebrow:"Your Virel type", resultDemo:"Demo mode",
+    labelRead:"The Read", labelMatches:"Who You Match With",
+    retake:"↩ Retake", share:"Share My Type",
+    modeNames:{friends:"Friend Archetypes",teams:"Roles in Teams",darkside:"Your Dark Side",mainchar:"Main Character Mode"},
+    modeDescs:{friends:"What kind of friend are you?",teams:"How do you function in groups?",darkside:"The honest, unflattering read.",mainchar:"What kind of story are you in?"}
+  },
+  es: {
+    eyebrow:"Personalidad · Autoconocimiento", headline:"Descubre quién <em>realmente</em> eres.",
+    sub:'Elige una perspectiva. <span id="start-q-count">Seis preguntas.</span> Virel lee tus patrones y te dice cosas que la mayoría no dice en voz alta.',
+    namePlaceholder:"¿Cómo te llamas?", cta:"Descubrir Mi Tipo →", footnote:"Sin registro · Menos de 2 minutos",
+    lengthShort:"Corto · 3 Ps", lengthMid:"Estándar · 6 Ps", lengthLong:"Profundo · 9 Ps",
+    qCount:{3:"Tres preguntas.",6:"Seis preguntas.",9:"Nueve preguntas."},
+    prevBtn:"← Atrás", nextBtn:"Siguiente →", lastBtn:"Ver Mi Tipo",
+    loading:["Leyendo tus patrones…","Cruzando tus respuestas…","Construyendo tu perfil…","Casi listo…"],
+    resultEyebrow:"Tu tipo Virel", resultDemo:"Modo demo",
+    labelRead:"El análisis", labelMatches:"Con quién encajas",
+    retake:"↩ Repetir", share:"Compartir Mi Tipo",
+    modeNames:{friends:"Arquetipos de Amistad",teams:"Roles en Equipos",darkside:"Tu Lado Oscuro",mainchar:"Modo Protagonista"},
+    modeDescs:{friends:"¿Qué tipo de amigo/a eres?",teams:"¿Cómo funcionas en grupos?",darkside:"La lectura honesta e incómoda.",mainchar:"¿En qué tipo de historia estás?"}
+  },
+  fr: {
+    eyebrow:"Personnalité · Connaissance de soi", headline:"Découvre qui tu es <em>vraiment</em>.",
+    sub:'Choisis une perspective. <span id="start-q-count">Six questions.</span> Virel lit tes schémas et te dit des choses que la plupart n\'osent pas dire à voix haute.',
+    namePlaceholder:"Comment tu t'appelles ?", cta:"Trouver Mon Type →", footnote:"Sans inscription · Moins de 2 minutes",
+    lengthShort:"Court · 3 Qs", lengthMid:"Standard · 6 Qs", lengthLong:"Profond · 9 Qs",
+    qCount:{3:"Trois questions.",6:"Six questions.",9:"Neuf questions."},
+    prevBtn:"← Retour", nextBtn:"Suivant →", lastBtn:"Voir Mon Type",
+    loading:["Lecture de tes schémas…","Analyse de tes réponses…","Construction de ton profil…","Presque prêt…"],
+    resultEyebrow:"Ton type Virel", resultDemo:"Mode démo",
+    labelRead:"L'analyse", labelMatches:"Avec qui tu t'entends",
+    retake:"↩ Recommencer", share:"Partager Mon Type",
+    modeNames:{friends:"Archétypes d'Amitié",teams:"Rôles en Équipe",darkside:"Ton Côté Sombre",mainchar:"Mode Personnage Principal"},
+    modeDescs:{friends:"Quel type d'ami(e) es-tu ?",teams:"Comment fonctionnes-tu en groupe ?",darkside:"La lecture honnête et inconfortable.",mainchar:"Dans quel type d'histoire es-tu ?"}
+  },
+  pt: {
+    eyebrow:"Personalidade · Autoconhecimento", headline:"Descubra quem você <em>realmente</em> é.",
+    sub:'Escolha uma perspectiva. <span id="start-q-count">Seis perguntas.</span> Virel lê seus padrões e te diz coisas que a maioria das pessoas não diz em voz alta.',
+    namePlaceholder:"Qual é o seu nome?", cta:"Descobrir Meu Tipo →", footnote:"Sem cadastro · Menos de 2 minutos",
+    lengthShort:"Curto · 3 Ps", lengthMid:"Padrão · 6 Ps", lengthLong:"Profundo · 9 Ps",
+    qCount:{3:"Três perguntas.",6:"Seis perguntas.",9:"Nove perguntas."},
+    prevBtn:"← Voltar", nextBtn:"Próximo →", lastBtn:"Ver Meu Tipo",
+    loading:["Lendo seus padrões…","Cruzando suas respostas…","Construindo seu perfil…","Quase pronto…"],
+    resultEyebrow:"Seu tipo Virel", resultDemo:"Modo demo",
+    labelRead:"A análise", labelMatches:"Com quem você combina",
+    retake:"↩ Refazer", share:"Compartilhar Meu Tipo",
+    modeNames:{friends:"Arquétipos de Amizade",teams:"Papéis em Equipes",darkside:"Seu Lado Sombrio",mainchar:"Modo Personagem Principal"},
+    modeDescs:{friends:"Que tipo de amigo/a você é?",teams:"Como você funciona em grupos?",darkside:"A leitura honesta e desconfortável.",mainchar:"Em que tipo de história você está?"}
+  },
+  de: {
+    eyebrow:"Persönlichkeit · Selbsterkenntnis", headline:"Finde heraus, wer du <em>wirklich</em> bist.",
+    sub:'Wähle eine Perspektive. <span id="start-q-count">Sechs Fragen.</span> Virel liest deine Muster und sagt dir Dinge, die die meisten Menschen nie aussprechen.',
+    namePlaceholder:"Wie heißt du?", cta:"Meinen Typ finden →", footnote:"Keine Anmeldung · Unter 2 Minuten",
+    lengthShort:"Kurz · 3 Fs", lengthMid:"Standard · 6 Fs", lengthLong:"Tiefgehend · 9 Fs",
+    qCount:{3:"Drei Fragen.",6:"Sechs Fragen.",9:"Neun Fragen."},
+    prevBtn:"← Zurück", nextBtn:"Weiter →", lastBtn:"Meinen Typ sehen",
+    loading:["Deine Muster werden gelesen…","Antworten werden analysiert…","Dein Profil wird erstellt…","Fast fertig…"],
+    resultEyebrow:"Dein Virel-Typ", resultDemo:"Demo-Modus",
+    labelRead:"Die Analyse", labelMatches:"Wer zu dir passt",
+    retake:"↩ Nochmal", share:"Meinen Typ teilen",
+    modeNames:{friends:"Freundschafts-Archetypen",teams:"Rollen im Team",darkside:"Deine dunkle Seite",mainchar:"Hauptfigur-Modus"},
+    modeDescs:{friends:"Was für ein Freund bist du?",teams:"Wie verhältst du dich in Gruppen?",darkside:"Die ehrliche, unbequeme Wahrheit.",mainchar:"In welcher Art Geschichte bist du?"}
+  },
+  ja: {
+    eyebrow:"パーソナリティ · 自己理解", headline:"本当の自分を<em>発見</em>しよう。",
+    sub:'視点を選んで。<span id="start-q-count">6つの質問。</span>Virelがあなたのパターンを読み解き、ほとんどの人が言わないことを教えてくれます。',
+    namePlaceholder:"あなたの名前は？", cta:"自分のタイプを見つける →", footnote:"登録不要 · 2分以内",
+    lengthShort:"短い · 3問", lengthMid:"標準 · 6問", lengthLong:"深い · 9問",
+    qCount:{3:"3つの質問。",6:"6つの質問。",9:"9つの質問。"},
+    prevBtn:"← 戻る", nextBtn:"次へ →", lastBtn:"自分のタイプを見る",
+    loading:["パターンを読み解いています…","回答を分析しています…","プロフィールを作成しています…","もうすぐです…"],
+    resultEyebrow:"あなたのVirelタイプ", resultDemo:"デモモード",
+    labelRead:"分析", labelMatches:"相性の良いタイプ",
+    retake:"↩ やり直す", share:"自分のタイプをシェア",
+    modeNames:{friends:"友達タイプ",teams:"チームでの役割",darkside:"あなたの影の面",mainchar:"主人公モード"},
+    modeDescs:{friends:"あなたはどんな友達？",teams:"グループでどう機能する？",darkside:"正直で耳の痛い分析。",mainchar:"あなたはどんな物語の中にいる？"}
+  }
+};
+
 let currentQ    = 0;
 let answers     = {};
 let activeQuestions = [];
@@ -1055,6 +1175,7 @@ let apiErrorUsed = false;
 let userName    = "";
 let selectedMode = "friends";
 let quizLength  = 6;
+let currentLang = "en";
 const apiKey    = "__OPENROUTER_API_KEY__";
 
 function selectMode(mode) {
@@ -1067,8 +1188,47 @@ function selectLength(n) {
   quizLength = n;
   document.querySelectorAll(".length-pill").forEach(p => p.classList.remove("active"));
   event.currentTarget.classList.add("active");
-  const labels = { 3: "Three questions.", 6: "Six questions.", 9: "Nine questions." };
-  document.getElementById("start-q-count").textContent = labels[n];
+  document.getElementById("start-q-count").textContent = TRANSLATIONS[currentLang].qCount[n];
+}
+
+function setLanguage(lang) {
+  currentLang = lang;
+  const t = TRANSLATIONS[lang];
+
+  document.querySelectorAll(".lang-btn").forEach(b => b.classList.remove("active"));
+  document.querySelector(`.lang-btn[data-lang="${lang}"]`).classList.add("active");
+
+  // Start screen
+  document.getElementById("start-eyebrow").textContent = t.eyebrow;
+  document.querySelector(".start-headline").innerHTML  = t.headline;
+  document.querySelector(".start-sub").innerHTML       = t.sub;
+  document.getElementById("user-name").placeholder    = t.namePlaceholder;
+  document.getElementById("start-cta").textContent    = t.cta;
+  document.querySelector(".start-footnote").textContent = t.footnote;
+
+  // Length pills
+  const pills = document.querySelectorAll(".length-pill");
+  pills[0].textContent = t.lengthShort;
+  pills[1].textContent = t.lengthMid;
+  pills[2].textContent = t.lengthLong;
+
+  // Mode cards
+  ["friends","teams","darkside","mainchar"].forEach(m => {
+    const card = document.getElementById(`mode-${m}`);
+    card.querySelector(".mode-card-name").textContent = t.modeNames[m];
+    card.querySelector(".mode-card-desc").textContent = t.modeDescs[m];
+  });
+
+  // Quiz nav (live if quiz is active)
+  document.getElementById("prev-btn").textContent = t.prevBtn;
+
+  // Result screen labels
+  document.getElementById("label-read").textContent    = t.labelRead;
+  document.getElementById("label-matches").textContent = t.labelMatches;
+
+  // Re-sync q-count span (re-injected by innerHTML above)
+  const qEl = document.getElementById("start-q-count");
+  if (qEl) qEl.textContent = t.qCount[quizLength];
 }
 
 // ─────────────────────────────────────────
@@ -1147,8 +1307,10 @@ function renderQuestion() {
 
   const isLast = currentQ === activeQuestions.length - 1;
   const nextBtn = document.getElementById("next-btn");
+  const t = TRANSLATIONS[currentLang];
   nextBtn.classList.remove("ready");
-  nextBtn.textContent = isLast ? "See My Type" : "Next →";
+  nextBtn.textContent = isLast ? t.lastBtn : t.nextBtn;
+  document.getElementById("prev-btn").textContent = t.prevBtn;
   if (isLast) nextBtn.setAttribute("aria-label", "See my personality type");
   else nextBtn.removeAttribute("aria-label");
 
@@ -1219,7 +1381,7 @@ async function analyseAnswers() {
   document.removeEventListener("keydown", handleQuizKey);
   showScreen("loading-screen");
 
-  const messages = ["Reading your patterns…", "Cross-referencing your answers…", "Building your profile…", "Almost there…"];
+  const messages = TRANSLATIONS[currentLang].loading;
   let mi = 0;
   const lt = document.getElementById("loading-text");
   const ticker = setInterval(() => { lt.textContent = messages[++mi % messages.length]; }, 1100);
@@ -1333,12 +1495,20 @@ function displayResults(r) {
   document.getElementById("result-name").textContent    = r.name;
   document.getElementById("result-tagline").textContent = r.tagline;
 
+  const t = TRANSLATIONS[currentLang];
   const nameStr = userName ? `, ${userName}` : "";
   if (apiErrorUsed) {
-    document.getElementById("result-eyebrow").textContent = `Your Virel type${nameStr} · Demo mode`;
+    document.getElementById("result-eyebrow").textContent = `${t.resultEyebrow}${nameStr} · ${t.resultDemo}`;
     apiErrorUsed = false;
   } else {
-    document.getElementById("result-eyebrow").textContent = `Your Virel type${nameStr}`;
+    document.getElementById("result-eyebrow").textContent = `${t.resultEyebrow}${nameStr}`;
+  }
+
+  // Sync footer buttons to current language
+  const footer = document.querySelector(".results-footer");
+  if (footer) {
+    footer.querySelector("button:first-child").textContent = t.retake;
+    footer.querySelector("button:last-child").textContent  = t.share;
   }
 
   // Context tags
