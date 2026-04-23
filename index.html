@@ -779,6 +779,9 @@
       <button class="lang-btn" data-lang="pt" onclick="setLanguage('pt')">PT</button>
       <button class="lang-btn" data-lang="de" onclick="setLanguage('de')">DE</button>
       <button class="lang-btn" data-lang="ja" onclick="setLanguage('ja')">JA</button>
+      <button class="lang-btn" data-lang="it" onclick="setLanguage('it')">IT</button>
+      <button class="lang-btn" data-lang="zh" onclick="setLanguage('zh')">ZH</button>
+      <button class="lang-btn" data-lang="ko" onclick="setLanguage('ko')">KO</button>
     </div>
     <div class="start-eyebrow" id="start-eyebrow">Personality · Self-awareness</div>
     <div class="virel-wordmark">Virel</div>
@@ -1164,6 +1167,192 @@ const TRANSLATIONS = {
     retake:"↩ やり直す", share:"自分のタイプをシェア",
     modeNames:{friends:"友達タイプ",teams:"チームでの役割",darkside:"あなたの影の面",mainchar:"主人公モード"},
     modeDescs:{friends:"あなたはどんな友達？",teams:"グループでどう機能する？",darkside:"正直で耳の痛い分析。",mainchar:"あなたはどんな物語の中にいる？"}
+  },
+  it: {
+    eyebrow:"Personalità · Consapevolezza di sé", headline:"Scopri chi sei <em>davvero</em>.",
+    sub:'Scegli una prospettiva. <span id="start-q-count">Sei domande.</span> Virel legge i tuoi schemi e ti dice cose che la maggior parte delle persone non dice mai ad alta voce.',
+    namePlaceholder:"Come ti chiami?", cta:"Scopri il mio tipo →", footnote:"Senza registrazione · Meno di 2 minuti",
+    lengthShort:"Breve · 3 Ds", lengthMid:"Standard · 6 Ds", lengthLong:"Profondo · 9 Ds",
+    qCount:{3:"Tre domande.",6:"Sei domande.",9:"Nove domande."},
+    prevBtn:"← Indietro", nextBtn:"Avanti →", lastBtn:"Vedi il mio tipo",
+    loading:["Leggendo i tuoi schemi…","Incrociando le risposte…","Costruendo il tuo profilo…","Quasi pronto…"],
+    resultEyebrow:"Il tuo tipo Virel", resultDemo:"Modalità demo",
+    labelRead:"L'analisi", labelMatches:"Con chi vai d'accordo",
+    retake:"↩ Rifai", share:"Condividi il mio tipo",
+    modeNames:{friends:"Archetipi di Amicizia",teams:"Ruoli nel Team",darkside:"Il tuo Lato Oscuro",mainchar:"Modalità Protagonista"},
+    modeDescs:{friends:"Che tipo di amico/a sei?",teams:"Come funzioni in gruppo?",darkside:"La lettura onesta e scomoda.",mainchar:"In che tipo di storia sei?"}
+  },
+  zh: {
+    eyebrow:"个性 · 自我认知", headline:"发现真实的<em>自己</em>。",
+    sub:'选择一个视角。<span id="start-q-count">六个问题。</span>Virel 读懂你的模式，告诉你那些大多数人不会说出口的事。',
+    namePlaceholder:"你叫什么名字？", cta:"发现我的类型 →", footnote:"无需注册 · 不到2分钟",
+    lengthShort:"简短 · 3题", lengthMid:"标准 · 6题", lengthLong:"深度 · 9题",
+    qCount:{3:"三个问题。",6:"六个问题。",9:"九个问题。"},
+    prevBtn:"← 返回", nextBtn:"下一个 →", lastBtn:"查看我的类型",
+    loading:["正在解读你的模式…","正在交叉分析答案…","正在建立你的档案…","快好了…"],
+    resultEyebrow:"你的 Virel 类型", resultDemo:"演示模式",
+    labelRead:"深度解读", labelMatches:"最佳匹配",
+    retake:"↩ 重新开始", share:"分享我的类型",
+    modeNames:{friends:"朋友原型",teams:"团队角色",darkside:"你的黑暗面",mainchar:"主角模式"},
+    modeDescs:{friends:"你是什么类型的朋友？",teams:"你如何在团队中运作？",darkside:"诚实、不讨好的解读。",mainchar:"你处于什么类型的故事中？"}
+  },
+  ko: {
+    eyebrow:"성격 · 자기 이해", headline:"진짜 나를 <em>발견</em>하세요.",
+    sub:'렌즈를 선택하세요. <span id="start-q-count">여섯 개의 질문.</span> Virel이 당신의 패턴을 읽고 대부분의 사람들이 말하지 않는 것들을 알려줍니다.',
+    namePlaceholder:"이름이 뭐예요?", cta:"내 유형 찾기 →", footnote:"가입 불필요 · 2분 이내",
+    lengthShort:"짧게 · 3문", lengthMid:"보통 · 6문", lengthLong:"깊게 · 9문",
+    qCount:{3:"세 가지 질문.",6:"여섯 가지 질문.",9:"아홉 가지 질문."},
+    prevBtn:"← 뒤로", nextBtn:"다음 →", lastBtn:"내 유형 보기",
+    loading:["패턴을 읽는 중…","답변을 분석하는 중…","프로필을 만드는 중…","거의 다 됐어요…"],
+    resultEyebrow:"당신의 Virel 유형", resultDemo:"데모 모드",
+    labelRead:"분석", labelMatches:"잘 맞는 유형",
+    retake:"↩ 다시 하기", share:"내 유형 공유",
+    modeNames:{friends:"친구 유형",teams:"팀에서의 역할",darkside:"나의 어두운 면",mainchar:"주인공 모드"},
+    modeDescs:{friends:"어떤 친구인가요?",teams:"그룹에서 어떻게 행동하나요?",darkside:"솔직하고 불편한 분석.",mainchar:"어떤 종류의 이야기 속에 있나요?"}
+  }
+};
+
+// ─────────────────────────────────────────
+//  QUIZ TRANSLATIONS — text + choices per language, English reactions kept
+// ─────────────────────────────────────────
+const QUIZ_TRANSLATIONS = {
+  es: {
+    friends: { questions: [
+      {text:"¿A qué hora te vas a dormir realmente?",choices:["Cuando mi cerebro deja de repasar el día","Cuando todos con quienes hablaba se desconectan","¿Horario de sueño? ¿Qué es eso?","Más o menos a la misma hora cada noche","Entre 'voy a dormir temprano' y las 3am"]},
+      {text:"Tu teléfono se muere en una fiesta. Tú:",choices:["Buscas un rincón y disfrutas no estar disponible","Buscas un cargador de inmediato — estás coordinando todo","Lo ves como una invitación a hacer algo más loco","Encuentras al que parece excluido y hablas con él","Aliviado/a — ahora puedes tener una conversación real"]},
+      {text:"¿Qué dice tu galería de fotos de ti?",choices:["Principalmente capturas y notas para ti mismo/a","Casi nada — el momento fue suficiente","Una colección artística que nadie pidió","Fotos grupales donde siempre estás animando a alguien","Conversaciones guardadas y cosas que te hicieron pensar"]},
+      {text:"Tu grupo elige dónde comer. Tú:",choices:["Terminas tomando la decisión por todos","Propones el lugar inesperado que nadie pensó","Lo que sea — estás aquí por la gente","Ya sabes qué quieres pero lees el ambiente primero","Preguntas qué quiere cada uno — quieres que estén contentos"]},
+      {text:"Alguien te desahoga. Tu primer instinto:",choices:["Escuchar sin planear qué responder","Hacerlos reír. Lo real viene después.","Relacionarte — has sentido exactamente eso","Recordarles de inmediato que no están solos","Acercarte. Para esto estás aquí."]},
+      {text:"¿Por qué cosa te tomarían el pelo tus amigos?",choices:["Desaparecer días y actuar como si nada","Saber todo de todos antes de que te cuenten","Empezar diez cosas y terminar cero","Animar a todos aunque tú estés sin energía","Convertir cada salida en terapia accidental"]},
+      {text:"¿Cuál de estas te describe raramente bien?",choices:["Notas más de lo que dejas ver","Recuerdas las fechas importantes de todos sin que te lo pidan","Te aburres cuando no pasa nada y haces que pase algo","Te quedas más tiempo del que deberías porque lo prometiste","Sientes las cosas antes de entenderlas"]},
+      {text:"Cuando estás de mal humor, tú:",choices:["Te quedas muy callado/a y esperas que nadie pregunte","Sigues apareciendo por los demás aunque estés mal","Te lo ríes y lo resuelves solo/a después","Animas a alguien — genuinamente ayuda","Necesitas hablarlo con exactamente la persona correcta"]},
+      {text:"¿Qué diría un/a amigo/a cercano/a que eres realmente?",choices:["Más profundo/a de lo que la mayoría imagina","El que sostiene todo sin hacerlo evidente","Impredecible en el mejor sentido","Alguien que no necesita mucho pero da todo","El que hace que las conversaciones vayan a algún lugar real"]}
+    ]},
+    teams: { questions: [
+      {text:"Se asignó un proyecto grupal. Tu primer movimiento:",choices:["Hacer un plan completo antes de que alguien hable","Preguntar qué hay que hacer y empezar de inmediato","Ver cómo está cada uno para entender sus fortalezas","Proponer el ángulo inesperado que cambia todo","Decir 'yo me encargo de lo que nadie quiere'"]},
+      {text:"El equipo no puede acordar una dirección. Tú:",choices:["Encuentras el hilo común y propones una síntesis","Intervienes para mediar — todos tienen voz","Eliges una opción. Decidir es mejor que paralizarse.","Replanteas todo el problema para que la respuesta sea obvia","Preguntas qué datos o evidencia tienen para cada opción"]},
+      {text:"¿Para qué te busca la gente realmente?",choices:["Para terminar las cosas","Para la idea que nadie vio venir","Para mantener la calma cuando todo se complica","Para ver lo que es posible más allá de lo actual","Para detectar lo que todos los demás pasaron por alto"]},
+      {text:"A mitad del camino, todo se tuerce. Tú:",choices:["Evalúas rápido qué cambió y ajustas el plan","Sigues en modo ejecución — las quejas pueden esperar","Te aseguras de que el equipo no entre en caos — el ánimo importa","Encuentras la oportunidad escondida en el problema","Analizas exactamente qué salió mal antes de actuar"]},
+      {text:"¿Cómo prefieres contribuir?",choices:["Estructurando el pensamiento para que todos sepan qué hacer","Asegurándote de que todos se sientan escuchados e incluidos","Trayendo el ángulo que hace todo interesante","Pintando el panorama más amplio — por qué importa todo esto","Asegurándote de que los detalles realmente funcionen"]},
+      {text:"Mañana es la entrega. Las cosas no están listas. Tú:",choices:["Dejas todo y ejecutas — hablas después","Motivas al equipo para que nadie se sienta solo","Eres el calmado — entrar en pánico no ayuda","Encuentras la solución creativa rápida que nadie pensó","Priorizas qué hacer y qué recortar"]},
+      {text:"Cuando el proyecto termina, ¿qué importa más?",choices:["Que todo salió según el plan","Que algo real se entregó — las ideas no cuentan","Que el equipo salió intacto","Que algo inesperado y mejor emergió","Que abrió una puerta más grande que la de entrada"]},
+      {text:"En una sala de desconocidos trabajando en algo, naturalmente te conviertes en:",choices:["El que traza lo que todos deberían hacer","El que se asegura de que todos se sientan incluidos","El del ángulo inesperado que nadie planeó","La constante estable y confiable cuando las cosas cambian","El que entusiasma a la gente con lo que puede llegar a ser"]},
+      {text:"¿Dónde aportas genuinamente más?",choices:["Poniendo las cosas en marcha cuando todos están atascados","Asegurándote de que la gente se sienta conectada entre sí","Trayendo ángulos y energía que nadie esperaba","Siendo la constante que no cambia cuando todo lo demás sí","Detectando el supuesto que todos pasaron por alto"]}
+    ]},
+    darkside: { questions: [
+      {text:"Tu amigo dice algo que te molesta. Tú:",choices:["Lo repites 47 veces antes de decidir qué significó","Te lo ríes y les dices que está todo bien","Te quedas un poco más callado/a. Menos disponible.","Haces un chiste. Eso cuenta como manejarlo.","Lo abordas directamente y dejas muy claro dónde estás"]},
+      {text:"Te piden hacer algo que realmente no quieres. Tú:",choices:["Piensas demasiado si decir que no arruinará todo","Dices que sí de inmediato para evitar lo incómodo","Aceptas en voz alta, internamente planeas desaparecer","Lanzas una indirecta para que alguien note cómo te sientes","Dices que estás ocupado/a sin dar explicaciones"]},
+      {text:"Las cosas no van como querías. Tú:",choices:["Te quedas atascado/a en 'y si hubiera hecho esto diferente' por días","Te alejas sin explicar por qué","Silenciosamente restructuras las cosas para que salgan a tu manera","Posteas algo que insinúa cómo te sientes","Te quedas completamente callado/a sobre el tema"]},
+      {text:"Alguien no te responde por un rato. Tú:",choices:["Ya escribiste cinco versiones del mensaje de seguimiento","Asumes que es algo que hiciste y mentalmente te disculpas","Decides que no te importa y también te quedas callado/a","Mandas un meme. Casual. Definitivamente no estás rastreando esto.","Revisas cuándo fue la última vez que estuvo activo/a"]},
+      {text:"Honestamente, ¿cuál es tu patrón más grande?",choices:["Decir que sí hasta resentir silenciosamente a quien preguntó","Desaparecer cuando las cosas se complican en vez de decir por qué","Convertir todo en un chiste cuando las cosas se ponen demasiado reales","Necesitar que alguien lo note antes de sentirte bien","Apagarte completamente cuando estás abrumado/a"]},
+      {text:"Cuando algo está mal de verdad, tú:",choices:["Desapareces lentamente y esperas que se resuelva solo","Lo conviertes en un chiste y esperas que nadie profundice","Lo manejas tú mismo/a — involucrar a otros se siente como perder","Lanzas una indirecta y esperas ver quién lo nota","Dices 'estoy bien' en un tono que deja claro que no lo estás"]},
+      {text:"Cuando alguien critica tu trabajo, tú:",choices:["Lo repites por días y encuentras doce significados posibles","Te disculpas de inmediato aunque hayan tenido razón o no","Lo procesas solo/a. Te quedas callado/a un rato.","Haces un chiste autodenigrante antes de que puedan elaborar","Necesitas que al menos dos personas digan que estuvo bien para seguir"]},
+      {text:"¿Con qué dirían que luchas realmente?",choices:["Apagar tu cerebro","Quedarte cuando las cosas se complican","Confiar en que otros manejen las cosas sin ti","Estar bien sin validación externa","Dejar que la gente realmente te conozca"]},
+      {text:"¿Qué desearías que la gente entendiera de ti?",choices:["Decir que sí no significa que estaba bien con eso","Quedarme callado/a no es lo mismo que no importarme","El chiste es real — pero también lo que hay debajo","Solo necesito que alguien realmente lo vea","Siento mucho más de lo que muestro. Mucho más."]}
+    ]},
+    mainchar: { questions: [
+      {text:"¿Cómo te sientes sobre dónde estás en la vida ahora mismo?",choices:["Todavía lo estoy descubriendo — pero algo se está construyendo","Muy lejos de donde estabas. Eso es mérito tuyo.","Algo está por cambiar. Lo puedes sentir.","Como que estás exactamente donde debes estar","Bien. En tus propios términos."]},
+      {text:"¿Cuál es tu relación con tu yo del pasado?",choices:["Hacía lo que podía. Tú eres la prueba.","Eres una persona completamente diferente ahora.","Siempre supiste algo que otros no sabían","Notaba cosas que la gente pasaba por alto","Era paciente de maneras que no apreciabas en ese momento"]},
+      {text:"Elige tu rol en la historia de alguien más:",choices:["El que ya había pasado por eso","El que aparece y cambia todo","El complicado que todos malinterpretaban","El detalle en el que piensan diferente después","El que no se dieron cuenta que necesitaban hasta mucho después"]},
+      {text:"¿Cuál es realmente tu estilo narrativo?",choices:["Todavía lo estoy escribiendo. Ese es el punto.","Lleno de cosas que nadie predijo","Se siente como si hubiera una razón detrás de todo","Complicado. Moralmente ambiguo. En mis propios términos.","Más hermoso cuanto más despacio lo tomas"]},
+      {text:"Lo más preciso que alguien podría decir de ti:",choices:["'Todavía te estás convirtiendo en algo'","'Ya sobreviviste algo que la mayoría no pudo'","'Nadie sabía realmente qué esperar de ti'","'Encuentras significado en cosas que otros pasan por alto'","'Nunca apresuraste nada — y se notó'"]},
+      {text:"¿Cómo tiende a desarrollarse tu historia?",choices:["A través de momentos donde elegiste diferente que antes","Como si algo la estuviera llevando a un lugar con un plan","En tu propio tiempo. Con o sin audiencia.","En pequeños momentos que resultan ser todo","Despacio. Silenciosamente. Luego de repente todo tiene sentido."]},
+      {text:"Cuando las cosas se derrumban, tú:",choices:["Lo ves como parte del proceso — todavía te estás formando","Sabes que has sobrevivido peor. Este no se acerca.","Pivotas. El tropiezo era solo la preparación para el próximo movimiento.","Lo sientes fuerte — pero también te sientes seguro/a de que saldrás","Encuentras el detalle interesante en los escombros"]},
+      {text:"La energía de tu capítulo actual se siente como:",choices:["Todavía formándome. Lejos del final.","Todo acaba de cambiar. No eres quien eras.","Exactamente donde elegiste estar — en el tiempo de nadie más.","Encontrando significado en detalles que la mayoría ignora.","Tranquilo/a y paciente. Construyendo hacia algo que nadie puede ver todavía."]},
+      {text:"¿Cómo te sientes sobre hacia dónde va tu historia?",choices:["Fue más difícil llegar aquí de lo que parece. Valió cada parte.","No sabes qué sigue. Eso es la mitad del punto.","Hay una razón detrás de todo. Lo sientes.","No sigues el arco estándar. Nunca lo seguiste.","Lo entenderás completamente cuando termine. No antes."]}
+    ]}
+  },
+  fr: {
+    friends: { questions: [
+      {text:"Tu te couches vraiment à quelle heure ?",choices:["Quand mon cerveau arrête de rejouer la journée","Quand tous ceux à qui je parlais se déconnectent","Un horaire de sommeil ? C'est quoi ça ?","À peu près à la même heure chaque soir","Entre 'je vais dormir tôt' et 3h du mat"]},
+      {text:"Ton téléphone meurt à une soirée. Tu :",choices:["Trouves un coin et profites d'être injoignable","Empruntes un chargeur immédiatement — tu coordonnes tout","Vois ça comme une invitation à faire quelque chose de plus fou","Trouves celui qui a l'air mis à l'écart et lui parles","Es en fait soulagé(e) — tu peux enfin avoir une vraie conversation"]},
+      {text:"Qu'est-ce que ta galerie de photos dit de toi ?",choices:["Surtout des screenshots et des notes pour toi-même","Presque rien — le moment suffisait","Une collection artistique bizarre que personne n'a demandée","Des photos de groupe où tu animes toujours quelqu'un","Des conversations sauvegardées et des trucs qui t'ont fait réfléchir"]},
+      {text:"Ton groupe choisit où manger. Tu :",choices:["Finis par décider pour tout le monde","Proposes l'endroit inattendu que personne n'avait pensé","Peu importe — tu es là pour les gens","Sais déjà ce que tu veux mais lis l'ambiance d'abord","Demandes ce que tout le monde veut vraiment — tu veux qu'ils soient contents"]},
+      {text:"Quelqu'un se défoule sur toi. Premier réflexe :",choices:["Écouter sans préparer ce qu'on va dire","Le faire rire. La vraie conversation vient après.","Te reconnaitre — tu as ressenti exactement ça","Lui rappeler immédiatement qu'il n'est pas seul","T'asseoir. C'est exactement pour ça que tu es là."]},
+      {text:"Pour quoi est-ce que tes amis te taquineraient ?",choices:["Disparaître des jours et agir comme si de rien n'était","Savoir tout sur tout le monde avant qu'ils te le disent","Commencer dix choses et en finir zéro","Encourager tout le monde même quand tu es à bout","Transformer chaque sortie en thérapie de groupe accidentelle"]},
+      {text:"Laquelle est bizarrement exacte ?",choices:["Tu remarques plus que tu ne le montres jamais","Tu te souviens des dates importantes de tout le monde sans qu'on te le demande","Tu t'ennuies quand il ne se passe rien et tu fais en sorte qu'il se passe quelque chose","Tu es resté(e) dans des situations plus longtemps que tu n'aurais dû parce que tu l'avais dit","Tu ressens les choses avant de les comprendre"]},
+      {text:"Quand tu es de mauvaise humeur, tu :",choices:["Te tais beaucoup et espères que personne ne demande","Continues d'être là pour les autres même si tu te bats","Ris et gères ça seul(e) après","Trouves quelqu'un à encourager — ça aide vraiment","As besoin d'en parler avec exactement la bonne personne"]},
+      {text:"Qu'est-ce qu'un(e) ami(e) proche dirait que tu es vraiment ?",choices:["Plus profond(e) que la plupart ne le réalisent","Celui/celle qui tient tout ensemble sans que ça se voie","Imprévisible dans le meilleur sens","Quelqu'un qui n'a pas besoin de grand-chose mais donne tout","Celui/celle qui fait aller les conversations quelque part de réel"]}
+    ]},
+    teams: { questions: [
+      {text:"Un projet de groupe vient d'être assigné. Ton premier mouvement :",choices:["Faire un plan complet avant que quelqu'un parle","Demander ce qu'il faut faire et commencer immédiatement","Vérifier comment tout le monde va pour comprendre leurs forces","Proposer l'angle inattendu qui change tout","Dire 'je prends en charge ce que personne ne veut'"]},
+      {text:"L'équipe ne peut pas se mettre d'accord. Tu :",choices:["Trouves le fil commun et proposes une synthèse","Interviens pour médiatiser — tout le monde a la parole","Choisis une option. Décider vaut mieux que se paralyser.","Reformules tout le problème pour que la réponse soit évidente","Demandes quelles données ou preuves ils ont pour chaque option"]},
+      {text:"Pour quoi les gens viennent-ils vraiment te voir ?",choices:["Pour faire avancer les choses jusqu'au bout","Pour l'idée que personne n'avait vue venir","Pour garder le groupe sain quand ça devient stressant","Pour voir ce qui est possible au-delà de ce qui existe","Pour repérer ce que tout le monde avait manqué"]},
+      {text:"À mi-chemin, les choses tournent mal. Tu :",choices:["Évalues rapidement ce qui a changé et ajustes le plan","Restes en mode exécution — les plaintes peuvent attendre","T'assures que l'équipe ne s'effondre pas — le moral compte","Trouves l'opportunité cachée dans le problème","Détermines exactement ce qui a mal tourné avant d'agir"]},
+      {text:"Comment préfères-tu contribuer ?",choices:["En structurant la réflexion pour que tout le monde sache quoi faire","En s'assurant que tout le monde se sent écouté et inclus","En apportant l'angle qui rend tout intéressant","En montrant le tableau plus large — pourquoi tout ça compte","En s'assurant que les détails tiennent vraiment la route"]},
+      {text:"La deadline c'est demain. Les choses ne sont pas faites. Tu :",choices:["Lâches tout et exécutes — tu parles après","Rallies l'équipe pour que personne ne se sente seul","Es le/la calme — paniquer n'aide pas","Trouves la solution créative rapide que personne n'a pensé","Tries ce qui doit être fait vs ce qui peut être coupé"]},
+      {text:"Quand le projet se termine, qu'est-ce qui compte le plus ?",choices:["Que tout s'est passé exactement selon le plan","Que quelque chose a vraiment été livré — les idées ne comptent pas","Que l'équipe s'en est sortie intacte","Que quelque chose d'inattendu et de mieux est sorti","Que ça a ouvert une plus grande porte que celle d'entrée"]},
+      {text:"Dans une salle d'inconnus qui travaillent ensemble, tu deviens naturellement :",choices:["Celui/celle qui trace ce que tout le monde devrait faire","Celui/celle qui s'assure que tout le monde se sent inclus","Celui/celle avec l'angle inattendu que personne n'avait planifié","La constante stable et fiable quand les choses bougent","Celui/celle qui enthousiasme les gens sur ce que ça pourrait devenir"]},
+      {text:"Où est-ce que tu ajoutes vraiment le plus de valeur ?",choices:["En faisant avancer les choses quand tout le monde est bloqué","En s'assurant que les gens se sentent connectés entre eux","En apportant des angles et de l'énergie que personne n'attendait","En étant la constante qui ne change pas quand tout le reste change","En repérant l'hypothèse que tout le monde avait manquée"]}
+    ]},
+    darkside: { questions: [
+      {text:"Ton ami dit quelque chose qui te dérange. Tu :",choices:["Le rejoues 47 fois avant de décider ce que ça voulait dire","Ris et leur dis que tout va bien","Te rends un peu plus silencieux(se). Moins disponible.","Fais une blague là-dessus. Ça compte comme gérer.","L'abordes directement et es très clair(e) sur où tu en es"]},
+      {text:"On te demande de faire quelque chose que tu ne veux vraiment pas faire. Tu :",choices:["Suranalyses si dire non va tout gâcher","Dis oui immédiatement pour éviter le malaise","Acceptes à voix haute, planifies intérieurement de disparaître","Lâches un indice pour que quelqu'un remarque comment tu te sens","Dis que tu es occupé(e) sans rien expliquer de plus"]},
+      {text:"Les choses ne vont pas comme tu voulais. Tu :",choices:["Restes bloqué(e) dans 'et si j'avais fait ça différemment' pendant des jours","Te retires et deviens légèrement moins disponible sans expliquer","Restructures silencieusement les choses pour qu'elles aillent dans ton sens","Postes quelque chose qui laisse deviner comment tu te sens","Te tais complètement sur le sujet"]},
+      {text:"Quelqu'un ne répond pas pendant un moment. Tu :",choices:["As déjà écrit cinq versions du message de suivi","Assumes que c'est quelque chose que tu as fait et t'excuses mentalement","Décides que tu t'en fous et te tais aussi accidentellement","Envoies un mème. Casual. Définitivement pas en train de tracker ça.","Vérifies quand ils ont été actifs pour la dernière fois"]},
+      {text:"Honnêtement, c'est quoi ton plus grand schéma ?",choices:["Dire oui jusqu'à silencieusement en vouloir à la personne qui a demandé","Disparaître quand ça se complique au lieu de dire pourquoi","Transformer tout en blague quand ça devient trop réel","Avoir besoin que quelqu'un le remarque avant de se sentir bien","Se fermer complètement quand tu es submergé(e)"]},
+      {text:"Quand quelque chose va vraiment mal, tu :",choices:["T'estompes lentement et espères que ça se règle tout seul","En fais une blague et espères que personne ne creuse","Gères ça toi-même — impliquer les autres ressemble à une défaite","Lâches un indice et attends de voir qui le remarque","Dis 'ça va' sur un ton qui indique clairement que non"]},
+      {text:"Quand quelqu'un critique ton travail, tu :",choices:["Le rejoues pendant des jours et trouves douze significations possibles","T'excuses immédiatement, même s'ils avaient tort","Le traites seul(e). Tu te tais un moment.","Fais une blague autodépréciative avant qu'ils puissent élaborer","As besoin d'au moins deux avis positifs avant de passer à autre chose"]},
+      {text:"Avec quoi diraient-ils que tu as vraiment du mal ?",choices:["Éteindre ton cerveau","Rester quand les choses se compliquent","Faire confiance aux autres pour gérer les choses sans toi","Te sentir bien sans validation externe","Laisser les gens vraiment te connaître"]},
+      {text:"Qu'est-ce que tu aimerais que les gens comprennent de toi ?",choices:["Dire oui ne signifie pas que j'étais d'accord","Se taire n'est pas la même chose que ne pas s'en soucier","La blague est réelle — mais ce qu'il y a dessous aussi","J'ai juste besoin que quelqu'un le voie vraiment","Je ressens beaucoup plus que je ne le montre. Beaucoup plus."]}
+    ]},
+    mainchar: { questions: [
+      {text:"Comment tu te sens par rapport à où tu en es dans la vie en ce moment ?",choices:["En train de comprendre — mais quelque chose se construit","Très loin de là où tu étais. C'est mérité.","Quelque chose est sur le point de changer. Tu le sens.","Comme si tu étais exactement où tu es censé(e) être","Bien. Sur tes propres termes."]},
+      {text:"Quelle est ta relation avec ton moi passé ?",choices:["Il faisait de son mieux. Tu es la preuve.","Tu es une personne complètement différente maintenant.","Tu as toujours su quelque chose que les autres ne savaient pas","Il remarquait des choses que les autres laissaient passer","Il était patient d'une façon que tu n'appréciais pas à l'époque"]},
+      {text:"Choisis ton rôle dans l'histoire de quelqu'un d'autre :",choices:["Celui/celle qui était déjà passé(e) par là","Celui/celle qui arrive et change tout","Le/la compliqué(e) que tout le monde a mal compris","Le détail auquel ils pensent différemment ensuite","Celui/celle dont ils n'ont réalisé avoir besoin que bien plus tard"]},
+      {text:"Quel est vraiment ton style narratif ?",choices:["Encore en train de l'écrire. C'est ça le but.","Plein de choses que personne n'avait prédit","Avec l'impression qu'il y a une raison derrière tout","Compliqué. Moralement ambigu. Sur mes propres termes.","Plus beau plus on le prend lentement"]},
+      {text:"La chose la plus juste que quelqu'un pourrait dire sur toi :",choices:["'Tu es encore en train de devenir quelque chose'","'Tu as déjà survécu à quelque chose que la plupart ne pourraient pas'","'Personne ne savait vraiment à quoi s'attendre de toi'","'Tu trouves du sens dans des choses que les autres ignorent'","'Tu n'as jamais rien précipité — et ça s'est vu'"]},
+      {text:"Comment ton histoire a-t-elle tendance à se dérouler ?",choices:["À travers des moments où tu as choisi différemment qu'avant","Comme si elle était tirée quelque part avec un plan","À ton rythme. Avec ou sans public.","Dans de petits moments qui s'avèrent être tout","Lentement. Silencieusement. Puis soudainement tout prend sens."]},
+      {text:"Quand les choses s'effondrent, tu :",choices:["Vois ça comme une partie du processus — tu es encore en train de devenir","Sais que tu as survécu à pire. Celui-ci n'est pas proche.","Pivotes. Le revers était juste la mise en place du prochain mouvement.","Le ressens fort — mais tu sens aussi étrangement que tu t'en sortiras","Trouves le détail intéressant dans les décombres"]},
+      {text:"L'énergie de ton chapitre actuel ressemble à :",choices:["Encore en train de devenir. Loin de la fin.","Tout vient de changer. Tu n'es plus qui tu étais.","Exactement là où tu as choisi d'être — personne d'autre ne dicte.","Trouver du sens dans des détails que la plupart ignorent.","Calme et patient(e). En train de construire vers quelque chose que personne ne peut voir encore."]},
+      {text:"Comment te sens-tu par rapport à où va ton histoire ?",choices:["C'était plus difficile d'arriver ici que ça n'en a l'air. Chaque partie en valait la peine.","Tu ne sais pas ce qui vient. C'est la moitié du but.","Il y a une raison derrière tout. Tu le ressens.","Tu ne suis pas l'arc standard. Tu ne l'as jamais suivi.","Tu le comprendras pleinement quand c'est terminé. Pas avant."]}
+    ]}
+  },
+  pt: {
+    friends: { questions: [
+      {text:"Que horas você realmente dorme?",choices:["Quando meu cérebro para de repetir o dia","Quando todos com quem eu falava ficam offline","Horário de sono? O que é isso?","Mais ou menos no mesmo horário toda noite","Em algum lugar entre 'vou dormir cedo' e 3 da manhã"]},
+      {text:"Seu celular morreu numa festa. Você:",choices:["Acha um canto e aproveita ser incontactável","Pega um carregador imediatamente — você está coordenando tudo","Vê como um convite para fazer algo mais louco","Encontra quem parece isolado e conversa","Fica aliviado/a — agora pode ter uma conversa de verdade"]},
+      {text:"O que a sua galeria de fotos diz sobre você?",choices:["Principalmente prints e notas para si mesmo/a","Quase nada — o momento foi suficiente","Uma coleção artística estranha que ninguém pediu","Fotos em grupo onde você está sempre animando alguém","Conversas salvas e coisas que te fizeram pensar"]},
+      {text:"Seu grupo está escolhendo onde comer. Você:",choices:["Acaba decidindo por todos","Sugere o lugar inesperado que ninguém pensou","Tanto faz — você está aqui pelas pessoas","Já sabe o que quer mas lê o ambiente primeiro","Pergunta o que cada um quer — você quer que estejam felizes"]},
+      {text:"Alguém está desabafando com você. Primeiro instinto:",choices:["Ouvir sem planejar o que dizer","Fazer rir. A conversa real vem depois.","Se identificar — você sentiu exatamente isso","Lembrar imediatamente que não estão sozinhos","Puxar uma cadeira. É exatamente para isso que você está aqui."]},
+      {text:"Pelo que seus amigos te zoariam?",choices:["Desaparecer por dias e agir como se nada tivesse acontecido","Saber tudo de todo mundo antes de contarem","Começar dez coisas e terminar zero","Animar todo mundo mesmo quando você está no limite","Transformar cada saída em terapia acidental"]},
+      {text:"Qual dessas é estranhamente precisa?",choices:["Você nota mais do que jamais deixa transparecer","Você lembra das datas importantes de todo mundo sem que peçam","Você se entedia quando nada está acontecendo e faz algo acontecer","Você ficou em situações mais tempo do que devia porque disse que ficaria","Você sente as coisas antes de entendê-las"]},
+      {text:"Quando você está de mau humor, você:",choices:["Fica bem quieto/a e torce para ninguém perguntar","Continua aparecendo pelas pessoas mesmo estando mal","Ri e resolve sozinho/a depois","Procura alguém para animar — genuinamente ajuda","Precisa falar sobre isso com exatamente a pessoa certa"]},
+      {text:"O que um/a amigo/a próximo/a diria que você é de verdade?",choices:["Mais profundo/a do que a maioria imagina","O que segura tudo junto sem deixar transparecer","Imprevisível da melhor forma possível","Alguém que não precisa de muito mas dá tudo","O que faz as conversas chegarem a algum lugar real"]}
+    ]},
+    teams: { questions: [
+      {text:"Um projeto em grupo acabou de ser atribuído. Seu primeiro movimento:",choices:["Fazer um plano completo antes de alguém falar","Perguntar o que precisa ser feito e começar imediatamente","Ver como está cada um para entender seus pontos fortes","Propor o ângulo inesperado que muda tudo","Dizer 'eu cuido do que ninguém quer'"]},
+      {text:"A equipe não consegue chegar a um acordo. Você:",choices:["Encontra o fio comum e propõe uma síntese","Intervém para mediar — todo mundo fala","Escolhe uma opção. Decisão supera paralisia.","Reformula o problema inteiro para que a resposta seja óbvia","Pergunta que dados ou evidências cada um tem"]},
+      {text:"Para que as pessoas realmente vêm até você?",choices:["Para terminar as coisas","Para a ideia que ninguém viu vir","Para manter a calma quando tudo fica estressante","Para ver o que é possível além do atual","Para detectar o que todo mundo perdeu"]},
+      {text:"No meio do caminho, as coisas desandam. Você:",choices:["Avalia rapidamente o que mudou e ajusta o plano","Continua em modo execução — reclamações podem esperar","Garante que a equipe não entre em colapso — o moral importa","Encontra a oportunidade escondida no problema","Descobre exatamente o que deu errado antes de agir"]},
+      {text:"Como você prefere contribuir?",choices:["Estruturando o pensamento para que todos saibam o que fazer","Garantindo que todos se sintam ouvidos e incluídos","Trazendo o ângulo que torna tudo interessante","Pintando o quadro maior — por que tudo isso importa","Garantindo que os detalhes realmente funcionem"]},
+      {text:"A entrega é amanhã. As coisas não estão prontas. Você:",choices:["Larga tudo e executa — conversa depois","Motiva a equipe para que ninguém se sinta sozinho","É o calmo — entrar em pânico não ajuda","Encontra a solução criativa rápida que ninguém pensou","Prioriza o que precisa ser feito vs o que pode ser cortado"]},
+      {text:"Quando o projeto termina, o que mais importa?",choices:["Que tudo saiu exatamente conforme o plano","Que algo real foi entregue — ideias não contam","Que a equipe saiu intacta","Que algo inesperado e melhor surgiu","Que abriu uma porta maior do que a que você entrou"]},
+      {text:"Numa sala de desconhecidos trabalhando em algo, você naturalmente se torna:",choices:["O que traça o que todos deveriam fazer","O que garante que todos se sintam incluídos","O que tem o ângulo inesperado que ninguém planejou","A constante estável e confiável quando as coisas mudam","O que anima as pessoas com o que poderia se tornar"]},
+      {text:"Onde você genuinamente agrega mais?",choices:["Colocando as coisas em movimento quando todos estão travados","Garantindo que as pessoas se sintam conectadas entre si","Trazendo ângulos e energia que ninguém esperava","Sendo a constante que não muda quando tudo mais muda","Detectando a suposição que todo mundo perdeu"]}
+    ]},
+    darkside: { questions: [
+      {text:"Seu amigo diz algo que te incomoda. Você:",choices:["Repete isso 47 vezes antes de decidir o que significou","Ri e diz que está tudo bem","Fica um pouco mais quieto/a. Menos disponível.","Faz uma piada. Isso conta como lidar.","Aborda diretamente e deixa muito claro onde você está"]},
+      {text:"Te pedem para fazer algo que você realmente não quer. Você:",choices:["Pensa demais se dizer não vai arruinar tudo","Diz sim imediatamente para evitar o desconforto","Aceita em voz alta, internamente planeja desaparecer depois","Dá uma indireta para que alguém note como você está se sentindo","Diz que está ocupado/a sem dar explicações"]},
+      {text:"As coisas não estão indo como você queria. Você:",choices:["Fica preso/a em 'e se eu tivesse feito diferente' por dias","Se afasta e fica um pouco menos disponível sem explicar","Silenciosamente reestrutura as coisas para saírem do seu jeito","Posta algo que insinua como você está se sentindo","Fica completamente em silêncio sobre o assunto"]},
+      {text:"Alguém não responde por um tempo. Você:",choices:["Já escreveu cinco versões da mensagem de follow-up","Assume que é algo que você fez e mentalmente se desculpa","Decide que não liga e acidentalmente também fica quieto/a","Manda um meme. Casual. Definitivamente não está rastreando isso.","Verifica quando foi a última vez que ficou ativo/a"]},
+      {text:"Honestamente, qual é o seu maior padrão?",choices:["Dizer sim até ressentir silenciosamente quem perguntou","Desaparecer quando as coisas complicam em vez de dizer por quê","Transformar tudo em piada quando as coisas ficam reais demais","Precisar que alguém note antes de se sentir bem","Desligar completamente quando está sobrecarregado/a"]},
+      {text:"Quando algo está realmente errado, você:",choices:["Vai sumindo lentamente e espera que se resolva sozinho","Transforma em piada e espera que ninguém aprofunde","Resolve você mesmo/a — envolver outros parece perder","Dá uma indireta e espera ver quem nota","Diz 'estou bem' num tom que deixa claro que não está"]},
+      {text:"Quando alguém critica seu trabalho, você:",choices:["Repete por dias e encontra doze significados possíveis","Pede desculpas imediatamente, mesmo que estivessem errados","Processa sozinho/a. Fica quieto/a por um tempo.","Faz uma piada autodepreciativa antes que possam elaborar","Precisa de pelo menos duas pessoas dizendo que estava bom para seguir em frente"]},
+      {text:"Com o que diriam que você realmente luta?",choices:["Desligar seu cérebro","Ficar quando as coisas complicam","Confiar que outros lidem com as coisas sem você","Ficar bem sem validação externa","Deixar as pessoas realmente te conhecerem"]},
+      {text:"O que você gostaria que as pessoas entendessem sobre você?",choices:["Dizer sim não significa que eu estava bem com isso","Ficar quieto/a não é a mesma coisa que não me importar","A piada é real — mas o que está embaixo também é","Só preciso que alguém realmente veja","Sinto muito mais do que mostro. Muito mais."]}
+    ]},
+    mainchar: { questions: [
+      {text:"Como você se sente sobre onde está na vida agora?",choices:["Ainda estou descobrindo — mas algo está sendo construído","Muito longe de onde você estava. Isso foi conquistado.","Algo está prestes a mudar. Você pode sentir.","Como se estivesse exatamente onde deveria estar","Bem. Nos seus próprios termos."]},
+      {text:"Qual é a sua relação com seu eu do passado?",choices:["Estava fazendo o melhor que podia. Você é a prova.","Você é uma pessoa completamente diferente agora.","Você sempre soube algo que outros não sabiam","Ele/ela notava coisas que as pessoas passavam por alto","Era paciente de formas que você não valorizava na época"]},
+      {text:"Escolha seu papel na história de outra pessoa:",choices:["O que já tinha passado por isso","O que aparece e muda tudo","O complicado que todo mundo entendia mal","O detalhe sobre o qual pensam diferente depois","O que não perceberam que precisavam até muito depois"]},
+      {text:"Qual é realmente o seu estilo narrativo?",choices:["Ainda estou escrevendo. Esse é o ponto.","Cheio de coisas que ninguém previu","Parece que há uma razão por trás de tudo","Complicado. Moralmente cinza. Nos meus próprios termos.","Mais bonito quanto mais devagar você toma"]},
+      {text:"A coisa mais precisa que alguém poderia dizer sobre você:",choices:["'Você ainda está se tornando algo'","'Você já sobreviveu a algo que a maioria não conseguiria'","'Ninguém sabia realmente o que esperar de você'","'Você encontra significado em coisas que outros ignoram'","'Você nunca apressou nada — e ficou evidente'"]},
+      {text:"Como a sua história tende a se desenrolar?",choices:["Através de momentos onde você escolheu diferente do que antes","Como se estivesse sendo puxada para algum lugar com um plano","No seu tempo. Com ou sem audiência.","Em pequenos momentos que acabam sendo tudo","Devagar. Quietamente. Depois de repente tudo faz sentido."]},
+      {text:"Quando as coisas desmoronam, você:",choices:["Vê como parte do processo — você ainda está se tornando","Sabe que já sobreviveu coisas piores. Esse não chega perto.","Pivota. O revés era apenas a preparação para o próximo movimento.","Sente forte — mas também sente estranhamente certo/a de que vai superar","Encontra o detalhe interessante nos escombros"]},
+      {text:"A energia do seu capítulo atual parece:",choices:["Ainda me tornando. Longe do final.","Tudo acabou de mudar. Você não é mais quem era.","Exatamente onde você escolheu estar — no tempo de mais ninguém.","Encontrando significado em detalhes que a maioria ignora.","Quieto/a e paciente. Construindo em direção a algo que ninguém pode ver ainda."]},
+      {text:"Como você se sente sobre para onde sua história está indo?",choices:["Foi mais difícil chegar aqui do que parece. Valeu cada parte.","Você não sabe o que vem a seguir. Isso é metade do ponto.","Há uma razão por trás de tudo. Você sente isso.","Você não está seguindo o arco padrão. Nunca seguiu.","Você vai entender completamente quando terminar. Não antes."]}
+    ]}
   }
 };
 
@@ -1282,7 +1471,9 @@ function updateDots() {
 }
 
 function renderQuestion() {
-  const q = activeQuestions[currentQ];
+  const baseQ = activeQuestions[currentQ];
+  const langQs = QUIZ_TRANSLATIONS[currentLang]?.[userContext.mode]?.questions;
+  const q = langQs ? { ...baseQ, ...langQs[currentQ] } : baseQ;
   updateDots();
 
   document.getElementById("question-area").classList.remove("fade-out");
