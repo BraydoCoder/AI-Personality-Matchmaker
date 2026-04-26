@@ -1326,7 +1326,7 @@ const TRANSLATIONS = {
     labelRead:"Analiz", labelMatches:"Kimlerle uyumlusun",
     retake:"↩ Tekrar al", share:"Tipimi paylaş", questionOf:"Soru {n} / {total}",
     modeNames:{friends:"Arkadaşlık tarzı",teams:"Takımdaki rolün",darkside:"Karanlık taraf",mainchar:"Ana karakter"},
-    modeDescs:{friends:"Nasıl bir arkadassın?",teams:"Grupta nasıl davranırsın?",darkside:"Dürüst ve rahatsız edici analiz.",mainchar:"Nasıl bir hikayedesin?"}
+    modeDescs:{friends:"Nasıl bir arkadaşsın?",teams:"Grupta nasıl davranırsın?",darkside:"Dürüst ve rahatsız edici analiz.",mainchar:"Nasıl bir hikâyedesin?"}
   },
   vi: {
     eyebrow:"Tính cách · Tự nhận thức", headline:"Khám phá <em>bản thân thật</em> của bạn.",
@@ -2071,6 +2071,11 @@ function setLanguage(lang) {
   // Re-sync q-count span (re-injected by innerHTML above)
   const qEl = document.getElementById("start-q-count");
   if (qEl) qEl.textContent = t.qCount[quizLength];
+
+  // Re-render current question live if quiz is active
+  if (document.getElementById("quiz-screen").style.display === "block" && activeQuestions.length) {
+    renderQuestion();
+  }
 }
 
 // ─────────────────────────────────────────
