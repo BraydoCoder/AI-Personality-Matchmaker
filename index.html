@@ -786,40 +786,77 @@
     }
     #lang-toggle:hover { background: rgba(124,58,237,0.25); border-color: rgba(167,139,250,0.5); }
 
+    /* Language fullscreen overlay */
     #lang-dropdown {
       position: fixed;
-      top: 58px;
-      left: 20px;
-      background: rgba(14, 9, 32, 0.97);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(167,139,250,0.18);
-      border-radius: 14px;
-      padding: 10px;
+      inset: 0;
+      background: rgba(7, 5, 18, 0.97);
+      backdrop-filter: blur(24px);
+      z-index: 500;
       display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      width: 216px;
-      z-index: 199;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       opacity: 0;
       pointer-events: none;
-      transform: translateY(-6px);
-      transition: opacity 0.18s, transform 0.18s;
+      transition: opacity 0.22s ease;
     }
-    #lang-dropdown.open { opacity: 1; pointer-events: all; transform: translateY(0); }
+    #lang-dropdown.open { opacity: 1; pointer-events: all; }
+
+    .lang-overlay-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 28px;
+    }
+
+    .lang-dd-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      width: min(480px, 90vw);
+    }
+
     .lang-dd-btn {
-      padding: 5px 11px;
+      padding: 18px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.03);
+      color: #94a3b8;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.15s;
+      line-height: 1.3;
+    }
+    .lang-dd-btn:hover {
+      background: rgba(124,58,237,0.18);
+      color: #e2d9f3;
+      border-color: rgba(124,58,237,0.35);
+      transform: translateY(-2px);
+    }
+    .lang-dd-btn.active {
+      background: rgba(124,58,237,0.22);
+      color: #a78bfa;
+      border-color: rgba(124,58,237,0.5);
+    }
+
+    .lang-overlay-close {
+      margin-top: 32px;
+      padding: 10px 28px;
       border-radius: 50px;
       border: 1px solid rgba(255,255,255,0.1);
       background: transparent;
-      color: #94a3b8;
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
+      color: #475569;
+      font-size: 0.82rem;
+      font-weight: 600;
       cursor: pointer;
-      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      transition: color 0.15s, border-color 0.15s;
     }
-    .lang-dd-btn:hover { background: rgba(124,58,237,0.15); color: #c4b5fd; border-color: rgba(167,139,250,0.25); }
-    .lang-dd-btn.active { background: rgba(124,58,237,0.2); color: #a78bfa; border-color: rgba(124,58,237,0.4); }
+    .lang-overlay-close:hover { color: #94a3b8; border-color: rgba(255,255,255,0.2); }
   </style>
 </head>
 <body>
@@ -2018,22 +2055,28 @@ function selectLength(n) {
   document.getElementById("start-q-count").textContent = TRANSLATIONS[currentLang].qCount[n];
 }
 
+const LANG_NAMES = {
+  en:"English", es:"Español", fr:"Français", pt:"Português", de:"Deutsch",
+  ja:"日本語", it:"Italiano", zh:"中文", ko:"한국어", ru:"Русский",
+  hi:"हिन्दी", ar:"العربية", id:"Indonesia", tr:"Türkçe", vi:"Tiếng Việt"
+};
+
 function toggleLangMenu() {
   document.getElementById("lang-dropdown").classList.toggle("open");
 }
 function closeLangMenu() {
   document.getElementById("lang-dropdown").classList.remove("open");
 }
-document.addEventListener("click", e => {
-  if (!e.target.closest("#lang-toggle") && !e.target.closest("#lang-dropdown")) closeLangMenu();
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") closeLangMenu();
 });
 
 function setLanguage(lang) {
   currentLang = lang;
   const t = TRANSLATIONS[lang];
 
-  // Update persistent toggle button
-  document.getElementById("lang-toggle").textContent = `🌐 ${lang.toUpperCase()}`;
+  // Update persistent toggle button + overlay active state
+  document.getElementById("lang-toggle").textContent = `🌐 ${LANG_NAMES[lang]}`;
   document.querySelectorAll(".lang-dd-btn").forEach(b => b.classList.remove("active"));
   document.querySelector(`.lang-dd-btn[data-lang="${lang}"]`)?.classList.add("active");
 
@@ -2542,23 +2585,27 @@ function shareResult() {
 })();
 </script>
 
-<button id="lang-toggle" onclick="toggleLangMenu()" aria-label="Select language">🌐 EN</button>
+<button id="lang-toggle" onclick="toggleLangMenu()" aria-label="Select language">🌐 English</button>
 <div id="lang-dropdown">
-  <button class="lang-dd-btn active" data-lang="en" onclick="setLanguage('en');closeLangMenu()">EN</button>
-  <button class="lang-dd-btn" data-lang="es" onclick="setLanguage('es');closeLangMenu()">ES</button>
-  <button class="lang-dd-btn" data-lang="fr" onclick="setLanguage('fr');closeLangMenu()">FR</button>
-  <button class="lang-dd-btn" data-lang="pt" onclick="setLanguage('pt');closeLangMenu()">PT</button>
-  <button class="lang-dd-btn" data-lang="de" onclick="setLanguage('de');closeLangMenu()">DE</button>
-  <button class="lang-dd-btn" data-lang="ja" onclick="setLanguage('ja');closeLangMenu()">JA</button>
-  <button class="lang-dd-btn" data-lang="it" onclick="setLanguage('it');closeLangMenu()">IT</button>
-  <button class="lang-dd-btn" data-lang="zh" onclick="setLanguage('zh');closeLangMenu()">ZH</button>
-  <button class="lang-dd-btn" data-lang="ko" onclick="setLanguage('ko');closeLangMenu()">KO</button>
-  <button class="lang-dd-btn" data-lang="ru" onclick="setLanguage('ru');closeLangMenu()">RU</button>
-  <button class="lang-dd-btn" data-lang="hi" onclick="setLanguage('hi');closeLangMenu()">HI</button>
-  <button class="lang-dd-btn" data-lang="ar" onclick="setLanguage('ar');closeLangMenu()">AR</button>
-  <button class="lang-dd-btn" data-lang="id" onclick="setLanguage('id');closeLangMenu()">ID</button>
-  <button class="lang-dd-btn" data-lang="tr" onclick="setLanguage('tr');closeLangMenu()">TR</button>
-  <button class="lang-dd-btn" data-lang="vi" onclick="setLanguage('vi');closeLangMenu()">VI</button>
+  <div class="lang-overlay-title" id="lang-overlay-title">Language</div>
+  <div class="lang-dd-grid">
+    <button class="lang-dd-btn active" data-lang="en" onclick="setLanguage('en');closeLangMenu()">English</button>
+    <button class="lang-dd-btn" data-lang="es" onclick="setLanguage('es');closeLangMenu()">Español</button>
+    <button class="lang-dd-btn" data-lang="fr" onclick="setLanguage('fr');closeLangMenu()">Français</button>
+    <button class="lang-dd-btn" data-lang="pt" onclick="setLanguage('pt');closeLangMenu()">Português</button>
+    <button class="lang-dd-btn" data-lang="de" onclick="setLanguage('de');closeLangMenu()">Deutsch</button>
+    <button class="lang-dd-btn" data-lang="ja" onclick="setLanguage('ja');closeLangMenu()">日本語</button>
+    <button class="lang-dd-btn" data-lang="it" onclick="setLanguage('it');closeLangMenu()">Italiano</button>
+    <button class="lang-dd-btn" data-lang="zh" onclick="setLanguage('zh');closeLangMenu()">中文</button>
+    <button class="lang-dd-btn" data-lang="ko" onclick="setLanguage('ko');closeLangMenu()">한국어</button>
+    <button class="lang-dd-btn" data-lang="ru" onclick="setLanguage('ru');closeLangMenu()">Русский</button>
+    <button class="lang-dd-btn" data-lang="hi" onclick="setLanguage('hi');closeLangMenu()">हिन्दी</button>
+    <button class="lang-dd-btn" data-lang="ar" onclick="setLanguage('ar');closeLangMenu()">العربية</button>
+    <button class="lang-dd-btn" data-lang="id" onclick="setLanguage('id');closeLangMenu()">Indonesia</button>
+    <button class="lang-dd-btn" data-lang="tr" onclick="setLanguage('tr');closeLangMenu()">Türkçe</button>
+    <button class="lang-dd-btn" data-lang="vi" onclick="setLanguage('vi');closeLangMenu()">Tiếng Việt</button>
+  </div>
+  <button class="lang-overlay-close" onclick="closeLangMenu()">Close</button>
 </div>
 </body>
 </html>
