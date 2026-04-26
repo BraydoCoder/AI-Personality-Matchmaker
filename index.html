@@ -761,6 +761,65 @@
     }
     #music-toggle:hover { background: rgba(124,58,237,0.25); border-color: rgba(167,139,250,0.5); }
     #music-toggle.muted { color: #475569; border-color: rgba(255,255,255,0.1); }
+
+    /* Language toggle button */
+    #lang-toggle {
+      position: fixed;
+      top: 18px;
+      left: 20px;
+      padding: 6px 13px;
+      border-radius: 50px;
+      border: 1px solid rgba(167,139,250,0.25);
+      background: rgba(15, 10, 30, 0.65);
+      backdrop-filter: blur(12px);
+      color: #a78bfa;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      z-index: 200;
+      transition: background 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+    #lang-toggle:hover { background: rgba(124,58,237,0.25); border-color: rgba(167,139,250,0.5); }
+
+    #lang-dropdown {
+      position: fixed;
+      top: 58px;
+      left: 20px;
+      background: rgba(14, 9, 32, 0.97);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(167,139,250,0.18);
+      border-radius: 14px;
+      padding: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      width: 216px;
+      z-index: 199;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-6px);
+      transition: opacity 0.18s, transform 0.18s;
+    }
+    #lang-dropdown.open { opacity: 1; pointer-events: all; transform: translateY(0); }
+    .lang-dd-btn {
+      padding: 5px 11px;
+      border-radius: 50px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: transparent;
+      color: #94a3b8;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .lang-dd-btn:hover { background: rgba(124,58,237,0.15); color: #c4b5fd; border-color: rgba(167,139,250,0.25); }
+    .lang-dd-btn.active { background: rgba(124,58,237,0.2); color: #a78bfa; border-color: rgba(124,58,237,0.4); }
   </style>
 </head>
 <body>
@@ -772,23 +831,6 @@
 
   <!-- ══ START SCREEN ══ -->
   <div id="start-screen">
-    <div class="lang-bar">
-      <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">EN</button>
-      <button class="lang-btn" data-lang="es" onclick="setLanguage('es')">ES</button>
-      <button class="lang-btn" data-lang="fr" onclick="setLanguage('fr')">FR</button>
-      <button class="lang-btn" data-lang="pt" onclick="setLanguage('pt')">PT</button>
-      <button class="lang-btn" data-lang="de" onclick="setLanguage('de')">DE</button>
-      <button class="lang-btn" data-lang="ja" onclick="setLanguage('ja')">JA</button>
-      <button class="lang-btn" data-lang="it" onclick="setLanguage('it')">IT</button>
-      <button class="lang-btn" data-lang="zh" onclick="setLanguage('zh')">ZH</button>
-      <button class="lang-btn" data-lang="ko" onclick="setLanguage('ko')">KO</button>
-      <button class="lang-btn" data-lang="ru" onclick="setLanguage('ru')">RU</button>
-      <button class="lang-btn" data-lang="hi" onclick="setLanguage('hi')">HI</button>
-      <button class="lang-btn" data-lang="ar" onclick="setLanguage('ar')">AR</button>
-      <button class="lang-btn" data-lang="id" onclick="setLanguage('id')">ID</button>
-      <button class="lang-btn" data-lang="tr" onclick="setLanguage('tr')">TR</button>
-      <button class="lang-btn" data-lang="vi" onclick="setLanguage('vi')">VI</button>
-    </div>
     <div class="start-eyebrow" id="start-eyebrow">Personality · Self-awareness</div>
     <div class="virel-wordmark">Virel</div>
     <h1 class="start-headline">
@@ -1100,7 +1142,7 @@ const TRANSLATIONS = {
     loading:["Reading your patterns…","Cross-referencing your answers…","Building your profile…","Almost there…"],
     resultEyebrow:"Your Virel type", resultDemo:"Demo mode",
     labelRead:"The Read", labelMatches:"Who You Match With",
-    retake:"↩ Retake", share:"Share My Type",
+    retake:"↩ Retake", share:"Share My Type", questionOf:"Question {n} of {total}",
     modeNames:{friends:"Friend Archetypes",teams:"Roles in Teams",darkside:"Your Dark Side",mainchar:"Main Character Mode"},
     modeDescs:{friends:"What kind of friend are you?",teams:"How do you function in groups?",darkside:"The honest, unflattering read.",mainchar:"What kind of story are you in?"}
   },
@@ -1114,7 +1156,7 @@ const TRANSLATIONS = {
     loading:["Leyendo tus patrones…","Cruzando tus respuestas…","Construyendo tu perfil…","Casi listo…"],
     resultEyebrow:"Tu tipo Virel", resultDemo:"Modo demo",
     labelRead:"El análisis", labelMatches:"Con quién encajas",
-    retake:"↩ Repetir", share:"Compartir Mi Tipo",
+    retake:"↩ Repetir", share:"Compartir Mi Tipo", questionOf:"Pregunta {n} de {total}",
     modeNames:{friends:"Arquetipos de Amistad",teams:"Roles en Equipos",darkside:"Tu Lado Oscuro",mainchar:"Modo Protagonista"},
     modeDescs:{friends:"¿Qué tipo de amigo/a eres?",teams:"¿Cómo funcionas en grupos?",darkside:"La lectura honesta e incómoda.",mainchar:"¿En qué tipo de historia estás?"}
   },
@@ -1128,7 +1170,7 @@ const TRANSLATIONS = {
     loading:["Lecture de tes schémas…","Analyse de tes réponses…","Construction de ton profil…","Presque prêt…"],
     resultEyebrow:"Ton type Virel", resultDemo:"Mode démo",
     labelRead:"L'analyse", labelMatches:"Avec qui tu t'entends",
-    retake:"↩ Recommencer", share:"Partager Mon Type",
+    retake:"↩ Recommencer", share:"Partager Mon Type", questionOf:"Question {n} sur {total}",
     modeNames:{friends:"Archétypes d'Amitié",teams:"Rôles en Équipe",darkside:"Ton Côté Sombre",mainchar:"Mode Personnage Principal"},
     modeDescs:{friends:"Quel type d'ami(e) es-tu ?",teams:"Comment fonctionnes-tu en groupe ?",darkside:"La lecture honnête et inconfortable.",mainchar:"Dans quel type d'histoire es-tu ?"}
   },
@@ -1142,7 +1184,7 @@ const TRANSLATIONS = {
     loading:["Lendo seus padrões…","Cruzando suas respostas…","Construindo seu perfil…","Quase pronto…"],
     resultEyebrow:"Seu tipo Virel", resultDemo:"Modo demo",
     labelRead:"A análise", labelMatches:"Com quem você combina",
-    retake:"↩ Refazer", share:"Compartilhar Meu Tipo",
+    retake:"↩ Refazer", share:"Compartilhar Meu Tipo", questionOf:"Questão {n} de {total}",
     modeNames:{friends:"Arquétipos de Amizade",teams:"Papéis em Equipes",darkside:"Seu Lado Sombrio",mainchar:"Modo Personagem Principal"},
     modeDescs:{friends:"Que tipo de amigo/a você é?",teams:"Como você funciona em grupos?",darkside:"A leitura honesta e desconfortável.",mainchar:"Em que tipo de história você está?"}
   },
@@ -1156,7 +1198,7 @@ const TRANSLATIONS = {
     loading:["Deine Muster werden gelesen…","Antworten werden analysiert…","Dein Profil wird erstellt…","Fast fertig…"],
     resultEyebrow:"Dein Virel-Typ", resultDemo:"Demo-Modus",
     labelRead:"Die Analyse", labelMatches:"Wer zu dir passt",
-    retake:"↩ Nochmal", share:"Meinen Typ teilen",
+    retake:"↩ Nochmal", share:"Meinen Typ teilen", questionOf:"Frage {n} von {total}",
     modeNames:{friends:"Freundschafts-Archetypen",teams:"Rollen im Team",darkside:"Deine dunkle Seite",mainchar:"Hauptfigur-Modus"},
     modeDescs:{friends:"Was für ein Freund bist du?",teams:"Wie verhältst du dich in Gruppen?",darkside:"Die ehrliche, unbequeme Wahrheit.",mainchar:"In welcher Art Geschichte bist du?"}
   },
@@ -1170,7 +1212,7 @@ const TRANSLATIONS = {
     loading:["パターンを読み解いています…","回答を分析しています…","プロフィールを作成しています…","もうすぐです…"],
     resultEyebrow:"あなたのVirelタイプ", resultDemo:"デモモード",
     labelRead:"分析", labelMatches:"相性の良いタイプ",
-    retake:"↩ やり直す", share:"自分のタイプをシェア",
+    retake:"↩ やり直す", share:"自分のタイプをシェア", questionOf:"{n} / {total} 問目",
     modeNames:{friends:"友達タイプ",teams:"チームでの役割",darkside:"あなたの影の面",mainchar:"主人公モード"},
     modeDescs:{friends:"あなたはどんな友達？",teams:"グループでどう機能する？",darkside:"正直で耳の痛い分析。",mainchar:"あなたはどんな物語の中にいる？"}
   },
@@ -1184,7 +1226,7 @@ const TRANSLATIONS = {
     loading:["Leggendo i tuoi schemi…","Incrociando le risposte…","Costruendo il tuo profilo…","Quasi pronto…"],
     resultEyebrow:"Il tuo tipo Virel", resultDemo:"Modalità demo",
     labelRead:"L'analisi", labelMatches:"Con chi vai d'accordo",
-    retake:"↩ Rifai", share:"Condividi il mio tipo",
+    retake:"↩ Rifai", share:"Condividi il mio tipo", questionOf:"Domanda {n} di {total}",
     modeNames:{friends:"Archetipi di Amicizia",teams:"Ruoli nel Team",darkside:"Il tuo Lato Oscuro",mainchar:"Modalità Protagonista"},
     modeDescs:{friends:"Che tipo di amico/a sei?",teams:"Come funzioni in gruppo?",darkside:"La lettura onesta e scomoda.",mainchar:"In che tipo di storia sei?"}
   },
@@ -1198,7 +1240,7 @@ const TRANSLATIONS = {
     loading:["正在解读你的模式…","正在交叉分析答案…","正在建立你的档案…","快好了…"],
     resultEyebrow:"你的 Virel 类型", resultDemo:"演示模式",
     labelRead:"深度解读", labelMatches:"最佳匹配",
-    retake:"↩ 重新开始", share:"分享我的类型",
+    retake:"↩ 重新开始", share:"分享我的类型", questionOf:"第 {n} 题，共 {total} 题",
     modeNames:{friends:"朋友原型",teams:"团队角色",darkside:"你的黑暗面",mainchar:"主角模式"},
     modeDescs:{friends:"你是什么类型的朋友？",teams:"你如何在团队中运作？",darkside:"诚实、不讨好的解读。",mainchar:"你处于什么类型的故事中？"}
   },
@@ -1212,7 +1254,7 @@ const TRANSLATIONS = {
     loading:["패턴을 읽는 중…","답변을 분석하는 중…","프로필을 만드는 중…","거의 다 됐어요…"],
     resultEyebrow:"당신의 Virel 유형", resultDemo:"데모 모드",
     labelRead:"분석", labelMatches:"잘 맞는 유형",
-    retake:"↩ 다시 하기", share:"내 유형 공유",
+    retake:"↩ 다시 하기", share:"내 유형 공유", questionOf:"질문 {n} / {total}",
     modeNames:{friends:"친구 유형",teams:"팀에서의 역할",darkside:"나의 어두운 면",mainchar:"주인공 모드"},
     modeDescs:{friends:"어떤 친구인가요?",teams:"그룹에서 어떻게 행동하나요?",darkside:"솔직하고 불편한 분석.",mainchar:"어떤 종류의 이야기 속에 있나요?"}
   },
@@ -1226,7 +1268,7 @@ const TRANSLATIONS = {
     loading:["Читаю паттерны…","Анализирую ответы…","Составляю профиль…","Почти готово…"],
     resultEyebrow:"Твой тип Virel", resultDemo:"Демо-режим",
     labelRead:"Анализ", labelMatches:"Совместимость",
-    retake:"↩ Пройти снова", share:"Поделиться типом",
+    retake:"↩ Пройти снова", share:"Поделиться типом", questionOf:"Вопрос {n} из {total}",
     modeNames:{friends:"Стиль дружбы",teams:"Роль в команде",darkside:"Тёмная сторона",mainchar:"Главный герой"},
     modeDescs:{friends:"Какой ты друг?",teams:"Как ты ведёшь себя в группе?",darkside:"Честный и неудобный анализ.",mainchar:"В какой истории ты живёшь?"}
   },
@@ -1240,7 +1282,7 @@ const TRANSLATIONS = {
     loading:["पैटर्न पढ़ रहे हैं…","जवाब विश्लेषण हो रहे हैं…","प्रोफ़ाइल बन रही है…","लगभग तैयार…"],
     resultEyebrow:"आपका Virel टाइप", resultDemo:"डेमो मोड",
     labelRead:"विश्लेषण", labelMatches:"कौन मैच करता है",
-    retake:"↩ फिर से करें", share:"अपना टाइप शेयर करें",
+    retake:"↩ फिर से करें", share:"अपना टाइप शेयर करें", questionOf:"प्रश्न {n} / {total}",
     modeNames:{friends:"दोस्ती का अंदाज़",teams:"टीम में भूमिका",darkside:"अंधेरा पक्ष",mainchar:"मुख्य किरदार"},
     modeDescs:{friends:"आप कैसे दोस्त हैं?",teams:"ग्रुप में कैसे काम करते हैं?",darkside:"ईमानदार और असहज सच।",mainchar:"आप किस तरह की कहानी में हैं?"}
   },
@@ -1254,7 +1296,7 @@ const TRANSLATIONS = {
     loading:["قراءة الأنماط…","تحليل الإجابات…","إنشاء الملف الشخصي…","اكتمل تقريباً…"],
     resultEyebrow:"نوع Virel الخاص بك", resultDemo:"وضع تجريبي",
     labelRead:"التحليل", labelMatches:"من يتوافق معك",
-    retake:"↩ إعادة المحاولة", share:"شارك نوعك",
+    retake:"↩ إعادة المحاولة", share:"شارك نوعك", questionOf:"سؤال {n} من {total}",
     modeNames:{friends:"أسلوب الصداقة",teams:"دورك في الفريق",darkside:"الجانب المظلم",mainchar:"الشخصية الرئيسية"},
     modeDescs:{friends:"كيف تكون صديقاً؟",teams:"كيف تتصرف في المجموعة؟",darkside:"تحليل صادق وغير مريح.",mainchar:"في أي نوع من القصص أنت؟"}
   },
@@ -1268,7 +1310,7 @@ const TRANSLATIONS = {
     loading:["Membaca pola…","Menganalisis jawaban…","Membuat profil…","Hampir selesai…"],
     resultEyebrow:"Tipe Virel kamu", resultDemo:"Mode demo",
     labelRead:"Analisis", labelMatches:"Siapa yang cocok",
-    retake:"↩ Coba lagi", share:"Bagikan tipe saya",
+    retake:"↩ Coba lagi", share:"Bagikan tipe saya", questionOf:"Pertanyaan {n} dari {total}",
     modeNames:{friends:"Gaya pertemanan",teams:"Peran dalam tim",darkside:"Sisi gelap",mainchar:"Karakter utama"},
     modeDescs:{friends:"Teman seperti apa kamu?",teams:"Bagaimana kamu bertindak dalam grup?",darkside:"Analisis jujur yang tidak nyaman.",mainchar:"Kamu ada di kisah seperti apa?"}
   },
@@ -1282,7 +1324,7 @@ const TRANSLATIONS = {
     loading:["Kalıplar okunuyor…","Cevaplar analiz ediliyor…","Profil oluşturuluyor…","Neredeyse bitti…"],
     resultEyebrow:"Virel tipiniz", resultDemo:"Demo modu",
     labelRead:"Analiz", labelMatches:"Kimlerle uyumlusun",
-    retake:"↩ Tekrar al", share:"Tipimi paylaş",
+    retake:"↩ Tekrar al", share:"Tipimi paylaş", questionOf:"Soru {n} / {total}",
     modeNames:{friends:"Arkadaşlık tarzı",teams:"Takımdaki rolün",darkside:"Karanlık taraf",mainchar:"Ana karakter"},
     modeDescs:{friends:"Nasıl bir arkadassın?",teams:"Grupta nasıl davranırsın?",darkside:"Dürüst ve rahatsız edici analiz.",mainchar:"Nasıl bir hikayedesin?"}
   },
@@ -1296,7 +1338,7 @@ const TRANSLATIONS = {
     loading:["Đang đọc các mẫu…","Đang phân tích câu trả lời…","Đang tạo hồ sơ…","Sắp xong rồi…"],
     resultEyebrow:"Kiểu Virel của bạn", resultDemo:"Chế độ demo",
     labelRead:"Phân tích", labelMatches:"Ai phù hợp với bạn",
-    retake:"↩ Làm lại", share:"Chia sẻ kiểu của tôi",
+    retake:"↩ Làm lại", share:"Chia sẻ kiểu của tôi", questionOf:"Câu hỏi {n} / {total}",
     modeNames:{friends:"Phong cách kết bạn",teams:"Vai trò trong nhóm",darkside:"Mặt tối",mainchar:"Nhân vật chính"},
     modeDescs:{friends:"Bạn là kiểu bạn bè nào?",teams:"Bạn hành động thế nào trong nhóm?",darkside:"Phân tích trung thực và khó chịu.",mainchar:"Bạn đang trong loại câu chuyện nào?"}
   }
@@ -1976,12 +2018,27 @@ function selectLength(n) {
   document.getElementById("start-q-count").textContent = TRANSLATIONS[currentLang].qCount[n];
 }
 
+function toggleLangMenu() {
+  document.getElementById("lang-dropdown").classList.toggle("open");
+}
+function closeLangMenu() {
+  document.getElementById("lang-dropdown").classList.remove("open");
+}
+document.addEventListener("click", e => {
+  if (!e.target.closest("#lang-toggle") && !e.target.closest("#lang-dropdown")) closeLangMenu();
+});
+
 function setLanguage(lang) {
   currentLang = lang;
   const t = TRANSLATIONS[lang];
 
-  document.querySelectorAll(".lang-btn").forEach(b => b.classList.remove("active"));
-  document.querySelector(`.lang-btn[data-lang="${lang}"]`).classList.add("active");
+  // Update persistent toggle button
+  document.getElementById("lang-toggle").textContent = `🌐 ${lang.toUpperCase()}`;
+  document.querySelectorAll(".lang-dd-btn").forEach(b => b.classList.remove("active"));
+  document.querySelector(`.lang-dd-btn[data-lang="${lang}"]`)?.classList.add("active");
+
+  // RTL for Arabic
+  document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
 
   // Start screen
   document.getElementById("start-eyebrow").textContent = t.eyebrow;
@@ -2073,7 +2130,8 @@ function renderQuestion() {
   updateDots();
 
   document.getElementById("question-area").classList.remove("fade-out");
-  document.getElementById("question-num").textContent = `Question ${currentQ + 1} of ${activeQuestions.length}`;
+  document.getElementById("question-num").textContent = TRANSLATIONS[currentLang].questionOf
+    .replace("{n}", currentQ + 1).replace("{total}", activeQuestions.length);
 
   document.getElementById("question-text").textContent = q.text;
 
@@ -2478,5 +2536,24 @@ function shareResult() {
   document.addEventListener("keydown", startMusic, { once: true });
 })();
 </script>
+
+<button id="lang-toggle" onclick="toggleLangMenu()" aria-label="Select language">🌐 EN</button>
+<div id="lang-dropdown">
+  <button class="lang-dd-btn active" data-lang="en" onclick="setLanguage('en');closeLangMenu()">EN</button>
+  <button class="lang-dd-btn" data-lang="es" onclick="setLanguage('es');closeLangMenu()">ES</button>
+  <button class="lang-dd-btn" data-lang="fr" onclick="setLanguage('fr');closeLangMenu()">FR</button>
+  <button class="lang-dd-btn" data-lang="pt" onclick="setLanguage('pt');closeLangMenu()">PT</button>
+  <button class="lang-dd-btn" data-lang="de" onclick="setLanguage('de');closeLangMenu()">DE</button>
+  <button class="lang-dd-btn" data-lang="ja" onclick="setLanguage('ja');closeLangMenu()">JA</button>
+  <button class="lang-dd-btn" data-lang="it" onclick="setLanguage('it');closeLangMenu()">IT</button>
+  <button class="lang-dd-btn" data-lang="zh" onclick="setLanguage('zh');closeLangMenu()">ZH</button>
+  <button class="lang-dd-btn" data-lang="ko" onclick="setLanguage('ko');closeLangMenu()">KO</button>
+  <button class="lang-dd-btn" data-lang="ru" onclick="setLanguage('ru');closeLangMenu()">RU</button>
+  <button class="lang-dd-btn" data-lang="hi" onclick="setLanguage('hi');closeLangMenu()">HI</button>
+  <button class="lang-dd-btn" data-lang="ar" onclick="setLanguage('ar');closeLangMenu()">AR</button>
+  <button class="lang-dd-btn" data-lang="id" onclick="setLanguage('id');closeLangMenu()">ID</button>
+  <button class="lang-dd-btn" data-lang="tr" onclick="setLanguage('tr');closeLangMenu()">TR</button>
+  <button class="lang-dd-btn" data-lang="vi" onclick="setLanguage('vi');closeLangMenu()">VI</button>
+</div>
 </body>
 </html>
